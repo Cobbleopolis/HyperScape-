@@ -1,5 +1,6 @@
 import java.io.File
 
+import core.HyperScape
 import org.lwjgl.LWJGLException
 import org.lwjgl.opengl._
 
@@ -9,18 +10,22 @@ object Game {
     val WIDTH = 1080
     val HEIGHT = 720
 
+    var hyperScape = new HyperScape
+
     def main(args: Array[String]): Unit = {
         setNatives()
         initGL()
+        hyperScape.init()
         println("Done Loading")
 
         while (!Display.isCloseRequested) {
-
+            hyperScape.tick()
+            hyperScape.render()
             Display.sync(60)
             Display.update()
         }
 
-//        Game.destroy()
+        hyperScape.destroy()
         Display.destroy()
 
     }

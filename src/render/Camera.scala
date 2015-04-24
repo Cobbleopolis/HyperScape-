@@ -5,8 +5,8 @@ import org.lwjgl.util.vector.Matrix4f
 import util.MathUtil
 
 class Camera {
-    var perspective = perspective(30, Display.getWidth.toFloat / Display.getHeight.toFloat, .001f, 300)
-
+    var perspective: Matrix4f = perspective(30, Display.getWidth.toFloat / Display.getHeight.toFloat, .001f, 300)
+    var view = new Matrix4f()
 
     def frustrum(left: Float, right: Float, bottom: Float, top: Float, near: Float, far: Float): Matrix4f = {
         val width = right - left
