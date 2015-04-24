@@ -1,8 +1,10 @@
-import java.io.File
+import java.io.{FileReader, IOException, BufferedReader, File}
+import javax.imageio.ImageIO
 
-import core.HyperScape
+import core.{Init, HyperScape}
 import org.lwjgl.LWJGLException
 import org.lwjgl.opengl._
+import registry.{ShaderRegistry, TextureRegistry}
 
 object Game {
 
@@ -10,17 +12,30 @@ object Game {
     val WIDTH = 1080
     val HEIGHT = 720
 
-    var hyperScape = new HyperScape
+    var vsId = 0
+    var fsId = 0
+    var pId = 0
 
+    var hyperScape: HyperScape = null
     def main(args: Array[String]): Unit = {
         setNatives()
         initGL()
+        Init.loadAssets()
+        ShaderRegistry.bindShader("terrain")
+        TextureRegistry.bindTexture("terrain")
+
+        hyperScape = new HyperScape
         hyperScape.init()
         println("Done Loading")
 
         while (!Display.isCloseRequested) {
             hyperScape.tick()
+            // Map the internal OpenGL coordinate system to the entire screen
+            GL11.glViewport(0, 0, WIDTH, HEIGHT)
             hyperScape.render()
+            val err = GL11.glGetError()
+            if (err != 0)
+                println(err)
             Display.sync(60)
             Display.update()
         }
@@ -48,23 +63,15 @@ object Game {
         // Setup an OpenGL context with API version 3.2
         try {
             val pixelFormat = new PixelFormat()
-            val contextAtrributes = new ContextAttribs(3, 2)
+            val contextAtrributes = new ContextAttribs(3, 3)
                     .withForwardCompatible(true)
                     .withProfileCore(true)
 
             Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT))
             Display.setTitle(WINDOW_TITLE)
             Display.create(pixelFormat, contextAtrributes)
-
-            GL11.glViewport(0, 0, WIDTH, HEIGHT)
         } catch {
             case e: LWJGLException => e.printStackTrace(); System.exit(-1)
         }
-
-        // Setup an XNA like background color
-        GL11.glClearColor(0.4f, 0.6f, 0.9f, 0f)
-
-        // Map the internal OpenGL coordinate system to the entire screen
-        GL11.glViewport(0, 0, WIDTH, HEIGHT)
     }
 }
