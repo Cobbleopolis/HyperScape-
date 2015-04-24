@@ -7,7 +7,7 @@ import registry.ShaderRegistry
 import util.MathUtil
 
 class Camera {
-    var perspective: Matrix4f = perspective(75, Display.getWidth.toFloat / Display.getHeight.toFloat, .001f, 300)
+    var perspective: Matrix4f = perspective(75, Display.getWidth.toFloat / Display.getHeight.toFloat, .0001f, 300f)
     var view = new Matrix4f()
 
     def frustum(left: Float, right: Float, bottom: Float, top: Float, near: Float, far: Float): Matrix4f = {
@@ -16,12 +16,12 @@ class Camera {
         val length = far - near
         val dest = new Matrix4f()
         dest.m00 = (near * 2) / width
-        dest.m11 = (near * 2) / height
         dest.m02 = (left + right) / width
+        dest.m11 = (near * 2) / height
         dest.m12 = (top + bottom) / height
         dest.m22 = -(far + near) / length
-        dest.m32 = -1
         dest.m23 = -(far * near * 2) / length
+        dest.m32 = -1
         new Matrix4f(dest)
     }
 
