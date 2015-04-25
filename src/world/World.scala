@@ -98,7 +98,7 @@ abstract class World {
             HyperScape.uploadBuffer.flip()
 //            println(chunkTransform.toString)
 //            println(chunk.chunkModel.getVertices.mkString(" "))
-            GL20.glUniformMatrix4(ShaderRegistry.getCurrentShader.getUniformLocation("modelMatrix"), false, HyperScape.uploadBuffer)
+            GL20.glUniformMatrix4(ShaderRegistry.getCurrentShader().getUniformLocation("modelMatrix"), false, HyperScape.uploadBuffer)
             chunk.chunkModel.render()
             HyperScape.uploadBuffer.clear()
         })
