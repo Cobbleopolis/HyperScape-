@@ -37,9 +37,9 @@ object OBJLoader {
             val uvLoc = indexes._2 * 2
             completeArray = completeArray :+ vertArray(vertLoc) :+ vertArray(vertLoc + 1) :+ vertArray(vertLoc + 2) :+ uvArray(uvLoc) :+ uvArray(uvLoc + 1)
         })
-        println(vertArray.mkString(" "))
-        println(uvArray.mkString(" "))
-        println(completeArray.mkString(" "))
+//        println(vertArray.mkString(" "))
+//        println(uvArray.mkString(" "))
+//        println(completeArray.mkString(" "))
         new Model(completeArray)
     }
 }
