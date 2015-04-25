@@ -13,16 +13,20 @@ class HyperScape {
     //    val model = ModelRegistry.cube.copy
     //    val model2 = ModelRegistry.cube.copy
 
-    val models = Array[Model](ModelRegistry.cube.copy, ModelRegistry.cube.copy, ModelRegistry.cube.copy)
+    val models = Array[Model](
+        ModelRegistry.cube.copy, ModelRegistry.cube.copy, ModelRegistry.cube.copy,
+        ModelRegistry.cube.copy, ModelRegistry.cube.copy, ModelRegistry.cube.copy,
+        ModelRegistry.cube.copy, ModelRegistry.cube.copy, ModelRegistry.cube.copy
+    )
 
     def init(): Unit = {
-        //        GL11.glClearColor(Math.random().toFloat, Math.random().toFloat, Math.random().toFloat, Math.random().toFloat)
         GL11.glClearColor(0.4f, 0.6f, 0.9f, 1f)
         GL11.glEnable(GL11.GL_DEPTH_TEST)
         HyperScape.mainCamera.uploadPerspective()
         HyperScape.mainCamera.uploadView()
-        models(1).translate(1, 0, 0)
-        models(2).translate(-1, 0, 0)
+        for(i <- 0 until models.length) {
+            models(i).translate(0, 0, -i)
+        }
     }
 
     def tick(): Unit = {
@@ -47,6 +51,9 @@ class HyperScape {
         }
         HyperScape.mainCamera.uploadView()
         //        println(HyperScape.mainCamera.view.toString)
+//        for(model <- models){
+//            model.translate(0, 0, .005f)
+//        }
     }
 
     def render(): Unit = {

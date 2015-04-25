@@ -7,7 +7,7 @@ import registry.ShaderRegistry
 import util.MathUtil
 
 class Camera {
-    var perspective: Matrix4f = perspective(70, Display.getWidth.toFloat / Display.getHeight.toFloat, .1f, 300)
+    var perspective: Matrix4f = perspective(70, Display.getWidth.toFloat / Display.getHeight.toFloat, .1f, 30000)
     var view = new Matrix4f()
     println(perspective.toString)
 
@@ -21,8 +21,9 @@ class Camera {
         dest.m11 = (near * 2) / height
         dest.m12 = (top + bottom) / height
         dest.m22 = -(far + near) / length
-        dest.m23 = -(far * near * 2) / length
-        dest.m32 = -1
+        dest.m32 = -(far * near * 2) / length
+        dest.m23 = -1
+        println(dest)
         new Matrix4f(dest)
     }
 
