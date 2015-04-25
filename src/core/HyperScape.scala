@@ -5,13 +5,16 @@ import org.lwjgl.input.Keyboard
 import org.lwjgl.opengl.{GL11, GL20}
 import org.lwjgl.util.vector.Vector3f
 import registry.{ModelRegistry, ShaderRegistry}
-import render.{Camera, Model}
+import render.{Model, Camera, RenderModel}
+import world.WorldMainMenu
 
 
 class HyperScape {
 
     //    val model = ModelRegistry.cube.copy
     //    val model2 = ModelRegistry.cube.copy
+
+    val world = new WorldMainMenu
 
     val models = Array[Model](
         ModelRegistry.cube.copy, ModelRegistry.cube.copy, ModelRegistry.cube.copy,
@@ -30,7 +33,7 @@ class HyperScape {
     }
 
     def tick(): Unit = {
-        val speed = .025f
+        val speed = 1
         if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
             HyperScape.mainCamera.view.translate(new Vector3f(0, 0, speed))
         }
@@ -50,6 +53,7 @@ class HyperScape {
             HyperScape.mainCamera.view.translate(new Vector3f(0, speed, 0))
         }
         HyperScape.mainCamera.uploadView()
+        world.tick()
         //        println(HyperScape.mainCamera.view.toString)
 //        for(model <- models){
 //            model.translate(0, 0, .005f)
@@ -58,25 +62,16 @@ class HyperScape {
 
     def render(): Unit = {
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT)
-        val loc = ShaderRegistry.getCurrentShader().getUniformLocation("modelMatrix")
-        for (model <- models) {
-            model.modelMatrix.store(HyperScape.uploadBuffer)
-            HyperScape.uploadBuffer.flip()
-            GL20.glUniformMatrix4(loc, false, HyperScape.uploadBuffer)
-            HyperScape.uploadBuffer.clear()
-            model.render()
-        }
+        world.render()
 
     }
 
     def destroy(): Unit = {
-        for (model <- models) {
-            model.destroy()
-        }
+        world.destroy()
     }
 }
 
 object HyperScape {
     val mainCamera = new Camera
-    val uploadBuffer = BufferUtils.createFloatBuffer(16000)
+    val uploadBuffer = BufferUtils.createFloatBuffer(64000000)
 }
