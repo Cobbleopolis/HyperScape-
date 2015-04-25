@@ -43,6 +43,12 @@ class HyperScape {
         if (Keyboard.isKeyDown(Keyboard.KEY_Q)) {
             HyperScape.mainCamera.pos.translate(0, speed, 0)
         }
+        if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {
+            HyperScape.mainCamera.view.rotate(-1, new Vector3f(0, 1, 0))
+        }
+        if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
+            HyperScape.mainCamera.view.rotate(1, new Vector3f(0, 1, 0))
+        }
         HyperScape.mainCamera.view.translate(HyperScape.mainCamera.pos)
         HyperScape.mainCamera.uploadView()
         world.tick()

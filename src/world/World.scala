@@ -1,6 +1,6 @@
 package world
 
-import block.{Block, BlockAir}
+import block.{BlockLight, Block, BlockAir}
 import core.HyperScape
 import org.lwjgl.opengl.GL20
 import org.lwjgl.util.vector.{Matrix4f, Vector3f}
@@ -134,6 +134,10 @@ abstract class World {
                 val (x,y,z) = chunk.getBlockXYZFromIndex(i)
                 val newModel: Model = new Model(block.gameModel.getVertices.clone())
                 newModel.translate(x, y, z)
+                newModel.translateUV(block.texCoord._1.toFloat / 16f, block.texCoord._2.toFloat / 16f)
+                if(index == 0 && block.isInstanceOf[BlockLight]) {
+                    println(newModel.getVertices.mkString(" "))
+                }
                 verts = verts ++ newModel.getVertices
                 num = num + 1
             }

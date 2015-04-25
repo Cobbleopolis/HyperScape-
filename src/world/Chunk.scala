@@ -43,6 +43,8 @@ class Chunk(xCoord: Int, zCoord: Int) {
                 for (z <- 0 to 15) {
                     if (rand.nextBoolean())
                         setBlock(x, y, z, new BlockBlank)
+                    else
+                        setBlock(x, y, z, new BlockLight)
                 }
             }
         }
