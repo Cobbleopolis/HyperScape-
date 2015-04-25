@@ -2,7 +2,7 @@ package world
 
 import java.util.Random
 
-import block.{Block, BlockAir, BlockBlank}
+import block.{BlockLight, Block, BlockAir, BlockBlank}
 import render.{RenderModel, Model}
 
 class Chunk(xCoord: Int, zCoord: Int) {
@@ -39,7 +39,7 @@ class Chunk(xCoord: Int, zCoord: Int) {
     def generate(): Unit = {
         println("Generate Chunk | " + xCoord + " " + zCoord)
         for (x <- 0 to 15) {
-            for (y <- 0 to 2) {
+            for (y <- 0 to 5) {
                 for (z <- 0 to 15) {
                     if (rand.nextBoolean())
                         setBlock(x, y, z, new BlockBlank)

@@ -11,6 +11,13 @@ class Model(verts: Array[Float]) {
         }
     }
 
+    def translateUV(x: Float, z: Float): Unit = {
+        for(i <- 0 until verticies.length by 5) {
+            verticies.update(i + 3, verticies(i + 3) + x)
+            verticies.update(i + 4, verticies(i + 4) + z)
+        }
+    }
+
     def getVertices: Array[Float] = verts
 
     def copy: Model = {

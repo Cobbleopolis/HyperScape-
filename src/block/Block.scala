@@ -4,6 +4,6 @@ import registry.ModelRegistry
 import render.{Model, RenderModel}
 
 class Block {
-    var gameModel: Model = ModelRegistry.cube
+    var gameModel: Model = ModelRegistry.cube.copy
     var lightLevel = 0
 }
