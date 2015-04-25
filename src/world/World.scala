@@ -69,7 +69,7 @@ abstract class World {
      */
     def tick(): Unit = {
         //                println("Tick")
-        activeChunks = WorldUtil.getSurroundingChunkIndexes(new Vector3f(HyperScape.mainCamera.view.m03, HyperScape.mainCamera.view.m13, HyperScape.mainCamera.view.m23), 2)
+        activeChunks = WorldUtil.getSurroundingChunkIndexes(HyperScape.mainCamera.pos, 4)
         activeChunks.foreach(chunkIndex => {
             if (chunks.getOrElse(chunkIndex, null) == null) {
                 println("New Chunk " + chunkIndex)
@@ -81,6 +81,7 @@ abstract class World {
             }
             chunks.getOrElse(chunkIndex, null).tick()
         })
+//        println(activeChunks.length)
     }
 
     /**
@@ -89,20 +90,24 @@ abstract class World {
     def render(): Unit = {
         checkDirtyChunks()
         HyperScape.mainCamera.uploadView()
+        var i = 0
         activeChunks.foreach(chunkIndex => {
             val chunk = chunks(chunkIndex)
-            val chunkTransform = new Matrix4f()
-            chunk.chunkModel.translate(chunk.getXCoord * 16, 0, chunk.getZCoord * 16)
-//            chunkTransform.translate(new Vector3f(chunk.getXCoord * 16, 0, chunk.getZCoord * 16))
-            chunkTransform.store(HyperScape.uploadBuffer)
+
+            val modelMatrix = new Matrix4f()
+//            println("X, Z | " + chunk.getXCoord + " " + chunk.getZCoord)
+            modelMatrix.translate(new Vector3f(chunk.getXCoord * 16, 0, chunk.getZCoord * 16))
+
+            val loc = ShaderRegistry.getCurrentShader().getUniformLocation("modelMatrix")
+            modelMatrix.store(HyperScape.uploadBuffer)
             HyperScape.uploadBuffer.flip()
-//            println(chunkTransform.toString)
-//            println(chunk.chunkModel.getVertices.mkString(" "))
-            GL20.glUniformMatrix4(ShaderRegistry.getCurrentShader().getUniformLocation("modelMatrix"), false, HyperScape.uploadBuffer)
-            chunk.chunkModel.render()
+            GL20.glUniformMatrix4(loc, false, HyperScape.uploadBuffer)
             HyperScape.uploadBuffer.clear()
+
+            chunk.chunkModel.render()
+            i =  i + 1
         })
-//        println(HyperScape.camera.view)
+//        println(HyperScape.mainCamera.view)
     }
 
     def checkDirtyChunks(): Unit = {
@@ -128,7 +133,7 @@ abstract class World {
         for ((block, i) <- chunk.blocks.zipWithIndex) {
             if (block != null && !block.isInstanceOf[BlockAir]) {
                 val (x,y,z) = chunk.getBlockXYZFromIndex(i)
-                val newModel: Model = new Model(block.gameModel.getVertices)
+                val newModel: Model = new Model(block.gameModel.getVertices.clone())
                 newModel.translate(x, y, z)
                 verts = verts ++ newModel.getVertices
                 num = num + 1

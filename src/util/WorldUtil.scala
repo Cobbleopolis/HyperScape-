@@ -56,14 +56,13 @@ object WorldUtil {
                 chunks = chunks :+ index
             }
         }
-        //        println("Active Size: " + chunks.length + " | " + chunks.mkString(" "))
+//        println("Center: " + position.getX + ", " + position.getY + ", " + position.getZ)
+//        println("Active Size: " + chunks.length + " | " + chunks.mkString(" "))
         chunks
     }
 
     def getChunkIndexFromXZ(x: Int, z: Int): Int = {
-        val index = (x >> 4) << 4 | z >> 4
-        //        println("Index: " + index + " | " + x + " " + z)
-        index
+            (x >> 4) << 4 | z >> 4
     }
 
     def getChunkXZFromIndex(index: Int): (Int, Int) = {

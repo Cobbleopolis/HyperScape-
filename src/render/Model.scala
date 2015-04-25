@@ -5,9 +5,9 @@ class Model(verts: Array[Float]) {
 
     def translate(x: Float, y: Float, z: Float): Unit = {
         for(i <- 0 until verticies.length by 5) {
-            verticies(i) += x
-            verticies(i + 1) += y
-            verticies(i + 2) += z
+            verticies.update(i, verticies(i) + x)
+            verticies.update(i + 1, verticies(i + 1) + y)
+            verticies.update(i + 2, verticies(i + 2) + z)
         }
     }
 
