@@ -4,7 +4,7 @@ import org.lwjgl.BufferUtils
 import org.lwjgl.input.Keyboard
 import org.lwjgl.opengl.{GL20, GL11}
 import org.lwjgl.util.vector.{Matrix4f, Vector3f}
-import registry.ShaderRegistry
+import registry.{ModelRegistry, ShaderRegistry}
 import render.{OBJLoader, Camera, Model}
 
 
@@ -21,20 +21,19 @@ class HyperScape {
         -0.5f,  0.5f, 0f, 0f, 1f
     )
 
-    val model = OBJLoader.loadFromOBJFile("res/model/cube.obj")
+//    val model = ModelRegistry.cube.copy
+//    val model2 = ModelRegistry.cube.copy
 
-    val modelMatrix = new Matrix4f()
+    val models = Array[Model](ModelRegistry.cube.copy, ModelRegistry.cube.copy, ModelRegistry.cube.copy)
+
     def init(): Unit = {
 //        GL11.glClearColor(Math.random().toFloat, Math.random().toFloat, Math.random().toFloat, Math.random().toFloat)
         GL11.glClearColor(0.4f, 0.6f, 0.9f, 1f)
-        HyperScape.mainCamera.view.translate(new Vector3f(0, 0, -1))
+        GL11.glEnable(GL11.GL_DEPTH_TEST)
         HyperScape.mainCamera.uploadPerspective()
         HyperScape.mainCamera.uploadView()
-        val loc = ShaderRegistry.getCurrentShader().getUniformLocation("modelMatrix")
-        modelMatrix.store(HyperScape.uploadBuffer)
-        HyperScape.uploadBuffer.flip()
-        GL20.glUniformMatrix4(loc, false, HyperScape.uploadBuffer)
-        HyperScape.uploadBuffer.clear()
+        models(1).translate(1, 0, 0)
+        models(2).translate(-1, 0, 0)
     }
 
     def tick(): Unit = {
@@ -63,11 +62,21 @@ class HyperScape {
 
     def render(): Unit = {
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT)
-        model.render()
+        val loc = ShaderRegistry.getCurrentShader().getUniformLocation("modelMatrix")
+        for(model <- models){
+            model.modelMatrix.store(HyperScape.uploadBuffer)
+            HyperScape.uploadBuffer.flip()
+            GL20.glUniformMatrix4(loc, false, HyperScape.uploadBuffer)
+            HyperScape.uploadBuffer.clear()
+            model.render()
+        }
+
     }
 
     def destroy(): Unit = {
-        model.destroy()
+        for(model <- models){
+            model.destroy()
+        }
     }
 }
 

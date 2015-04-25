@@ -26,12 +26,10 @@ object Game {
 
         hyperScape = new HyperScape
         hyperScape.init()
-        println("Done Loading")
 
         while (!Display.isCloseRequested) {
             hyperScape.tick()
             // Map the internal OpenGL coordinate system to the entire screen
-            GL11.glViewport(0, 0, WIDTH, HEIGHT)
             hyperScape.render()
             val err = GL11.glGetError()
             if (err != 0)
@@ -73,5 +71,6 @@ object Game {
         } catch {
             case e: LWJGLException => e.printStackTrace(); System.exit(-1)
         }
+        GL11.glViewport(0, 0, WIDTH, HEIGHT)
     }
 }
