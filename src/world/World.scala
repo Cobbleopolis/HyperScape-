@@ -69,7 +69,7 @@ abstract class World {
      */
     def tick(): Unit = {
         //                println("Tick")
-        activeChunks = WorldUtil.getSurroundingChunkIndexes(HyperScape.mainCamera.pos, 4)
+        activeChunks = WorldUtil.getSurroundingChunkIndexes(new Vector3f(-HyperScape.mainCamera.pos.x, HyperScape.mainCamera.pos.y, -HyperScape.mainCamera.pos.z), 4)
         activeChunks.foreach(chunkIndex => {
             if (chunks.getOrElse(chunkIndex, null) == null) {
                 println("New Chunk " + chunkIndex)
@@ -97,7 +97,7 @@ abstract class World {
             val modelMatrix = new Matrix4f()
 //            println("X, Z | " + chunk.getXCoord + " " + chunk.getZCoord)
             modelMatrix.translate(new Vector3f(chunk.getXCoord * 16, 0, chunk.getZCoord * 16))
-
+//            println(modelMatrix.toString)
             val loc = ShaderRegistry.getCurrentShader().getUniformLocation("modelMatrix")
             modelMatrix.store(HyperScape.uploadBuffer)
             HyperScape.uploadBuffer.flip()
@@ -128,7 +128,6 @@ abstract class World {
         println("Updating Chunk " + index)
         val chunk = chunks(index)
         var verts = Array[Float]()
-        var transforms = List[Vector3f]()
         var num = 0
         for ((block, i) <- chunk.blocks.zipWithIndex) {
             if (block != null && !block.isInstanceOf[BlockAir]) {
