@@ -135,9 +135,6 @@ abstract class World {
                 val newModel: Model = new Model(block.gameModel.getVertices.clone())
                 newModel.translate(x, y, z)
                 newModel.translateUV(block.texCoord._1.toFloat / 16f, block.texCoord._2.toFloat / 16f)
-                if(index == 0 && block.isInstanceOf[BlockLight]) {
-                    println(newModel.getVertices.mkString(" "))
-                }
                 verts = verts ++ newModel.getVertices
                 num = num + 1
             }
