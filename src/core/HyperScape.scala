@@ -60,10 +60,10 @@ class HyperScape {
             player.rotate(0, Math.toRadians(5.0).toFloat, 0)
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_UP)) {
-            player.rotate(Math.toRadians(5.0).toFloat, 0, 0)
+            player.rotate(-Math.toRadians(5.0).toFloat, 0, 0)
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
-            player.rotate(-Math.toRadians(5.0).toFloat, 0, 0)
+            player.rotate(Math.toRadians(5.0).toFloat, 0, 0)
         }
         HyperScape.mainCamera.view.rotate(player.rot.getX, new Vector3f(1, 0, 0))
         HyperScape.mainCamera.view.rotate(player.rot.getY, new Vector3f(0, 1, 0))

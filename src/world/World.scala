@@ -111,11 +111,15 @@ abstract class World {
 //        println(HyperScape.mainCamera.view)
     }
 
+    /**
+     * Checks for dirty chunks and regenerates it's model if it is dirty
+     */
     def checkDirtyChunks(): Unit = {
         //Those chunks are so dirty
         activeChunks.foreach(chunkIndex => {
             if (chunks(chunkIndex).isDirty) {
                 println("Dirty Chunk: " + chunkIndex)
+                if(chunks(chunkIndex).chunkModel != null) chunks(chunkIndex).chunkModel.destroy()
                 updateChunkModel(chunkIndex)
             }
         })
@@ -153,6 +157,9 @@ abstract class World {
         chunks(index).isDirty = false
     }
 
+    /**
+     * Destroies the world
+     */
     def destroy(): Unit = {
         for(chunk <- chunks)
             chunk._2.chunkModel.destroy()

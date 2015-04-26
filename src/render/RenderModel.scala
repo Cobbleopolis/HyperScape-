@@ -26,10 +26,19 @@ class RenderModel(verts: Array[Float]) {
 
     GL30.glBindVertexArray(0)
 
+    /**
+     * Translates the model
+     * @param x Amount to translate on the x-axis
+     * @param y Amount to translate on the y-axis
+     * @param z Amount to translate on the z-axis
+     */
     def translate(x: Float, y: Float, z: Float): Unit = {
         modelMatrix.translate(new Vector3f(x, y, z))
     }
 
+    /**
+     * Renders the model
+     */
     def render(): Unit = {
         // Bind to the VAO that has all the information about the quad vertices
         GL30.glBindVertexArray(vao)
@@ -45,8 +54,15 @@ class RenderModel(verts: Array[Float]) {
         GL30.glBindVertexArray(0)
     }
 
+    /**
+     * Returns the model's vertices
+     * @return
+     */
     def getVertices: Array[Float] = verts
 
+    /**
+     * Destroies the model
+     */
     def destroy(): Unit = {
         // Disable the VBO index from the VAO attributes list
         GL20.glDisableVertexAttribArray(0)

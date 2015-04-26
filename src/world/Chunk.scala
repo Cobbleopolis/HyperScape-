@@ -15,27 +15,56 @@ class Chunk(xCoord: Int, zCoord: Int) {
     var isDirty: Boolean = false
     generate()
 
+    /**
+     * Ticks the chunk
+     */
     def tick(): Unit = {
 
     }
 
+    /**
+     * Returns if the chunk is empty
+     * @return If the chunk is empty or not
+     */
     def isEmpty: Boolean = {
         blocks.isEmpty
     }
 
+    /**
+     * Gets the x, y, z of the block at index
+     * @param index Index of the block
+     * @return The x, y, z of the block
+     */
     def getBlockXYZFromIndex(index: Int): (Int, Int, Int) = {
         ((index >> 4) & 15, index >> 8, index & 15)
     }
 
+    /**
+     * Checks if the block exists (isn't null and isn't air
+     * @param x X location of the block
+     * @param y Y location of the block
+     * @param z Z location of the block
+     * @return If the block at x, y, z exists
+     */
     def blockExists(x: Int, y: Int, z: Int): Boolean = {
-        getBlock(x, y, z) != null
+        getBlock(x, y, z) != null && !getBlock(x, y, z).isInstanceOf[BlockAir]
     }
 
+    /**
+     * Returns the block at x, y, x (chunk coordinates)
+     * @param x X location of the block
+     * @param y Y location of the block
+     * @param z Z location of the block
+     * @return The block at x, y, x (chunk coordinates)
+     */
     def getBlock(x: Int, y: Int, z: Int): Block = {
         //        println("(" + x + ", " + y + ", " + z + ")")
         blocks(y << 8 | x << 4 | z)
     }
 
+    /**
+     * Generates the chunk
+     */
     def generate(): Unit = {
         println("Generate Chunk | " + xCoord + " " + zCoord)
         for (x <- 0 to 15) {
@@ -53,13 +82,28 @@ class Chunk(xCoord: Int, zCoord: Int) {
         }
     }
 
+    /**
+     * Sets the block at x, y, z (chunk coordinates) to block
+     * @param x X location of the block
+     * @param y Y location of the block
+     * @param z Z location of the block
+     * @param block Sets the block at x, y, z (chunk coordinates) to block
+     */
     def setBlock(x: Int, y: Int, z: Int, block: Block): Unit = {
         blocks(y << 8 | x << 4 | z) = block
         isDirty = true
     }
 
+    /**
+     * Gets the x coordinate of the chunk
+     * @return The x coordinate of the chunk
+     */
     def getXCoord: Int = xCoord
 
+    /**
+     * Gets the z coordinate of the chunk
+     * @return The z coordinate of the chunk
+     */
     def getZCoord: Int = zCoord
 
     //    def getModelInstances: (Array[GameModel], Environment) = {

@@ -4,9 +4,15 @@ import org.lwjgl.opengl.{GL11, GL20}
 import render.Shader
 
 object ShaderRegistry {
-    var programs: Map[String, Shader] = Map()
-    var currShader = ""
+    private var programs: Map[String, Shader] = Map()
+    private var currShader = ""
 
+    /**
+     * Loads a shader and stores it in the shader registry with the name provided
+     * @param vertPath Path to the vertex shader
+     * @param fragPath Path to the fragment shader
+     * @param shaderName Name to store the shader with
+     */
     def loadShader(vertPath: String, fragPath: String, shaderName: String): Unit = {
         // Load the vertex shader
         val vsId = this.loadShader("res/shader/terrain.vert", GL20.GL_VERTEX_SHADER)
@@ -35,7 +41,8 @@ object ShaderRegistry {
         println("\tShader Id | " + shaderName + " | " + pId + ", " + vsId + ", " + fsId)
     }
 
-    def loadShader(filename: String, shaderType: Int): Int = {
+
+    private def loadShader(filename: String, shaderType: Int): Int = {
         val shaderSource = scala.io.Source.fromFile(filename).mkString
 
         val shaderID = GL20.glCreateShader(shaderType)
@@ -49,6 +56,10 @@ object ShaderRegistry {
         shaderID
     }
 
+    /**
+     * Binds a shader
+     * @param shaderName Name of the shader to bind
+     */
     def bindShader(shaderName: String): Unit = {
         if(!shaderName.equals(currShader)){
             programs(shaderName).bind()
@@ -56,14 +67,25 @@ object ShaderRegistry {
         }
     }
 
+    /**
+     * Returns the currently bound shader object
+     * @return Currently bound shader
+     */
     def getCurrentShader(): Shader = {
         programs(currShader)
     }
 
+    /**
+     * Destroys a shader
+     * @param shaderName Name of the shader to destroy
+     */
     def destroyShader(shaderName: String): Unit = {
         programs(shaderName).destroy()
     }
 
+    /**
+     * Destroies all loaded shaders
+     */
     def destroyAllShaders(): Unit = {
         for(shader <- programs) {
             shader._2.destroy()

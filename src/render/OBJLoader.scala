@@ -4,8 +4,13 @@ import scala.io.Source
 
 object OBJLoader {
 
-    def loadFromOBJFile(fileName: String): Model = {
-        val objFileContentsArray = Source.fromFile(fileName).getLines()
+    /**
+     * Loads an OBJ file
+     * @param filePath Path to the OBJ model to load
+     * @return A model generated from the OBJ file
+     */
+    def loadFromOBJFile(filePath: String): Model = {
+        val objFileContentsArray = Source.fromFile(filePath).getLines()
         //        val vertArray = BufferUtils.newFloatBuffer(objFileContentsArray.count(line => line.startsWith("v ")))
         var vertArray = Array[Float]()
         var uvArray = Array[Float]()

@@ -1,23 +1,39 @@
 package util
 
-import block.Block
+import block.{BlockAir, Block}
 import org.lwjgl.util.vector.Vector3f
 import reference.BlockSides
 import world.World
 
 object WorldUtil {
 
+    /**
+     * Gets the BlockSides that are surrounding the x, y, z location in world
+     * @param world The world the blocks are in
+     * @param x The x value of the location
+     * @param y The y value of the location
+     * @param z The z value of the location
+     * @return An array of BlockSides that surround a block
+     */
     def getSurroundingSides(world: World, x: Int, y: Int, z: Int): Array[Int] = {
         val blocks = getSurroundingBlocks(world, x, y, z)
         val sides = Array[Int]()
         for ((block, i) <- blocks.view.zipWithIndex) {
-            if (block != null) {
+            if (block != null || !block.isInstanceOf[BlockAir]) {
                 sides :+ i
             }
         }
         sides
     }
 
+    /**
+     * Gets the blocks that surround a the x, y, z location
+     * @param world World to check
+     * @param x The x value of the location
+     * @param y The y value of the location
+     * @param z The x value of the location
+     * @return An array of the blocks that surround the x, y, z location
+     */
     def getSurroundingBlocks(world: World, x: Int, y: Int, z: Int): Array[Block] = {
         val blocks = new Array[Block](6)
         blocks(0) = getBlockFromSide(world, x, y - 1, z, BlockSides.BOTTOM)
@@ -29,6 +45,15 @@ object WorldUtil {
         blocks
     }
 
+    /**
+     * Gets the block on the side of the x, y z location in world
+     * @param world World to check
+     * @param x The x value of the location
+     * @param y The y value of the location
+     * @param z The z value of the location
+     * @param side The BlockSides to get the block from
+     * @return The block on the side of the x, y z location in world
+     */
     def getBlockFromSide(world: World, x: Int, y: Int, z: Int, side: Int): Block = {
         var block: Block = null
         //        println("(" + x + ", " + y + ", " + z + ")")
@@ -48,6 +73,12 @@ object WorldUtil {
         block
     }
 
+    /**
+     * Gets the chunks surrounding the position
+     * @param position The position to get the surrounding chunks from
+     * @param radius The radius to look around the position
+     * @return An array with the indexes of the surrounding chunks
+     */
     def getSurroundingChunkIndexes(position: Vector3f, radius: Int): Array[Int] = {
         var chunks = Array[Int]()
         for (x <- -radius until radius) {
@@ -61,10 +92,21 @@ object WorldUtil {
         chunks
     }
 
+    /**
+     * Converts a chunk's x, z coordinates into it's index
+     * @param x X coordinate of the chunk
+     * @param z Z coordinate of the chunk
+     * @return The index of the chunk at x, z
+     */
     def getChunkIndexFromXZ(x: Int, z: Int): Int = {
             (x >> 4) << 4 | z >> 4
     }
 
+    /**
+     * Converts a chunk's index into it's x, z location
+     * @param index Index of the chunk
+     * @return The x, z location of the chunk
+     */
     def getChunkXZFromIndex(index: Int): (Int, Int) = {
         (index >> 4, index & 15)
     }

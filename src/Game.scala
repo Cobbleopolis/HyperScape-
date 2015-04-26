@@ -13,6 +13,11 @@ object Game {
     val HEIGHT = 720
 
     var hyperScape: HyperScape = null
+
+    /**
+     * Main method of the game
+     * @param args Arguments passed to the game
+     */
     def main(args: Array[String]): Unit = {
         setNatives()
         initGL()
@@ -39,6 +44,9 @@ object Game {
 
     }
 
+    /**
+     * Sets the natives based on the operating system
+     */
     def setNatives(): Unit = {
         val os = System.getProperty("os.name").toLowerCase
         var suffix = ""
@@ -54,6 +62,9 @@ object Game {
         System.setProperty("org.lwjgl.librarypath", nativePath)
     }
 
+    /**
+     * Initializes OpenGL
+     */
     def initGL(): Unit = {
         // Setup an OpenGL context with API version 3.2
         try {

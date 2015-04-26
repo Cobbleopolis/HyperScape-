@@ -11,7 +11,7 @@ class Camera {
     var view = new Matrix4f()
     var pos = new Vector3f()
 
-    def frustum(left: Float, right: Float, bottom: Float, top: Float, near: Float, far: Float): Matrix4f = {
+    private def frustum(left: Float, right: Float, bottom: Float, top: Float, near: Float, far: Float): Matrix4f = {
         val width = right - left
         val height = top - bottom
         val length = far - near
@@ -26,12 +26,15 @@ class Camera {
         new Matrix4f(dest)
     }
 
-    def perspective(fovInDegrees: Float, aspectRatio: Float, near: Float, far: Float): Matrix4f = {
+    private def perspective(fovInDegrees: Float, aspectRatio: Float, near: Float, far: Float): Matrix4f = {
         val top = (near * Math.tan(fovInDegrees * MathUtil.PI360)).toFloat
         val right = top * aspectRatio
         frustum(-right, right, -top, top, near, far)
     }
 
+    /**
+     * Uploads the perspective matrix to the GPU
+     */
     def uploadPerspective(): Unit = {
         val loc = ShaderRegistry.getCurrentShader().getUniformLocation("projectionMatrix")
         perspective.store(HyperScape.uploadBuffer)
@@ -40,6 +43,9 @@ class Camera {
         HyperScape.uploadBuffer.clear()
     }
 
+    /**
+     * Uploads the view matrix to the GPU
+     */
     def uploadView(): Unit = {
         val loc = ShaderRegistry.getCurrentShader().getUniformLocation("viewMatrix")
         view.store(HyperScape.uploadBuffer)
