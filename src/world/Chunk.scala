@@ -2,7 +2,7 @@ package world
 
 import java.util.Random
 
-import block.{BlockLight, Block, BlockAir, BlockBlank}
+import block._
 import render.{RenderModel, Model}
 
 class Chunk(xCoord: Int, zCoord: Int) {
@@ -41,10 +41,13 @@ class Chunk(xCoord: Int, zCoord: Int) {
         for (x <- 0 to 15) {
             for (y <- 0 to 5) {
                 for (z <- 0 to 15) {
-                    if (rand.nextBoolean())
+                    val r = rand.nextInt(3)
+                    if (r == 0)
                         setBlock(x, y, z, new BlockBlank)
-                    else
+                    else if (r == 1)
                         setBlock(x, y, z, new BlockLight)
+                    else
+                        setBlock(x, y, z, new BlockModel)
                 }
             }
         }

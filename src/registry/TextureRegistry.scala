@@ -12,6 +12,11 @@ object TextureRegistry {
     private var textures: Map[String, Int] = Map()
     private var currTexture = ""
 
+    /**
+     * Loads a texture and uploads it it the GPU
+     * @param pathToTexture The path to the texture that needs to be uploaded
+     * @param textureName The name used to identify the texture with the registry
+     */
     def loadTexture(pathToTexture: String, textureName: String): Unit = {
         val img = ImageIO.read(new File(pathToTexture))
         val rgb = new Array[Int](img.getWidth * img.getHeight * 4)
@@ -29,6 +34,10 @@ object TextureRegistry {
         println("\tTexture Id | " + textureName + " | " + texID)
     }
 
+    /**
+     * Binds the texture to GL_TEXTURE0
+     * @param textureName Name of the texture to bind
+     */
     def bindTexture(textureName: String): Unit = {
         if (!textureName.equals(currTexture)) {
             println("Binding Texture | " + textureName)
@@ -39,6 +48,10 @@ object TextureRegistry {
         }
     }
 
+    /**
+     * Destroys a texture
+     * @param textureName Name of the texture to destroy
+     */
     def destroyTexture(textureName: String): Unit ={
         textures(textureName)
     }

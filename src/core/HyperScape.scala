@@ -15,6 +15,9 @@ class HyperScape {
 
     val world = new WorldMainMenu
 
+    /**
+     * Initializes the game
+     */
     def init(): Unit = {
         GL11.glClearColor(0.4f, 0.6f, 0.9f, 1f)
         GL11.glEnable(GL11.GL_DEPTH_TEST)
@@ -22,6 +25,9 @@ class HyperScape {
         HyperScape.mainCamera.uploadView()
     }
 
+    /**
+     * Ticks the game
+     */
     def tick(): Unit = {
         HyperScape.mainCamera.view = new Matrix4f()
         val speed = 1
@@ -58,18 +64,24 @@ class HyperScape {
         //        }
     }
 
+    /**
+     * Renders the game
+     */
     def render(): Unit = {
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT)
         world.render()
 
     }
 
+    /**
+     * Destroys the game
+     */
     def destroy(): Unit = {
         world.destroy()
     }
 }
 
 object HyperScape {
-    val mainCamera = new Camera
-    val uploadBuffer = BufferUtils.createFloatBuffer(64000000)
+    val mainCamera = new Camera /**The Camera that renders they game*/
+    val uploadBuffer = BufferUtils.createFloatBuffer(64000000) /**The buffer used to upload to the GPU*/
 }
