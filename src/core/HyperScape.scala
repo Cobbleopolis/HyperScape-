@@ -1,5 +1,6 @@
 package core
 
+import entity.Entity
 import org.lwjgl.BufferUtils
 import org.lwjgl.input.Keyboard
 import org.lwjgl.opengl.GL11
@@ -15,10 +16,13 @@ class HyperScape {
 
     val world = new WorldMainMenu
 
+    var player: Entity = null
+
     /**
      * Initializes the game
      */
     def init(): Unit = {
+        player = new Entity
         GL11.glClearColor(0.4f, 0.6f, 0.9f, 1f)
         GL11.glEnable(GL11.GL_DEPTH_TEST)
         HyperScape.mainCamera.uploadPerspective()
@@ -32,32 +36,41 @@ class HyperScape {
         HyperScape.mainCamera.view = new Matrix4f()
         val speed = 1
         if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
-            HyperScape.mainCamera.pos.translate(0, 0, speed)
+            player.translateInDirectionFacing(0, 0, speed)
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
-            HyperScape.mainCamera.pos.translate(speed, 0, 0)
+            player.translateInDirectionFacing(speed, 0, 0)
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
-            HyperScape.mainCamera.pos.translate(0, 0, -speed)
+            player.translateInDirectionFacing(0, 0, -speed)
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
-            HyperScape.mainCamera.pos.translate(-speed, 0, 0)
+            player.translateInDirectionFacing(-speed, 0, 0)
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_E)) {
-            HyperScape.mainCamera.pos.translate(0, -speed, 0)
+            player.translateInDirectionFacing(0, -speed, 0)
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_Q)) {
-            HyperScape.mainCamera.pos.translate(0, speed, 0)
+            player.translateInDirectionFacing(0, speed, 0)
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {
-            HyperScape.mainCamera.view.rotate(-1, new Vector3f(0, 1, 0))
+            player.rotate(0, -Math.toRadians(5.0).toFloat, 0)
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
-            HyperScape.mainCamera.view.rotate(1, new Vector3f(0, 1, 0))
+            player.rotate(0, Math.toRadians(5.0).toFloat, 0)
         }
-        HyperScape.mainCamera.view.translate(HyperScape.mainCamera.pos)
+        if (Keyboard.isKeyDown(Keyboard.KEY_UP)) {
+            player.rotate(Math.toRadians(5.0).toFloat, 0, 0)
+        }
+        if (Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
+            player.rotate(-Math.toRadians(5.0).toFloat, 0, 0)
+        }
+        HyperScape.mainCamera.view.rotate(player.rot.getX, new Vector3f(1, 0, 0))
+        HyperScape.mainCamera.view.rotate(player.rot.getY, new Vector3f(0, 1, 0))
+        HyperScape.mainCamera.view.rotate(player.rot.getZ, new Vector3f(0, 0, 1))
+        HyperScape.mainCamera.view.translate(player.pos)
         HyperScape.mainCamera.uploadView()
-        world.tick()
+        world.tick(player)
         //        println(HyperScape.mainCamera.view.toString)
         //        for(model <- models){
         //            model.translate(0, 0, .005f)

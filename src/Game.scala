@@ -1,4 +1,4 @@
-import java.io.{FileReader, IOException, BufferedReader, File}
+import java.io._
 import javax.imageio.ImageIO
 
 import core.{Init, HyperScape}
@@ -11,10 +11,6 @@ object Game {
     val WINDOW_TITLE = "Hyperspace"
     val WIDTH = 1080
     val HEIGHT = 720
-
-    var vsId = 0
-    var fsId = 0
-    var pId = 0
 
     var hyperScape: HyperScape = null
     def main(args: Array[String]): Unit = {
@@ -53,7 +49,8 @@ object Game {
         } else {
             suffix = "linux"
         }
-        val nativePath = System.getProperty("user.dir") + File.separator + "lib" + File.separator + "lwjgl" + File.separator + "native" + File.separator + suffix
+//        val nativePath = System.getProperty("user.dir") + File.separator + "lib" + File.separator + "lwjgl" + File.separator + "native" + File.separator + suffix
+        val nativePath = System.getProperty("user.dir") + File.separator + "native" + File.separator + suffix
         System.setProperty("org.lwjgl.librarypath", nativePath)
     }
 

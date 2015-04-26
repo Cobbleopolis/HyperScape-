@@ -13,5 +13,6 @@ out vec2 pass_TextureCoord;
 void main(void) {
 	gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(in_Position, 1.0);
 	pass_Color = vec4(1, 1, 1, 1);
+	//pass_Color = vec4(1 + gl_Position.x, 1 + gl_Position.y, 1 + gl_Position.z, 1);
 	pass_TextureCoord = in_TextureCoord;
 }

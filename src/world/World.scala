@@ -2,6 +2,7 @@ package world
 
 import block.{BlockLight, Block, BlockAir}
 import core.HyperScape
+import entity.Entity
 import org.lwjgl.opengl.GL20
 import org.lwjgl.util.vector.{Matrix4f, Vector3f}
 import registry.ShaderRegistry
@@ -67,9 +68,9 @@ abstract class World {
     /**
      * Called every tick and updates the world
      */
-    def tick(): Unit = {
+    def tick(player: Entity): Unit = {
         //                println("Tick")
-        activeChunks = WorldUtil.getSurroundingChunkIndexes(new Vector3f(-HyperScape.mainCamera.pos.x, HyperScape.mainCamera.pos.y, -HyperScape.mainCamera.pos.z), 4)
+        activeChunks = WorldUtil.getSurroundingChunkIndexes(new Vector3f(-player.pos.x, player.pos.y, -player.pos.z), 4)
         activeChunks.foreach(chunkIndex => {
             if (chunks.getOrElse(chunkIndex, null) == null) {
                 println("New Chunk " + chunkIndex)

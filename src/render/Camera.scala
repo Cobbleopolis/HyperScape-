@@ -10,7 +10,6 @@ class Camera {
     var perspective: Matrix4f = perspective(70, Display.getWidth.toFloat / Display.getHeight.toFloat, .1f, 30000)
     var view = new Matrix4f()
     var pos = new Vector3f()
-    println(perspective.toString)
 
     def frustum(left: Float, right: Float, bottom: Float, top: Float, near: Float, far: Float): Matrix4f = {
         val width = right - left
@@ -24,7 +23,6 @@ class Camera {
         dest.m22 = -(far + near) / length
         dest.m32 = -(far * near * 2) / length
         dest.m23 = -1
-        println(dest)
         new Matrix4f(dest)
     }
 
