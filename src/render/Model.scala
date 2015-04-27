@@ -30,13 +30,21 @@ class Model(verts: Array[Float]) {
     }
 
     /**
-     * Returns the model's vertices
-     * @return The model's vertices
+     * Removes a face from the model
+     * @param faceIndex The index of the face to remove
      */
-    def getVertices: Array[Float] = verts
+    def removeFace(faceIndex: Int): Unit = {
+        verticies = verticies.dropRight(faceIndex * Vertex.ELEMENT_COUNT) ++ verticies.drop(faceIndex * (Vertex.ELEMENT_COUNT + 1))
+    }
 
     /**
-     * Returns a copy of the model
+     * Gets the model's vertices
+     * @return The model's vertices
+     */
+    def getVertices: Array[Float] = verticies
+
+    /**
+     * Gets a copy of the model
      * @return A copy of the model
      */
     def copy: Model = {

@@ -32,25 +32,26 @@ class HyperScape {
      * Ticks the game
      */
     def tick(): Unit = {
-        HyperScape.mainCamera.view = new Matrix4f()
+        player.velocity = new Vector3f
+        HyperScape.mainCamera.view = new Matrix4f
         val speed: Float = .25f
         if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
-            player.translateInDirectionFacing(0, 0, speed)
+            player.addToSpeedInDirectionFacing(0, 0, speed)
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
-            player.translateInDirectionFacing(speed, 0, 0)
+            player.addToSpeedInDirectionFacing(speed, 0, 0)
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
-            player.translateInDirectionFacing(0, 0, -speed)
+            player.addToSpeedInDirectionFacing(0, 0, -speed)
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
-            player.translateInDirectionFacing(-speed, 0, 0)
+            player.addToSpeedInDirectionFacing(-speed, 0, 0)
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_E)) {
-            player.translateInDirectionFacing(0, -speed, 0)
+            player.addToSpeedInDirectionFacing(0, -speed, 0)
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_Q)) {
-            player.translateInDirectionFacing(0, speed, 0)
+            player.addToSpeedInDirectionFacing(0, speed, 0)
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {
             player.rotate(0, -Math.toRadians(2.5).toFloat, 0)
@@ -64,10 +65,10 @@ class HyperScape {
         if (Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
             player.rotate(Math.toRadians(2.5).toFloat, 0, 0)
         }
-        HyperScape.mainCamera.view.rotate(player.rot.getX, new Vector3f(1, 0, 0))
-        HyperScape.mainCamera.view.rotate(player.rot.getY, new Vector3f(0, 1, 0))
-        HyperScape.mainCamera.view.rotate(player.rot.getZ, new Vector3f(0, 0, 1))
-        HyperScape.mainCamera.view.translate(player.pos)
+        HyperScape.mainCamera.view.rotate(player.rotation.getX, new Vector3f(1, 0, 0))
+        HyperScape.mainCamera.view.rotate(player.rotation.getY, new Vector3f(0, 1, 0))
+        HyperScape.mainCamera.view.rotate(player.rotation.getZ, new Vector3f(0, 0, 1))
+        HyperScape.mainCamera.view.translate(player.position)
         HyperScape.mainCamera.uploadView()
         world.tick(player)
     }
@@ -78,7 +79,6 @@ class HyperScape {
     def render(): Unit = {
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT)
         world.render()
-
     }
 
     /**
@@ -90,6 +90,9 @@ class HyperScape {
 }
 
 object HyperScape {
-    val mainCamera = new Camera /**The Camera that renders they game*/
-    val uploadBuffer = BufferUtils.createFloatBuffer(64000000) /**The buffer used to upload to the GPU*/
+    val mainCamera = new Camera
+    /**The Camera that renders they game*/
+
+    val uploadBuffer = BufferUtils.createFloatBuffer(64000000)
+    /**The buffer used to upload to the GPU*/
 }

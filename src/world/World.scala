@@ -1,6 +1,6 @@
 package world
 
-import block.{BlockLight, Block, BlockAir}
+import block.{Block, BlockAir}
 import core.HyperScape
 import entity.Entity
 import org.lwjgl.opengl.GL20
@@ -69,8 +69,7 @@ abstract class World {
      * Called every tick and updates the world
      */
     def tick(player: Entity): Unit = {
-        //                println("Tick")
-        activeChunks = WorldUtil.getSurroundingChunkIndexes(new Vector3f(-player.pos.x, player.pos.y, -player.pos.z), 4)
+        activeChunks = WorldUtil.getSurroundingChunkIndexes(new Vector3f(-player.position.x, player.position.y, -player.position.z), 4)
         activeChunks.foreach(chunkIndex => {
             if (chunks.getOrElse(chunkIndex, null) == null) {
                 println("New Chunk " + chunkIndex)
@@ -82,7 +81,7 @@ abstract class World {
             }
             chunks.getOrElse(chunkIndex, null).tick()
         })
-//        println(activeChunks.length)
+        player.tick(this)
     }
 
     /**
@@ -96,19 +95,19 @@ abstract class World {
             val chunk = chunks(chunkIndex)
 
             val modelMatrix = new Matrix4f()
-//            println("X, Z | " + chunk.getXCoord + " " + chunk.getZCoord)
+            //            println("X, Z | " + chunk.getXCoord + " " + chunk.getZCoord)
             modelMatrix.translate(new Vector3f(chunk.getXCoord * 16, 0, chunk.getZCoord * 16))
-//            println(modelMatrix.toString)
-            val loc = ShaderRegistry.getCurrentShader().getUniformLocation("modelMatrix")
+            //            println(modelMatrix.toString)
+            val loc = ShaderRegistry.getCurrentShader.getUniformLocation("modelMatrix")
             modelMatrix.store(HyperScape.uploadBuffer)
             HyperScape.uploadBuffer.flip()
             GL20.glUniformMatrix4(loc, false, HyperScape.uploadBuffer)
             HyperScape.uploadBuffer.clear()
 
             chunk.chunkModel.render()
-            i =  i + 1
+            i = i + 1
         })
-//        println(HyperScape.mainCamera.view)
+        //        println(HyperScape.mainCamera.view)
     }
 
     /**
@@ -119,7 +118,7 @@ abstract class World {
         activeChunks.foreach(chunkIndex => {
             if (chunks(chunkIndex).isDirty) {
                 println("Dirty Chunk: " + chunkIndex)
-                if(chunks(chunkIndex).chunkModel != null) chunks(chunkIndex).chunkModel.destroy()
+                if (chunks(chunkIndex).chunkModel != null) chunks(chunkIndex).chunkModel.destroy()
                 updateChunkModel(chunkIndex)
             }
         })
@@ -136,7 +135,7 @@ abstract class World {
         var num = 0
         for ((block, i) <- chunk.blocks.zipWithIndex) {
             if (block != null && !block.isInstanceOf[BlockAir]) {
-                val (x,y,z) = chunk.getBlockXYZFromIndex(i)
+                val (x, y, z) = chunk.getBlockXYZFromIndex(i)
                 val newModel: Model = new Model(block.gameModel.getVertices.clone())
                 newModel.translate(x, y, z)
                 newModel.translateUV(block.texCoord._1.toFloat / 16f, block.texCoord._2.toFloat / 16f)
@@ -161,7 +160,7 @@ abstract class World {
      * Destroies the world
      */
     def destroy(): Unit = {
-        for(chunk <- chunks)
+        for (chunk <- chunks)
             chunk._2.chunkModel.destroy()
     }
 

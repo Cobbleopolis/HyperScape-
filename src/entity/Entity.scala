@@ -1,12 +1,38 @@
 package entity
 
 import org.lwjgl.util.vector.Vector3f
+import physics.BoundingBox
+import world.World
 
 class Entity {
 
-    var pos: Vector3f = new Vector3f /** A vector that is used to represent the entities location (x, y, z)*/
+    var position: Vector3f = new Vector3f
+    /** A vector that is used to represent the entities location (x, y, z) */
 
-    var rot: Vector3f = new Vector3f /** A vector that is used to represent the entities rotation (roll, pitch, yaw)*/
+    var rotation: Vector3f = new Vector3f
+    /** A vector that is used to represent the entities rotation (roll, pitch, yaw) */
+
+    var velocity: Vector3f = new Vector3f
+    /** A vector representing the entities velocity */
+
+    var hasCollision: Boolean = true
+    /** Sets if the entity has collision */
+
+    var boundingBox: BoundingBox = new BoundingBox
+    /** The entities bounding box */
+
+    /**
+     * Ticks the entity
+     */
+    def tick(world: World): Unit = {
+        checkCollision(world)
+        position.translate(velocity.getX, velocity.getY, velocity.getZ)
+    }
+
+    def checkCollision(world: World): Unit = {
+
+    }
+
 
     /**
      * Translates the entity
@@ -14,8 +40,19 @@ class Entity {
      * @param y Amount to translate in the y
      * @param z Amount to translate in the z
      */
-    def translate(x: Float, y: Float, z: Float): Unit ={
-        pos.translate(x, -y, z)
+    def translate(x: Float, y: Float, z: Float): Unit = {
+        position.translate(x, -y, z)
+    }
+
+    /**
+     * Sets the speed of the entity
+     * @param x Amount to translate in the x
+     * @param y Amount to translate in the y
+     * @param z Amount to translate in the z
+     */
+    def setSpeed(x: Float, y: Float, z: Float): Unit = {
+//        position.translate(x, -y, z)
+        velocity.set(velocity.getX + x, velocity.getY - y, velocity.getZ + z)
     }
 
     /**
@@ -24,9 +61,11 @@ class Entity {
      * @param y Amount to translate in the y
      * @param z Amount to translate in the z
      */
-    def translateInDirectionFacing(x: Float, y: Float, z: Float): Unit ={
-        pos.translate(x * Math.cos(rot.getY).toFloat, y, x * Math.sin(rot.getY).toFloat)
-        pos.translate(z * -Math.sin(rot.getY).toFloat, 0, z * Math.cos(rot.getY).toFloat)
+    def addToSpeedInDirectionFacing(x: Float, y: Float, z: Float): Unit = {
+        velocity.set(velocity.getX + (x * Math.cos(rotation.getY).toFloat), velocity.getY + y, velocity.getZ + (x * Math.sin(rotation.getY).toFloat))
+        velocity.set(velocity.getX + (z * -Math.sin(rotation.getY).toFloat), velocity.getY, velocity.getZ + (z * Math.cos(rotation.getY).toFloat))
+//        position.translate(x * Math.cos(rotation.getY).toFloat, y, x * Math.sin(rotation.getY).toFloat)
+//        position.translate(z * -Math.sin(rotation.getY).toFloat, 0, z * Math.cos(rotation.getY).toFloat)
     }
 
     /**
@@ -36,7 +75,7 @@ class Entity {
      * @param yaw Amount to rotate the entity on the z-axis in radians
      */
     def rotate(roll: Float, pitch: Float, yaw: Float): Unit = {
-        rot.translate(roll, pitch, yaw)
+        rotation.translate(roll, pitch, yaw)
     }
 
 }

@@ -71,7 +71,7 @@ object ShaderRegistry {
      * Returns the currently bound shader object
      * @return Currently bound shader
      */
-    def getCurrentShader(): Shader = {
+    def getCurrentShader: Shader = {
         programs(currShader)
     }
 
