@@ -15,7 +15,7 @@ class Entity {
      * @param z Amount to translate in the z
      */
     def translate(x: Float, y: Float, z: Float): Unit ={
-        pos.translate(x, y, z)
+        pos.translate(x, -y, z)
     }
 
     /**
@@ -25,7 +25,7 @@ class Entity {
      * @param z Amount to translate in the z
      */
     def translateInDirectionFacing(x: Float, y: Float, z: Float): Unit ={
-        pos.translate(x * Math.cos(rot.getY).toFloat, y * Math.cos(rot.getX).toFloat, x * Math.sin(rot.getY).toFloat)
+        pos.translate(x * Math.cos(rot.getY).toFloat, y, x * Math.sin(rot.getY).toFloat)
         pos.translate(z * -Math.sin(rot.getY).toFloat, 0, z * Math.cos(rot.getY).toFloat)
     }
 
@@ -36,7 +36,7 @@ class Entity {
      * @param yaw Amount to rotate the entity on the z-axis
      */
     def rotate(roll: Float, pitch: Float, yaw: Float): Unit = {
-        rot.translate(roll, pitch, yaw)
+        rot.translate(Math.toRadians(roll).toFloat, Math.toRadians(pitch).toFloat, Math.toRadians(yaw).toFloat)
     }
 
 }
