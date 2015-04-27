@@ -11,9 +11,6 @@ import world.WorldMainMenu
 
 class HyperScape {
 
-    //    val model = ModelRegistry.cube.copy
-    //    val model2 = ModelRegistry.cube.copy
-
     val world = new WorldMainMenu
 
     var player: Entity = null
