@@ -34,7 +34,7 @@ class HyperScape {
      */
     def tick(): Unit = {
         HyperScape.mainCamera.view = new Matrix4f()
-        val speed = 1
+        val speed: Float = .25f
         if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
             player.translateInDirectionFacing(0, 0, speed)
         }
@@ -71,10 +71,6 @@ class HyperScape {
         HyperScape.mainCamera.view.translate(player.pos)
         HyperScape.mainCamera.uploadView()
         world.tick(player)
-        //        println(HyperScape.mainCamera.view.toString)
-        //        for(model <- models){
-        //            model.translate(0, 0, .005f)
-        //        }
     }
 
     /**
