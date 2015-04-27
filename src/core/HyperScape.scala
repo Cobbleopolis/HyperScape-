@@ -21,7 +21,7 @@ class HyperScape {
     def init(): Unit = {
         player = new Entity
         player.translate(0, 7.8f, 0)
-        player.rotate(0, 180, 0)
+        player.rotate(0, Math.toRadians(180).toFloat, 0)
         GL11.glClearColor(0.4f, 0.6f, 0.9f, 1f)
         GL11.glEnable(GL11.GL_DEPTH_TEST)
         HyperScape.mainCamera.uploadPerspective()
@@ -53,16 +53,16 @@ class HyperScape {
             player.translateInDirectionFacing(0, speed, 0)
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {
-            player.rotate(0, -Math.toRadians(5.0).toFloat, 0)
+            player.rotate(0, -Math.toRadians(2.5).toFloat, 0)
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
-            player.rotate(0, Math.toRadians(5.0).toFloat, 0)
+            player.rotate(0, Math.toRadians(2.5).toFloat, 0)
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_UP)) {
-            player.rotate(-Math.toRadians(5.0).toFloat, 0, 0)
+            player.rotate(-Math.toRadians(2.5).toFloat, 0, 0)
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
-            player.rotate(Math.toRadians(5.0).toFloat, 0, 0)
+            player.rotate(Math.toRadians(2.5).toFloat, 0, 0)
         }
         HyperScape.mainCamera.view.rotate(player.rot.getX, new Vector3f(1, 0, 0))
         HyperScape.mainCamera.view.rotate(player.rot.getY, new Vector3f(0, 1, 0))

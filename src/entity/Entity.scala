@@ -31,12 +31,12 @@ class Entity {
 
     /**
      * Rotates the entity
-     * @param roll Amount to rotate the entity on the x-axis
-     * @param pitch Amount to rotate the entity on the y-axis
-     * @param yaw Amount to rotate the entity on the z-axis
+     * @param roll Amount to rotate the entity on the x-axis in radians
+     * @param pitch Amount to rotate the entity on the y-axis in radians
+     * @param yaw Amount to rotate the entity on the z-axis in radians
      */
     def rotate(roll: Float, pitch: Float, yaw: Float): Unit = {
-        rot.translate(Math.toRadians(roll).toFloat, Math.toRadians(pitch).toFloat, Math.toRadians(yaw).toFloat)
+        rot.translate(roll, pitch, yaw)
     }
 
 }
