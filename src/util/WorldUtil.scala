@@ -17,12 +17,13 @@ object WorldUtil {
      */
     def getSurroundingSides(world: World, x: Int, y: Int, z: Int): Array[Int] = {
         val blocks = getSurroundingBlocks(world, x, y, z)
-        val sides = Array[Int]()
+        var sides = Array[Int]()
         for ((block, i) <- blocks.view.zipWithIndex) {
-            if (block != null || !block.isInstanceOf[BlockAir]) {
-                sides :+ i
+            if (!block.isInstanceOf[BlockAir]) {
+                sides = sides :+ i
             }
         }
+//        println(sides.mkString(" "))
         sides
     }
 
@@ -36,12 +37,12 @@ object WorldUtil {
      */
     def getSurroundingBlocks(world: World, x: Int, y: Int, z: Int): Array[Block] = {
         val blocks = new Array[Block](6)
-        blocks(0) = getBlockFromSide(world, x, y - 1, z, BlockSides.BOTTOM)
-        blocks(1) = getBlockFromSide(world, x + 1, y, z, BlockSides.NORTH)
-        blocks(2) = getBlockFromSide(world, x, y, z + 1, BlockSides.EAST)
-        blocks(3) = getBlockFromSide(world, x - 1, y, z, BlockSides.SOUTH)
-        blocks(4) = getBlockFromSide(world, x, y, z - 1, BlockSides.WEST)
-        blocks(5) = getBlockFromSide(world, x, y + 1, z, BlockSides.TOP)
+        blocks(0) = getBlockFromSide(world, x, y, z, BlockSides.BOTTOM)
+        blocks(1) = getBlockFromSide(world, x, y, z, BlockSides.TOP)
+        blocks(2) = getBlockFromSide(world, x, y, z, BlockSides.NORTH)
+        blocks(3) = getBlockFromSide(world, x, y, z, BlockSides.EAST)
+        blocks(4) = getBlockFromSide(world, x, y, z, BlockSides.SOUTH)
+        blocks(5) = getBlockFromSide(world, x, y, z, BlockSides.WEST)
         blocks
     }
 

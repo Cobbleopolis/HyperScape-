@@ -5,9 +5,10 @@ import core.HyperScape
 import entity.Entity
 import org.lwjgl.opengl.GL20
 import org.lwjgl.util.vector.{Matrix4f, Vector3f}
+import reference.BlockSides
 import registry.ShaderRegistry
-import render.{Model, RenderModel}
-import util.WorldUtil
+import render.{Model, RenderModel, Vertex}
+import util.{ArrayUtil, WorldUtil}
 
 import scala.collection.mutable
 
@@ -69,7 +70,7 @@ abstract class World {
      * Called every tick and updates the world
      */
     def tick(player: Entity): Unit = {
-        activeChunks = WorldUtil.getSurroundingChunkIndexes(new Vector3f(-player.position.x, player.position.y, -player.position.z), 4)
+        activeChunks = WorldUtil.getSurroundingChunkIndexes(new Vector3f(-player.position.x, player.position.y, -player.position.z), 2)
         activeChunks.foreach(chunkIndex => {
             if (chunks.getOrElse(chunkIndex, null) == null) {
                 println("New Chunk " + chunkIndex)
@@ -136,7 +137,42 @@ abstract class World {
         for ((block, i) <- chunk.blocks.zipWithIndex) {
             if (block != null && !block.isInstanceOf[BlockAir]) {
                 val (x, y, z) = chunk.getBlockXYZFromIndex(i)
-                val newModel: Model = new Model(block.gameModel.getVertices.clone())
+                val modelVerts = block.gameModel.getVertices.clone()
+                var newVerts = Array[Float]()
+                val surroundingBlocks = WorldUtil.getSurroundingSides(this, x, y, z)
+                if (!surroundingBlocks.contains(BlockSides.TOP)) {
+                    for (i <- block.topVerts) {
+                        newVerts = newVerts ++ modelVerts.clone().slice(i * Vertex.ELEMENT_COUNT, (i + 3) * Vertex.ELEMENT_COUNT)
+                    }
+                }
+//                if (!surroundingBlocks.contains(BlockSides.NORTH)) {
+//                    for (i <- block.northVerts) {
+//                        newVerts = newVerts ++ modelVerts.clone().slice(i * Vertex.ELEMENT_COUNT, (i + 3) * Vertex.ELEMENT_COUNT)
+//                    }
+//                }
+//                if (!surroundingBlocks.contains(BlockSides.EAST)) {
+//                    for (i <- block.eastVerts) {
+//                        newVerts = newVerts ++ modelVerts.clone().slice(i * Vertex.ELEMENT_COUNT, (i + 3) * Vertex.ELEMENT_COUNT)
+//                    }
+//                }
+//                if (!surroundingBlocks.contains(BlockSides.SOUTH)) {
+//                    for (i <- block.southVerts) {
+//                        newVerts = newVerts ++ modelVerts.clone().slice(i * Vertex.ELEMENT_COUNT, (i + 3) * Vertex.ELEMENT_COUNT)
+//                    }
+//                }
+//                if (!surroundingBlocks.contains(BlockSides.WEST)) {
+//                    for (i <- block.westVerts) {
+//                        newVerts = newVerts ++ modelVerts.clone().slice(i * Vertex.ELEMENT_COUNT, (i + 3) * Vertex.ELEMENT_COUNT)
+//                    }
+//                }
+//                if (!surroundingBlocks.contains(BlockSides.BOTTOM)) {
+//                    for (i <- block.bottomVerts) {
+//                        newVerts = newVerts ++ modelVerts.clone().slice(i * Vertex.ELEMENT_COUNT, (i + 3) * Vertex.ELEMENT_COUNT)
+//                    }
+//                }
+
+                val newModel: Model = new Model(newVerts)
+
                 newModel.translate(x, y, z)
                 newModel.translateUV(block.texCoord._1.toFloat / 16f, block.texCoord._2.toFloat / 16f)
                 verts = verts ++ newModel.getVertices

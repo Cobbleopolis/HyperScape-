@@ -22,4 +22,12 @@ object ArrayUtil {
     def dropIndex(array: Array[Any], index: Int, size: Int): Array[Any] = {
         array.clone().take(index).++(array.clone().drop(index + size))
     }
+
+    def subset(array: Array[Any], index: Int): Array[Any] = {
+        array.dropRight(index)
+    }
+
+    def subset(array: Array[Any], startIndex: Int, endIndex: Int): Array[Any] = {
+        subset(array, endIndex).drop(startIndex)
+    }
 }

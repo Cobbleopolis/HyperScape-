@@ -23,9 +23,10 @@ class Block {
     var renderType: Int = 1
     /** Render method used by block */
 
-    var topVerts: Array[Int] = Array[Int]()
-    var northVerts: Array[Int] = Array[Int]()
-    var eastVerts: Array[Int] = Array[Int]()
-    var southVerts: Array[Int] = Array[Int]()
-    var bottomVerts: Array[Int] = Array[Int]()
+    var topVerts: Array[Int] = Array[Int](7, 6)
+    var northVerts: Array[Int] = Array[Int](3, 8)
+    var eastVerts: Array[Int] = Array[Int](4, 9)
+    var southVerts: Array[Int] = Array[Int](5, 10)
+    var westVerts: Array[Int] = Array[Int](6, 11)
+    var bottomVerts: Array[Int] = Array[Int](0, 1)
 }

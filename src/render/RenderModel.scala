@@ -46,7 +46,7 @@ class RenderModel(verts: Array[Float]) {
         GL20.glEnableVertexAttribArray(1)
 
         // Draw the vertices
-        GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, verts.length / 5)
+        GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, verts.length / Vertex.ELEMENT_COUNT)
 
         // Put everything back to default (deselect)
         GL20.glDisableVertexAttribArray(0)

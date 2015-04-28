@@ -68,14 +68,14 @@ class Chunk(xCoord: Int, zCoord: Int) {
     def generate(): Unit = {
         println("Generate Chunk | " + xCoord + " " + zCoord)
         for (x <- 0 to 15) {
-            for (y <- 0 to 5) {
+            for (y <- 0 to 0) {
                 for (z <- 0 to 15) {
-                    val r = rand.nextInt(3)
+                    val r = rand.nextInt(7)
                     if (r == 0)
                         setBlock(x, y, z, new BlockBlank)
                     else if (r == 1)
                         setBlock(x, y, z, new BlockLight)
-                    else
+                    else if (r == 2)
                         setBlock(x, y, z, new BlockModel)
                 }
             }

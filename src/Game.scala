@@ -80,5 +80,6 @@ object Game {
             case e: LWJGLException => e.printStackTrace(); System.exit(-1)
         }
         GL11.glViewport(0, 0, WIDTH, HEIGHT)
+        GL11.glEnable(GL11.GL_CULL_FACE)
     }
 }
