@@ -69,7 +69,7 @@ class Chunk(xCoord: Int, zCoord: Int) {
         println("Generate Chunk | " + xCoord + " " + zCoord)
         val opts = Array(new BlockBlank, new BlockLight, new BlockModel)
         for (x <- 0 to 15) {
-            for (y <- 0 to 3) {
+            for (y <- 0 to 15) {
                 for (z <- 0 to 15) {
                     val r = rand.nextInt(opts.length + 7)
                     if(r <= 2)

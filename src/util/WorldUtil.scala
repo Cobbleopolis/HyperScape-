@@ -1,6 +1,6 @@
 package util
 
-import block.{BlockAir, Block}
+import block.{Block, BlockAir}
 import org.lwjgl.util.vector.Vector3f
 import reference.BlockSides
 import world.{Chunk, World}
@@ -27,15 +27,14 @@ object WorldUtil {
     }
 
 
-
     //TODO document
     def getSidesForRender(world: World, x: Int, y: Int, z: Int): Array[Int] = {
         val blocks = getSurroundingBlocks(world, x, y, z)
         blocks.zipWithIndex
                 .filter(x => {
-                    val (b, _) = x
-                    b.isInstanceOf[BlockAir] || b.renderType != 1
-                })
+            val (b, _) = x
+            b.isInstanceOf[BlockAir] || b.renderType != 1
+        })
                 .map(x => x._2)
     }
 
@@ -56,7 +55,7 @@ object WorldUtil {
         blocks(3) = getBlockFromSide(world, x, y, z, BlockSides.EAST)
         blocks(4) = getBlockFromSide(world, x, y, z, BlockSides.SOUTH)
         blocks(5) = getBlockFromSide(world, x, y, z, BlockSides.WEST)
-//        println(blocks.mkString(" "))
+        //        println(blocks.mkString(" "))
         blocks
     }
 
@@ -94,17 +93,23 @@ object WorldUtil {
         var block: Block = null
         //        println("(" + x + ", " + y + ", " + z + ")")
         if (side == BlockSides.BOTTOM) {
-            block = world.getBlock(x, y - 1, z)
+            if (world.blockExists(x, y - 1, z))
+                block = world.getBlock(x, y - 1, z)
         } else if (side == BlockSides.NORTH) {
-            block = world.getBlock(x + 1, y, z)
+            if (world.blockExists(x + 1, y, z))
+                block = world.getBlock(x + 1, y, z)
         } else if (side == BlockSides.EAST) {
-            block = world.getBlock(x, y, z - 1)
+            if (world.blockExists(x, y, z - 1))
+                block = world.getBlock(x, y, z - 1)
         } else if (side == BlockSides.SOUTH) {
-            block = world.getBlock(x - 1, y, z)
+            if (world.blockExists(x - 1, y, z))
+                block = world.getBlock(x - 1, y, z)
         } else if (side == BlockSides.WEST) {
-            block = world.getBlock(x, y, z + 1)
+            if (world.blockExists(x, y, z + 1))
+                block = world.getBlock(x, y, z + 1)
         } else if (side == BlockSides.TOP) {
-            block = world.getBlock(x, y + 1, z)
+            if (world.blockExists(x, y + 1, z))
+                block = world.getBlock(x, y + 1, z)
         }
         if (block == null) {
             block = new BlockAir
@@ -157,8 +162,8 @@ object WorldUtil {
                 chunks = chunks :+ index
             }
         }
-//        println("Center: " + position.getX + ", " + position.getY + ", " + position.getZ)
-//        println("Active Size: " + chunks.length + " | " + chunks.mkString(" "))
+        //        println("Center: " + position.getX + ", " + position.getY + ", " + position.getZ)
+        //        println("Active Size: " + chunks.length + " | " + chunks.mkString(" "))
         chunks
     }
 

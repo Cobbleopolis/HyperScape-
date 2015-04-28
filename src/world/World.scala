@@ -39,12 +39,19 @@ abstract class World {
      * @return Block at x, y, z
      */
     def getBlock(x: Int, y: Int, z: Int): Block = {
-        if (x >= 0 && y >= 0 && z >= 0) {
+        if ((x & 15) >= 0 && y >= 0 && (z & 15) >= 0) {
             getChunk(x, z).getBlock(x & 15, y, z & 15)
         } else {
             null
         }
+    }
 
+    def blockExists(x: Int, y: Int, z: Int): Boolean = {
+        if(chunks.contains(WorldUtil.getChunkIndexFromXZ(x, z))){
+            !getBlock(x, y, z).isInstanceOf[BlockAir]
+        } else {
+            false
+        }
     }
 
     /**
@@ -54,7 +61,7 @@ abstract class World {
      * @return Chunk at x, z
      */
     def getChunk(x: Int, z: Int): Chunk = {
-        chunks(WorldUtil.getChunkIndexFromXZ(x, z))
+        chunks.getOrElse(WorldUtil.getChunkIndexFromXZ(x, z), null)
     }
 
     /**
@@ -108,7 +115,18 @@ abstract class World {
             HyperScape.uploadBuffer.clear()
 
             val colorLoc = ShaderRegistry.getCurrentShader.getUniformLocation("chunkColor")
-            GL20.glUniform4f(colorLoc, Math.random().toFloat, Math.random().toFloat, Math.random().toFloat, Math.random().toFloat)
+            if(HyperScape.currentShader.equals("terrain")){
+                GL20.glUniform4f(colorLoc, 1, 1, 1, 1)
+            } else if(HyperScape.currentShader.equals("debug")) {
+                val (r, g) = Math.abs(chunk.getXCoord + chunk.getZCoord) % 2 match {
+                    case 0 => (1, 0)
+                    case 1 => (0, 1)
+                }
+//                GL20.glUniform4f(colorLoc, r, g, .5625f, 1)
+                GL20.glUniform4f(colorLoc, r, g, 0.3125f, 1)
+            } else if(HyperScape.currentShader.equals("rave")) {
+                GL20.glUniform4f(colorLoc, Math.random().toFloat, Math.random().toFloat, Math.random().toFloat, Math.random().toFloat)
+            }
 
             chunk.chunkModel.render()
             i = i + 1
@@ -141,13 +159,13 @@ abstract class World {
         var num = 0
         for ((block, i) <- chunk.blocks.zipWithIndex) {
             if (block != null && !block.isInstanceOf[BlockAir]) {
-                var (x, y, z) = chunk.getBlockXYZFromIndex(i)
+                val (x, y, z) = chunk.getBlockXYZFromIndex(i)
                 val modelVerts = block.gameModel.getVertices.clone()
                 var newVerts = Array[Float]()
 //                x += (chunk.getXCoord * 16)
 //                z += (chunk.getZCoord * 16)
                 if (block.renderType == 1) {
-                    val surroundingBlocks = WorldUtil.getSidesForRender(this, x, y, z)
+                    val surroundingBlocks = WorldUtil.getSidesForRender(this, x + (chunk.getXCoord * 16), y, z + (chunk.getZCoord * 16))
                     if (surroundingBlocks.contains(BlockSides.TOP)) {
                         for (i <- block.topVerts) {
                             newVerts = newVerts ++ modelVerts.clone().slice(i * (Vertex.ELEMENT_COUNT * 3),

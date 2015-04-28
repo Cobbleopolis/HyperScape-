@@ -5,6 +5,7 @@ import org.lwjgl.BufferUtils
 import org.lwjgl.input.Keyboard
 import org.lwjgl.opengl.GL11
 import org.lwjgl.util.vector.{Matrix4f, Vector3f}
+import registry.ShaderRegistry
 import render.Camera
 import world.WorldMainMenu
 
@@ -14,6 +15,9 @@ class HyperScape {
     val world = new WorldMainMenu
 
     var player: Entity = null
+
+    val shaders = Array("terrain", "debug", "rave")
+    var shaderSelector = 0
 
     /**
      * Initializes the game
@@ -32,6 +36,17 @@ class HyperScape {
      * Ticks the game
      */
     def tick(): Unit = {
+        while (Keyboard.next()) {
+            if (Keyboard.getEventKeyState) {
+                if (Keyboard.getEventKey == Keyboard.KEY_F3) {
+                    if (Keyboard.getEventKeyState) {
+                        shaderSelector += 1
+                        if(shaderSelector >= shaders.length) shaderSelector = 0
+                        HyperScape.currentShader = shaders(shaderSelector)
+                    }
+                }
+            }
+        }
         player.velocity = new Vector3f
         HyperScape.mainCamera.view = new Matrix4f
         val speed: Float = .25f
@@ -95,4 +110,6 @@ object HyperScape {
 
     val uploadBuffer = BufferUtils.createFloatBuffer(64000000)
     /**The buffer used to upload to the GPU*/
+
+    var currentShader = "terrain"
 }
