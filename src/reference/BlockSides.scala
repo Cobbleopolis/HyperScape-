@@ -7,4 +7,5 @@ object BlockSides {
     val EAST = 3
     val SOUTH = 4
     val WEST = 5
+    val ALL = Array(BOTTOM, TOP, NORTH, EAST, SOUTH, WEST)
 }

@@ -20,7 +20,7 @@ class HyperScape {
      */
     def init(): Unit = {
         player = new Entity
-        player.translate(0, 7.8f, 0)
+        player.translate(0, 17.8f, 0)
         player.rotate(0, Math.toRadians(180).toFloat, 0)
         GL11.glClearColor(0.4f, 0.6f, 0.9f, 1f)
         GL11.glEnable(GL11.GL_DEPTH_TEST)

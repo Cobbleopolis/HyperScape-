@@ -36,7 +36,7 @@ class Camera {
      * Uploads the perspective matrix to the GPU
      */
     def uploadPerspective(): Unit = {
-        val loc = ShaderRegistry.getCurrentShader().getUniformLocation("projectionMatrix")
+        val loc = ShaderRegistry.getCurrentShader.getUniformLocation("projectionMatrix")
         perspective.store(HyperScape.uploadBuffer)
         HyperScape.uploadBuffer.flip()
         GL20.glUniformMatrix4(loc, false, HyperScape.uploadBuffer)
@@ -47,7 +47,7 @@ class Camera {
      * Uploads the view matrix to the GPU
      */
     def uploadView(): Unit = {
-        val loc = ShaderRegistry.getCurrentShader().getUniformLocation("viewMatrix")
+        val loc = ShaderRegistry.getCurrentShader.getUniformLocation("viewMatrix")
         view.store(HyperScape.uploadBuffer)
         HyperScape.uploadBuffer.flip()
         GL20.glUniformMatrix4(loc, false, HyperScape.uploadBuffer)

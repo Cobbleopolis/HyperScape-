@@ -8,7 +8,7 @@ import org.lwjgl.util.vector.{Matrix4f, Vector3f}
 import reference.BlockSides
 import registry.ShaderRegistry
 import render.{Model, RenderModel, Vertex}
-import util.{ArrayUtil, WorldUtil}
+import util.WorldUtil
 
 import scala.collection.mutable
 
@@ -70,7 +70,9 @@ abstract class World {
      * Called every tick and updates the world
      */
     def tick(player: Entity): Unit = {
-        activeChunks = WorldUtil.getSurroundingChunkIndexes(new Vector3f(-player.position.x, player.position.y, -player.position.z), 2)
+        //        println(player.position.toString)
+        activeChunks = WorldUtil.getSurroundingChunkIndexes(new Vector3f(-player.position.x, player.position.y, -player.position.z), 4)
+        //        activeChunks = WorldUtil.getSurroundingChunkIndexes(new Vector3f(0, 0, 0), 2)
         activeChunks.foreach(chunkIndex => {
             if (chunks.getOrElse(chunkIndex, null) == null) {
                 println("New Chunk " + chunkIndex)
@@ -105,6 +107,9 @@ abstract class World {
             GL20.glUniformMatrix4(loc, false, HyperScape.uploadBuffer)
             HyperScape.uploadBuffer.clear()
 
+            val colorLoc = ShaderRegistry.getCurrentShader.getUniformLocation("chunkColor")
+            GL20.glUniform4f(colorLoc, Math.random().toFloat, Math.random().toFloat, Math.random().toFloat, Math.random().toFloat)
+
             chunk.chunkModel.render()
             i = i + 1
         })
@@ -136,40 +141,52 @@ abstract class World {
         var num = 0
         for ((block, i) <- chunk.blocks.zipWithIndex) {
             if (block != null && !block.isInstanceOf[BlockAir]) {
-                val (x, y, z) = chunk.getBlockXYZFromIndex(i)
+                var (x, y, z) = chunk.getBlockXYZFromIndex(i)
                 val modelVerts = block.gameModel.getVertices.clone()
                 var newVerts = Array[Float]()
-                val surroundingBlocks = WorldUtil.getSurroundingSides(this, x, y, z)
-                if (!surroundingBlocks.contains(BlockSides.TOP)) {
-                    for (i <- block.topVerts) {
-                        newVerts = newVerts ++ modelVerts.clone().slice(i * Vertex.ELEMENT_COUNT, (i + 3) * Vertex.ELEMENT_COUNT)
+//                x += (chunk.getXCoord * 16)
+//                z += (chunk.getZCoord * 16)
+                if (block.renderType == 1) {
+                    val surroundingBlocks = WorldUtil.getSidesForRender(this, x, y, z)
+                    if (surroundingBlocks.contains(BlockSides.TOP)) {
+                        for (i <- block.topVerts) {
+                            newVerts = newVerts ++ modelVerts.clone().slice(i * (Vertex.ELEMENT_COUNT * 3),
+                                (i * (Vertex.ELEMENT_COUNT * 3)) + Vertex.ELEMENT_COUNT * 3)
+                        }
                     }
+                    if (surroundingBlocks.contains(BlockSides.NORTH)) {
+                        for (i <- block.northVerts) {
+                            newVerts = newVerts ++ modelVerts.clone().slice(i * (Vertex.ELEMENT_COUNT * 3),
+                                (i * (Vertex.ELEMENT_COUNT * 3)) + Vertex.ELEMENT_COUNT * 3)
+                        }
+                    }
+                    if (surroundingBlocks.contains(BlockSides.EAST)) {
+                        for (i <- block.eastVerts) {
+                            newVerts = newVerts ++ modelVerts.clone().slice(i * (Vertex.ELEMENT_COUNT * 3),
+                                (i * (Vertex.ELEMENT_COUNT * 3)) + Vertex.ELEMENT_COUNT * 3)
+                        }
+                    }
+                    if (surroundingBlocks.contains(BlockSides.SOUTH)) {
+                        for (i <- block.southVerts) {
+                            newVerts = newVerts ++ modelVerts.clone().slice(i * (Vertex.ELEMENT_COUNT * 3),
+                                (i * (Vertex.ELEMENT_COUNT * 3)) + Vertex.ELEMENT_COUNT * 3)
+                        }
+                    }
+                    if (surroundingBlocks.contains(BlockSides.WEST)) {
+                        for (i <- block.westVerts) {
+                            newVerts = newVerts ++ modelVerts.clone().slice(i * (Vertex.ELEMENT_COUNT * 3),
+                                (i * (Vertex.ELEMENT_COUNT * 3)) + Vertex.ELEMENT_COUNT * 3)
+                        }
+                    }
+                    if (surroundingBlocks.contains(BlockSides.BOTTOM)) {
+                        for (i <- block.bottomVerts) {
+                            newVerts = newVerts ++ modelVerts.clone().slice(i * (Vertex.ELEMENT_COUNT * 3),
+                                (i * (Vertex.ELEMENT_COUNT * 3)) + Vertex.ELEMENT_COUNT * 3)
+                        }
+                    }
+                } else {
+                    newVerts = modelVerts.clone()
                 }
-//                if (!surroundingBlocks.contains(BlockSides.NORTH)) {
-//                    for (i <- block.northVerts) {
-//                        newVerts = newVerts ++ modelVerts.clone().slice(i * Vertex.ELEMENT_COUNT, (i + 3) * Vertex.ELEMENT_COUNT)
-//                    }
-//                }
-//                if (!surroundingBlocks.contains(BlockSides.EAST)) {
-//                    for (i <- block.eastVerts) {
-//                        newVerts = newVerts ++ modelVerts.clone().slice(i * Vertex.ELEMENT_COUNT, (i + 3) * Vertex.ELEMENT_COUNT)
-//                    }
-//                }
-//                if (!surroundingBlocks.contains(BlockSides.SOUTH)) {
-//                    for (i <- block.southVerts) {
-//                        newVerts = newVerts ++ modelVerts.clone().slice(i * Vertex.ELEMENT_COUNT, (i + 3) * Vertex.ELEMENT_COUNT)
-//                    }
-//                }
-//                if (!surroundingBlocks.contains(BlockSides.WEST)) {
-//                    for (i <- block.westVerts) {
-//                        newVerts = newVerts ++ modelVerts.clone().slice(i * Vertex.ELEMENT_COUNT, (i + 3) * Vertex.ELEMENT_COUNT)
-//                    }
-//                }
-//                if (!surroundingBlocks.contains(BlockSides.BOTTOM)) {
-//                    for (i <- block.bottomVerts) {
-//                        newVerts = newVerts ++ modelVerts.clone().slice(i * Vertex.ELEMENT_COUNT, (i + 3) * Vertex.ELEMENT_COUNT)
-//                    }
-//                }
 
                 val newModel: Model = new Model(newVerts)
 
