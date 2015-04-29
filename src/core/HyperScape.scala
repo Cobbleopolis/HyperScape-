@@ -42,6 +42,7 @@ class HyperScape {
                     if (Keyboard.getEventKeyState) {
                         shaderSelector += 1
                         if(shaderSelector >= shaders.length) shaderSelector = 0
+                        println("Entering " + shaders(shaderSelector) + " mode...")
                         HyperScape.currentShader = shaders(shaderSelector)
                     }
                 }

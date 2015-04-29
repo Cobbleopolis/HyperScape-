@@ -27,7 +27,14 @@ object WorldUtil {
     }
 
 
-    //TODO document
+    /**
+     * Gets the sides that need to be rendered for a block
+     * @param world The world the block is in
+     * @param x The x value of the location
+     * @param y The y value of the location
+     * @param z The z value of the location
+     * @return An array containing the BlockSides that need to be rendered
+     */
     def getSidesForRender(world: World, x: Int, y: Int, z: Int): Array[Int] = {
         val blocks = getSurroundingBlocks(world, x, y, z)
         blocks.zipWithIndex

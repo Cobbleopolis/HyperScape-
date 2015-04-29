@@ -122,7 +122,6 @@ abstract class World {
                     case 0 => (1, 0)
                     case 1 => (0, 1)
                 }
-//                GL20.glUniform4f(colorLoc, r, g, .5625f, 1)
                 GL20.glUniform4f(colorLoc, r, g, 0.3125f, 1)
             } else if(HyperScape.currentShader.equals("rave")) {
                 GL20.glUniform4f(colorLoc, Math.random().toFloat, Math.random().toFloat, Math.random().toFloat, Math.random().toFloat)
