@@ -163,8 +163,8 @@ object WorldUtil {
      */
     def getSurroundingChunkIndexes(position: Vector3f, radius: Int): Array[Int] = {
         var chunks = Array[Int]()
-        for (x <- -radius until radius) {
-            for (z <- -radius until radius) {
+        for (x <- -radius to radius) {
+            for (z <- -radius to radius) {
                 val index = getChunkIndexFromXZ(position.x.toInt + (x * 16), position.z.toInt + (z * 16))
                 chunks = chunks :+ index
             }
@@ -176,8 +176,8 @@ object WorldUtil {
 
     /**
      * Converts a chunk's x, z coordinates into it's index
-     * @param x X coordinate of the chunk
-     * @param z Z coordinate of the chunk
+     * @param x X world coordinate
+     * @param z Z world coordinate of the chunk
      * @return The index of the chunk at x, z
      */
     def getChunkIndexFromXZ(x: Int, z: Int): Int = {
