@@ -5,7 +5,6 @@ import org.lwjgl.BufferUtils
 import org.lwjgl.input.Keyboard
 import org.lwjgl.opengl.GL11
 import org.lwjgl.util.vector.{Matrix4f, Vector3f}
-import registry.ShaderRegistry
 import render.Camera
 import world.WorldMainMenu
 
@@ -16,7 +15,7 @@ class HyperScape {
 
     var player: Entity = null
 
-    val shaders = Array("terrain", "debug", "rave")
+    val shaders = Array("terrain", "debug", "plaid", "rave")
     var shaderSelector = 0
 
     /**
@@ -40,10 +39,9 @@ class HyperScape {
             if (Keyboard.getEventKeyState) {
                 if (Keyboard.getEventKey == Keyboard.KEY_F3) {
                     if (Keyboard.getEventKeyState) {
-                        shaderSelector += 1
-                        if(shaderSelector >= shaders.length) shaderSelector = 0
-                        println("Entering " + shaders(shaderSelector) + " mode...")
-                        HyperScape.currentShader = shaders(shaderSelector)
+                        HyperScape.shaderSelector += 1
+                        if (HyperScape.shaderSelector >= shaders.length) HyperScape.shaderSelector = 0
+                        println("Entering " + shaders(HyperScape.shaderSelector) + " mode...")
                     }
                 }
             }
@@ -85,6 +83,7 @@ class HyperScape {
         HyperScape.mainCamera.view.rotate(player.rotation.getY, new Vector3f(0, 1, 0))
         HyperScape.mainCamera.view.rotate(player.rotation.getZ, new Vector3f(0, 0, 1))
         HyperScape.mainCamera.view.translate(player.position)
+        HyperScape.mainCamera.view.translate(new Vector3f(1, 1, 1))
         HyperScape.mainCamera.uploadView()
         world.tick(player)
     }
@@ -112,5 +111,5 @@ object HyperScape {
     val uploadBuffer = BufferUtils.createFloatBuffer(64000000)
     /**The buffer used to upload to the GPU*/
 
-    var currentShader = "terrain"
+    var shaderSelector = 0
 }

@@ -115,15 +115,17 @@ abstract class World {
             HyperScape.uploadBuffer.clear()
 
             val colorLoc = ShaderRegistry.getCurrentShader.getUniformLocation("chunkColor")
-            if(HyperScape.currentShader.equals("terrain")){
+            if (HyperScape.shaderSelector == 0) {
                 GL20.glUniform4f(colorLoc, 1, 1, 1, 1)
-            } else if(HyperScape.currentShader.equals("debug")) {
+            } else if (HyperScape.shaderSelector == 1) {
                 val (r, g) = Math.abs(chunk.getXCoord + chunk.getZCoord) % 2 match {
                     case 0 => (1, 0)
                     case 1 => (0, 1)
                 }
                 GL20.glUniform4f(colorLoc, r, g, 0.3125f, 1)
-            } else if(HyperScape.currentShader.equals("rave")) {
+            } else if (HyperScape.shaderSelector == 2) {
+                GL20.glUniform4f(colorLoc, Math.sin(chunk.getXCoord).toFloat, Math.sin(chunk.getZCoord).toFloat, 0.3125f, 1)
+            } else if (HyperScape.shaderSelector == 3) {
                 GL20.glUniform4f(colorLoc, Math.random().toFloat, Math.random().toFloat, Math.random().toFloat, Math.random().toFloat)
             }
 
