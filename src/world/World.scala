@@ -5,8 +5,8 @@ import core.HyperScape
 import entity.Entity
 import org.lwjgl.opengl.GL20
 import org.lwjgl.util.vector.{Matrix4f, Vector3f}
-import reference.BlockSides
-import registry.ShaderRegistry
+import reference.{Blocks, BlockID, BlockSides}
+import registry.{BlockRegistry, ShaderRegistry}
 import render.{Model, RenderModel, Vertex}
 import util.WorldUtil
 
@@ -27,7 +27,7 @@ abstract class World {
      * @param z Z Coordinate of block
      * @param block Block to set the location to
      */
-    def setBlock(x: Int, y: Int, z: Int, block: Block): Unit = {
+    def setBlock(x: Int, y: Int, z: Int, block: Int): Unit = {
         chunks(WorldUtil.getChunkIndexFromXZ(x, z)).setBlock(x & 15, y, z & 15, block)
     }
 
@@ -48,7 +48,7 @@ abstract class World {
 
     def blockExists(x: Int, y: Int, z: Int): Boolean = {
         if(chunks.contains(WorldUtil.getChunkIndexFromXZ(x, z))){
-            !getBlock(x, y, z).isInstanceOf[BlockAir]
+            getBlock(x, y, z) != Blocks.air
         } else {
             false
         }
@@ -158,8 +158,9 @@ abstract class World {
         val chunk = chunks(index)
         var verts = Array[Float]()
         var num = 0
-        for ((block, i) <- chunk.blocks.zipWithIndex) {
-            if (block != null && !block.isInstanceOf[BlockAir]) {
+        for ((blockID, i) <- chunk.blocks.zipWithIndex) {
+            val block = BlockRegistry.getBlock(blockID)
+            if (block != Blocks.air) {
                 val (x, y, z) = chunk.getBlockXYZFromIndex(i)
                 val modelVerts = block.gameModel.getVertices.clone()
                 var newVerts = Array[Float]()

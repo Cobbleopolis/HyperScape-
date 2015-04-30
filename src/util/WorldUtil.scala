@@ -2,7 +2,8 @@ package util
 
 import block.{Block, BlockAir}
 import org.lwjgl.util.vector.Vector3f
-import reference.BlockSides
+import reference.{Blocks, BlockSides}
+import registry.BlockRegistry
 import world.{Chunk, World}
 
 object WorldUtil {
@@ -19,7 +20,7 @@ object WorldUtil {
         val blocks = getSurroundingBlocks(world, x, y, z)
         var sides = Array[Int]()
         for ((block, i) <- blocks.view.zipWithIndex) {
-            if (block != null && !block.isInstanceOf[BlockAir]) {
+            if (block != null && block != Blocks.air) {
                 sides = sides :+ i
             }
         }
@@ -40,7 +41,7 @@ object WorldUtil {
         blocks.zipWithIndex
                 .filter(x => {
             val (b, _) = x
-            b.isInstanceOf[BlockAir] || b.renderType != 1
+            b == Blocks.air || b.renderType != 1
         })
                 .map(x => x._2)
     }
@@ -62,27 +63,6 @@ object WorldUtil {
         blocks(3) = getBlockFromSide(world, x, y, z, BlockSides.EAST)
         blocks(4) = getBlockFromSide(world, x, y, z, BlockSides.SOUTH)
         blocks(5) = getBlockFromSide(world, x, y, z, BlockSides.WEST)
-        //        println(blocks.mkString(" "))
-        blocks
-    }
-
-    /**
-     * Gets the blocks that surround a the x, y, z location
-     * @param chunk Chunk to check
-     * @param x The x value of the location
-     * @param y The y value of the location
-     * @param z The x value of the location
-     * @return An array of the blocks that surround the x, y, z location
-     */
-    def getSurroundingBlocks(chunk: Chunk, x: Int, y: Int, z: Int): Array[Block] = {
-
-        val blocks = new Array[Block](6)
-        blocks(0) = getBlockFromSide(chunk, x, y, z, BlockSides.BOTTOM)
-        blocks(1) = getBlockFromSide(chunk, x, y, z, BlockSides.TOP)
-        blocks(2) = getBlockFromSide(chunk, x, y, z, BlockSides.NORTH)
-        blocks(3) = getBlockFromSide(chunk, x, y, z, BlockSides.EAST)
-        blocks(4) = getBlockFromSide(chunk, x, y, z, BlockSides.SOUTH)
-        blocks(5) = getBlockFromSide(chunk, x, y, z, BlockSides.WEST)
         //        println(blocks.mkString(" "))
         blocks
     }
@@ -119,7 +99,7 @@ object WorldUtil {
                 block = world.getBlock(x, y + 1, z)
         }
         if (block == null) {
-            block = new BlockAir
+            block = BlockRegistry.getBlock(Blocks.air.blockID)
         }
         block
     }
@@ -150,7 +130,7 @@ object WorldUtil {
             block = chunk.getBlock(x, y + 1, z)
         }
         if (block == null) {
-            block = new BlockAir
+            block = Blocks.air
         }
         block
     }

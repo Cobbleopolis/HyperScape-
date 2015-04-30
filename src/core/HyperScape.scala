@@ -5,6 +5,7 @@ import org.lwjgl.BufferUtils
 import org.lwjgl.input.Keyboard
 import org.lwjgl.opengl.GL11
 import org.lwjgl.util.vector.{Matrix4f, Vector3f}
+import reference.Blocks
 import render.Camera
 import world.WorldMainMenu
 
@@ -22,11 +23,10 @@ class HyperScape {
      * Initializes the game
      */
     def init(): Unit = {
+        Blocks.registerBlocks()
         player = new Entity
         player.translate(0, 17.8f, 0)
         player.rotate(0, Math.toRadians(180).toFloat, 0)
-        GL11.glClearColor(0.4f, 0.6f, 0.9f, 1f)
-        GL11.glEnable(GL11.GL_DEPTH_TEST)
         HyperScape.mainCamera.uploadPerspective()
         HyperScape.mainCamera.uploadView()
     }

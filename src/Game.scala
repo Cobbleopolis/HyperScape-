@@ -14,6 +14,8 @@ object Game {
 
     var hyperScape: HyperScape = null
 
+    var isFullscreen = false
+
     /**
      * Main method of the game
      * @param args Arguments passed to the game
@@ -24,6 +26,8 @@ object Game {
         Init.loadAssets()
         ShaderRegistry.bindShader("terrain")
         TextureRegistry.bindTexture("terrain")
+
+        isFullscreen = args.contains("--fullscreen")
 
         hyperScape = new HyperScape
         hyperScape.init()
@@ -75,11 +79,14 @@ object Game {
 
             Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT))
             Display.setTitle(WINDOW_TITLE)
+            //            Display.setResizable(true)
             Display.create(pixelFormat, contextAtrributes)
         } catch {
             case e: LWJGLException => e.printStackTrace(); System.exit(-1)
         }
         GL11.glViewport(0, 0, WIDTH, HEIGHT)
         GL11.glEnable(GL11.GL_CULL_FACE)
+        GL11.glClearColor(0.4f, 0.6f, 0.9f, 1f)
+        GL11.glEnable(GL11.GL_DEPTH_TEST)
     }
 }

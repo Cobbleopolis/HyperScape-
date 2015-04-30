@@ -1,8 +1,17 @@
 package registry
 
-import render.OBJLoader
+import render.{Model, OBJLoader}
 
 object ModelRegistry {
-    val cube = OBJLoader.loadFromOBJFile("res/model/cube.obj")
-    val model = OBJLoader.loadFromOBJFile("res/model/model.obj")
+    private var models: Map[String, Model] = Map()
+
+    def loadModel(pathToObj: String, modelName: String): Unit = {
+        models += (modelName -> OBJLoader.loadFromOBJFile(pathToObj))
+    }
+
+    def getModel(modelName: String): Model = {
+        models(modelName).copy
+    }
+//    val cube = OBJLoader.loadFromOBJFile("res/model/cube.obj")
+//    val model = OBJLoader.loadFromOBJFile("res/model/model.obj")
 }

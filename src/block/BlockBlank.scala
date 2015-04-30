@@ -1,5 +1,7 @@
 package block
 
-class BlockBlank extends Block {
+import reference.BlockID
 
+class BlockBlank extends Block {
+    blockID = BlockID.BLANK
 }

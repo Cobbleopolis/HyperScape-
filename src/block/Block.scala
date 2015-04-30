@@ -8,7 +8,7 @@ class Block {
     var texCoord: (Int, Int) = (0, 0)
     /** Texture Coordinates for the UVs */
 
-    var gameModel: Model = ModelRegistry.cube.copy
+    var gameModel: Model = ModelRegistry.getModel("cube")
     /** Model to render with */
 
     var lightLevel = 0
@@ -22,6 +22,10 @@ class Block {
 
     var renderType: Int = 1
     /** Render method used by block */
+
+    var blockID: Int = 0
+    /** ID used by the block */
+
 
     var topVerts: Array[Int] = Array[Int](2, 7)
     var northVerts: Array[Int] = Array[Int](3, 8)

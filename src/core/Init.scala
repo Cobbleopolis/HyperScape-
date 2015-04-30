@@ -1,6 +1,6 @@
 package core
 
-import registry.{TextureRegistry, ShaderRegistry}
+import registry.{ModelRegistry, TextureRegistry, ShaderRegistry}
 
 object Init {
 
@@ -10,6 +10,7 @@ object Init {
     def loadAssets(): Unit = {
         loadShaders()
         loadTextures()
+        loadModels()
         println("Done Loading")
     }
 
@@ -29,6 +30,16 @@ object Init {
         println("Loading Textures...")
         TextureRegistry.loadTexture("res/blocks.png", "terrain")
         println("Finished Loading Textures")
+    }
+
+    /**
+     * Loads all of the models
+     */
+    def loadModels(): Unit = {
+        println("Loading Models...")
+        ModelRegistry.loadModel("res/model/cube.obj", "cube")
+        ModelRegistry.loadModel("res/model/model.obj", "model")
+        println("Finished Loading Models")
     }
 
 }
