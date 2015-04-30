@@ -83,7 +83,6 @@ class HyperScape {
         HyperScape.mainCamera.view.rotate(player.rotation.getY, new Vector3f(0, 1, 0))
         HyperScape.mainCamera.view.rotate(player.rotation.getZ, new Vector3f(0, 0, 1))
         HyperScape.mainCamera.view.translate(player.position)
-        HyperScape.mainCamera.view.translate(new Vector3f(1, 1, 1))
         HyperScape.mainCamera.uploadView()
         world.tick(player)
     }
