@@ -124,9 +124,9 @@ abstract class World {
                 }
                 GL20.glUniform4f(colorLoc, r, g, 0.3125f, 1)
             } else if (HyperScape.shaderSelector == 2) {
-                GL20.glUniform4f(colorLoc, Math.sin(chunk.getXCoord).toFloat, Math.sin(chunk.getZCoord).toFloat, 0.3125f, 1)
-            } else if (HyperScape.shaderSelector == 3) {
                 GL20.glUniform4f(colorLoc, Math.random().toFloat, Math.random().toFloat, Math.random().toFloat, Math.random().toFloat)
+            } else if (HyperScape.shaderSelector == 3) {
+                GL20.glUniform4f(colorLoc, Math.sin(chunk.getXCoord).toFloat, Math.sin(chunk.getZCoord).toFloat, 0.3125f, 1)
             }
 
             chunk.chunkModel.render()

@@ -15,7 +15,7 @@ class HyperScape {
 
     var player: Entity = null
 
-    val shaders = Array("terrain", "debug", "plaid", "rave")
+    val shaders = Array("terrain", "debug", "rave", "plaid")
     var shaderSelector = 0
 
     /**
