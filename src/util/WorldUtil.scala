@@ -170,7 +170,7 @@ object WorldUtil {
             }
         }
         //        println("Center: " + position.getX + ", " + position.getY + ", " + position.getZ)
-        //        println("Active Size: " + chunks.length + " | " + chunks.mkString(" "))
+        //                println("Active Size: " + chunks.length + " | " + chunks.mkString(", "))
         chunks
     }
 
@@ -181,7 +181,7 @@ object WorldUtil {
      * @return The index of the chunk at x, z
      */
     def getChunkIndexFromXZ(x: Int, z: Int): Int = {
-        (x >> 4) << 4 | z >> 4
+        (x >> 4) << 16 | ((z >> 4) & 0xFFFF)
     }
 
     /**
@@ -190,7 +190,7 @@ object WorldUtil {
      * @return The x, z location of the chunk
      */
     def getChunkXZFromIndex(index: Int): (Int, Int) = {
-        (index >> 4, index & 15)
+        (index >> 16, (index & 0xFFFF).toShort)
     }
 
 }

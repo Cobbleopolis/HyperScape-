@@ -40,7 +40,7 @@ abstract class World {
      */
     def getBlock(x: Int, y: Int, z: Int): Block = {
         if ((x & 15) >= 0 && y >= 0 && (z & 15) >= 0) {
-            getChunk(x, z).getBlock(x & 15, y, z & 15)
+            chunks(WorldUtil.getChunkIndexFromXZ(x, z)).getBlock(x & 15, y, z & 15)
         } else {
             null
         }
