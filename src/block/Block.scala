@@ -5,34 +5,42 @@ import registry.ModelRegistry
 import render.Model
 
 class Block {
-    var texCoord: (Int, Int) = (0, 0)
     /** Texture Coordinates for the UVs */
+    var texCoord: (Int, Int) = (0, 0)
 
-    var gameModel: Model = ModelRegistry.getModel("cube")
     /** Model to render with */
+    var gameModel: Model = ModelRegistry.getModel("cube")
 
-    var lightLevel = 0
     /** Light Level to render with */
+    var lightLevel = 0
 
-    var hasCollision: Boolean = true
     /** Sets if the block has collision */
+    var hasCollision: Boolean = true
 
-    var boundingBox = new BoundingBox
     /** Block's bounding box */
+    var boundingBox = new BoundingBox
 
-    var renderType: Int = 1
     /** Render method used by block */
+    var renderType: Int = 1
 
-    var blockID: Int = 0
     /** ID used by the block */
+    var blockID: Int = 0
 
+    /** Faces to add when the top side of the block is open */
+    var topFaces: Array[Int] = Array[Int](2, 7)
 
-    var topVerts: Array[Int] = Array[Int](2, 7)
-    var northVerts: Array[Int] = Array[Int](3, 8)
-//    var eastVerts: Array[Int] = Array[Int](4, 9)
-    var eastVerts: Array[Int] = Array[Int](6, 11)
-    var southVerts: Array[Int] = Array[Int](5, 10)
-//    var westVerts: Array[Int] = Array[Int](6, 11)
-    var westVerts: Array[Int] = Array[Int](4, 9)
-    var bottomVerts: Array[Int] = Array[Int](0, 1)
+    /** Faces to add when the north side of the block is open */
+    var northFaces: Array[Int] = Array[Int](3, 8)
+
+    /** Faces to add when the east side of the block is open */
+    var eastFaces: Array[Int] = Array[Int](6, 11)
+
+    /** Faces to add when the south side of the block is open */
+    var southFaces: Array[Int] = Array[Int](5, 10)
+
+    /** Faces to add when the west side of the block is open */
+    var westFaces: Array[Int] = Array[Int](4, 9)
+
+    /** Faces to add when the bottom side of the block is open */
+    var bottomFaces: Array[Int] = Array[Int](0, 1)
 }

@@ -9,6 +9,9 @@ object Blocks {
     val light = new BlockLight
     val model = new BlockModel
 
+    /**
+     * Registers the blocks with the game
+     */
     def registerBlocks(): Unit = {
         BlockRegistry.registerBlock(air)
         BlockRegistry.registerBlock(blank)

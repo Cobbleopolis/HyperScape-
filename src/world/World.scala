@@ -1,11 +1,11 @@
 package world
 
-import block.{Block, BlockAir}
+import block.Block
 import core.HyperScape
 import entity.Entity
 import org.lwjgl.opengl.GL20
 import org.lwjgl.util.vector.{Matrix4f, Vector3f}
-import reference.{Blocks, BlockID, BlockSides}
+import reference.{BlockSides, Blocks}
 import registry.{BlockRegistry, ShaderRegistry}
 import render.{Model, RenderModel, Vertex}
 import util.WorldUtil
@@ -169,37 +169,37 @@ abstract class World {
                 if (block.renderType == 1) {
                     val surroundingBlocks = WorldUtil.getSidesForRender(this, x + (chunk.getXCoord * 16), y, z + (chunk.getZCoord * 16))
                     if (surroundingBlocks.contains(BlockSides.TOP)) {
-                        for (i <- block.topVerts) {
+                        for (i <- block.topFaces) {
                             newVerts = newVerts ++ modelVerts.clone().slice(i * (Vertex.ELEMENT_COUNT * 3),
                                 (i * (Vertex.ELEMENT_COUNT * 3)) + Vertex.ELEMENT_COUNT * 3)
                         }
                     }
                     if (surroundingBlocks.contains(BlockSides.NORTH)) {
-                        for (i <- block.northVerts) {
+                        for (i <- block.northFaces) {
                             newVerts = newVerts ++ modelVerts.clone().slice(i * (Vertex.ELEMENT_COUNT * 3),
                                 (i * (Vertex.ELEMENT_COUNT * 3)) + Vertex.ELEMENT_COUNT * 3)
                         }
                     }
                     if (surroundingBlocks.contains(BlockSides.EAST)) {
-                        for (i <- block.eastVerts) {
+                        for (i <- block.eastFaces) {
                             newVerts = newVerts ++ modelVerts.clone().slice(i * (Vertex.ELEMENT_COUNT * 3),
                                 (i * (Vertex.ELEMENT_COUNT * 3)) + Vertex.ELEMENT_COUNT * 3)
                         }
                     }
                     if (surroundingBlocks.contains(BlockSides.SOUTH)) {
-                        for (i <- block.southVerts) {
+                        for (i <- block.southFaces) {
                             newVerts = newVerts ++ modelVerts.clone().slice(i * (Vertex.ELEMENT_COUNT * 3),
                                 (i * (Vertex.ELEMENT_COUNT * 3)) + Vertex.ELEMENT_COUNT * 3)
                         }
                     }
                     if (surroundingBlocks.contains(BlockSides.WEST)) {
-                        for (i <- block.westVerts) {
+                        for (i <- block.westFaces) {
                             newVerts = newVerts ++ modelVerts.clone().slice(i * (Vertex.ELEMENT_COUNT * 3),
                                 (i * (Vertex.ELEMENT_COUNT * 3)) + Vertex.ELEMENT_COUNT * 3)
                         }
                     }
                     if (surroundingBlocks.contains(BlockSides.BOTTOM)) {
-                        for (i <- block.bottomVerts) {
+                        for (i <- block.bottomFaces) {
                             newVerts = newVerts ++ modelVerts.clone().slice(i * (Vertex.ELEMENT_COUNT * 3),
                                 (i * (Vertex.ELEMENT_COUNT * 3)) + Vertex.ELEMENT_COUNT * 3)
                         }
