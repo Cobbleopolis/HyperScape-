@@ -1,9 +1,8 @@
 package util
 
-import block.{Block, BlockAir}
+import block.Block
 import org.lwjgl.util.vector.Vector3f
-import reference.{RenderTypes, Blocks, BlockSides}
-import registry.BlockRegistry
+import reference.{BlockSides, Blocks, RenderTypes}
 import world.{Chunk, World}
 
 object WorldUtil {
@@ -39,14 +38,11 @@ object WorldUtil {
     def getSidesForRender(world: World, x: Int, y: Int, z: Int): Array[Int] = {
         val blocks = getSurroundingBlocks(world, x, y, z)
         val block = world.getBlock(x, y, z)
+        //        println("Block ID: " + block.blockID + " " + block.renderType)
         blocks.zipWithIndex
                 .filter(x => {
             val (b, _) = x
-            if(block.renderType == RenderTypes.GLASS){
-                b == Blocks.air || b.renderType != RenderTypes.GLASS
-            } else {
-                b == Blocks.air || b.renderType != RenderTypes.FULL_BLOCK
-            }
+            b == Blocks.air || (b.renderType != RenderTypes.FULL_BLOCK && !(block.renderType == RenderTypes.GLASS && b.renderType == RenderTypes.GLASS))
         })
                 .map(x => x._2)
     }

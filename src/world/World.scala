@@ -5,7 +5,7 @@ import core.HyperScape
 import entity.Entity
 import org.lwjgl.opengl.GL20
 import org.lwjgl.util.vector.{Matrix4f, Vector3f}
-import reference.{BlockSides, Blocks}
+import reference.{BlockSides, Blocks, RenderTypes}
 import registry.{BlockRegistry, ShaderRegistry}
 import render.{Model, RenderModel, Vertex}
 import util.WorldUtil
@@ -39,7 +39,7 @@ abstract class World {
      * @return Block at x, y, z
      */
     def getBlock(x: Int, y: Int, z: Int): Block = {
-        if ((x & 15) >= 0 && y >= 0 && (z & 15) >= 0) {
+        if (y >= 0) {
             chunks(WorldUtil.getChunkIndexFromXZ(x, z)).getBlock(x & 15, y, z & 15)
         } else {
             null
@@ -166,7 +166,7 @@ abstract class World {
                 var newVerts = Array[Float]()
 //                x += (chunk.getXCoord * 16)
 //                z += (chunk.getZCoord * 16)
-                if (block.renderType == 1) {
+                if (block.renderType != RenderTypes.DOES_NOT_RENDER && block.renderType != RenderTypes.NON_FULL_BLOCK) {
                     val surroundingBlocks = WorldUtil.getSidesForRender(this, x + (chunk.getXCoord * 16), y, z + (chunk.getZCoord * 16))
                     if (surroundingBlocks.contains(BlockSides.TOP)) {
                         for (i <- block.topFaces) {

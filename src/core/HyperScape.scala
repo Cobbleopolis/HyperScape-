@@ -7,12 +7,12 @@ import org.lwjgl.opengl.GL11
 import org.lwjgl.util.vector.{Matrix4f, Vector3f}
 import reference.Blocks
 import render.Camera
-import world.WorldMainMenu
+import world.{World, WorldMainMenu}
 
 
 class HyperScape {
 
-    val world = new WorldMainMenu
+    var world: World = null
 
     var player: Entity = null
 
@@ -27,6 +27,7 @@ class HyperScape {
         player = new Entity
         player.translate(0, 17.8f, 0)
         player.rotate(0, Math.toRadians(180).toFloat, 0)
+        world = new WorldMainMenu
         HyperScape.mainCamera.uploadPerspective()
         HyperScape.mainCamera.uploadView()
     }
