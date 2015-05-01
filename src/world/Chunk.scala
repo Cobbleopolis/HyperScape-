@@ -67,7 +67,7 @@ class Chunk(xCoord: Int, zCoord: Int) {
      */
     def generate(): Unit = {
         println("Generate Chunk | " + xCoord + " " + zCoord)
-        val opts = Array(Blocks.blank.blockID, Blocks.light.blockID, Blocks.model.blockID)
+        val opts = Array(Blocks.blank.blockID, Blocks.light.blockID, Blocks.model.blockID, Blocks.glass.blockID)
         for (x <- 0 to 15) {
             for (y <- 0 to 15) {
                 for (z <- 0 to 15) {

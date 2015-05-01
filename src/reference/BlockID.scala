@@ -5,4 +5,5 @@ object BlockID {
     val BLANK = 1
     val LIGHT = 2
     val MODEL = 3
+    val GLASS = 4
 }

@@ -1,8 +1,8 @@
 package block
 
-import reference.BlockID
+import reference.{RenderTypes, BlockID}
 
 class BlockAir extends Block {
     blockID = BlockID.AIR
-    renderType = -1
+    renderType = RenderTypes.DOES_NOT_RENDER
 }

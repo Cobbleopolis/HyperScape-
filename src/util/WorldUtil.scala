@@ -2,7 +2,7 @@ package util
 
 import block.{Block, BlockAir}
 import org.lwjgl.util.vector.Vector3f
-import reference.{Blocks, BlockSides}
+import reference.{RenderTypes, Blocks, BlockSides}
 import registry.BlockRegistry
 import world.{Chunk, World}
 
@@ -41,7 +41,7 @@ object WorldUtil {
         blocks.zipWithIndex
                 .filter(x => {
             val (b, _) = x
-            b == Blocks.air || b.renderType != 1
+            b == Blocks.air || b.renderType != RenderTypes.FULL_BLOCK
         })
                 .map(x => x._2)
     }

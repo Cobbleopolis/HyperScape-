@@ -1,6 +1,6 @@
 package reference
 
-import block.{BlockAir, BlockBlank, BlockLight, BlockModel}
+import block._
 import registry.BlockRegistry
 
 object Blocks {
@@ -8,6 +8,7 @@ object Blocks {
     val blank = new BlockBlank
     val light = new BlockLight
     val model = new BlockModel
+    val glass = new BlockGlass
 
     /**
      * Registers the blocks with the game
@@ -17,5 +18,6 @@ object Blocks {
         BlockRegistry.registerBlock(blank)
         BlockRegistry.registerBlock(light)
         BlockRegistry.registerBlock(model)
+        BlockRegistry.registerBlock(glass)
     }
 }

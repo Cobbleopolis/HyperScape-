@@ -1,6 +1,7 @@
 package block
 
 import physics.BoundingBox
+import reference.RenderTypes
 import registry.ModelRegistry
 import render.Model
 
@@ -21,7 +22,10 @@ class Block {
     var boundingBox = new BoundingBox
 
     /** Render method used by block */
-    var renderType: Int = 1
+    var renderType: Int = RenderTypes.FULL_BLOCK
+
+    /** Tells the renderer if this block is opaque or not */
+    var isOpaque: Boolean = true
 
     /** ID used by the block */
     var blockID: Int = 0

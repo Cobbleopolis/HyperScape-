@@ -104,11 +104,11 @@ class HyperScape {
 }
 
 object HyperScape {
-    val mainCamera = new Camera
-    /**The Camera that renders they game*/
-
+    /**The buffer used to upload to the GPU. Max is 64000000 floats*/
     val uploadBuffer = BufferUtils.createFloatBuffer(64000000)
-    /**The buffer used to upload to the GPU*/
-
+    
     var shaderSelector = 0
+
+    /**The Camera that renders they game*/
+    val mainCamera = new Camera
 }
