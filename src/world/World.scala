@@ -160,7 +160,7 @@ abstract class World {
         var num = 0
         for ((blockID, i) <- chunk.blocks.zipWithIndex) {
             val block = BlockRegistry.getBlock(blockID)
-            if (block != Blocks.air) {
+            if (block.renderType != RenderTypes.DOES_NOT_RENDER) {
                 val (x, y, z) = chunk.getBlockXYZFromIndex(i)
                 val modelVerts = block.gameModel.getVertices.clone()
                 var newVerts = Array[Float]()

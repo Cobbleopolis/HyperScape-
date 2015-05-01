@@ -42,7 +42,7 @@ object WorldUtil {
         blocks.zipWithIndex
                 .filter(x => {
             val (b, _) = x
-            b == Blocks.air || (b.renderType != RenderTypes.FULL_BLOCK && !(block.renderType == RenderTypes.GLASS && b.renderType == RenderTypes.GLASS))
+            b.renderType == RenderTypes.DOES_NOT_RENDER || (b.renderType != RenderTypes.FULL_BLOCK && !(block.renderType == RenderTypes.GLASS && b.renderType == RenderTypes.GLASS))
         })
                 .map(x => x._2)
     }
