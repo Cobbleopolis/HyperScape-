@@ -38,10 +38,15 @@ object WorldUtil {
      */
     def getSidesForRender(world: World, x: Int, y: Int, z: Int): Array[Int] = {
         val blocks = getSurroundingBlocks(world, x, y, z)
+        val block = world.getBlock(x, y, z)
         blocks.zipWithIndex
                 .filter(x => {
             val (b, _) = x
-            b == Blocks.air || b.renderType != RenderTypes.FULL_BLOCK
+            if(block.renderType == RenderTypes.GLASS){
+                b == Blocks.air || b.renderType != RenderTypes.GLASS
+            } else {
+                b == Blocks.air || b.renderType != RenderTypes.FULL_BLOCK
+            }
         })
                 .map(x => x._2)
     }
@@ -99,7 +104,7 @@ object WorldUtil {
                 block = world.getBlock(x, y + 1, z)
         }
         if (block == null) {
-            block = BlockRegistry.getBlock(Blocks.air.blockID)
+            block = Blocks.air
         }
         block
     }
