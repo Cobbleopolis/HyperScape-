@@ -21,16 +21,56 @@ class Entity {
     var boundingBox: BoundingBox = new BoundingBox
     /** The entities bounding box */
 
+    var isJumping: Boolean = false
+
+    var jumpTime: Int = 5
+
+    var jumpSpeed = .5f
+
     /**
      * Ticks the entity
      */
     def tick(world: World): Unit = {
+//        println(velocity.getX + " " + velocity.getY + " " + velocity.getZ)
+        velocity.setY(velocity.getY + world.grav)
+        if(isJumping){
+            velocity.setY(velocity.getY + jumpSpeed)
+            jumpTime -= 1
+            if(jumpTime <= 0){
+                jumpTime = 5
+                isJumping = false
+            }
+        }
         checkCollision(world)
-        position.translate(velocity.getX, velocity.getY, velocity.getZ)
+//        position.translate(velocity.getX, velocity.getY, velocity.getZ)
     }
 
+    /**
+     * Checks if the entity is colliding with anything and changes the entities velocity accordingly.
+     * @param world The world the entity is in.
+     */
     def checkCollision(world: World): Unit = {
-
+        val y = Math.floor(position.getY).toInt
+        val translatedBB = boundingBox.getTranslatedBoundingBox(position.getX, position.getY, position.getZ)
+        var bottomBounds: Array[BoundingBox] = Array[BoundingBox]()
+        for (x <- Math.floor(position.getX - boundingBox.getXMin).toInt to Math.floor(position.getX + boundingBox.getXMax).toInt) {
+            for (z <- Math.floor(position.getZ - boundingBox.getZMin).toInt to Math.floor(position.getZ + boundingBox.getZMax).toInt) {
+                if (world.getBlock(x, y, z).hasCollision)
+                    bottomBounds = bottomBounds :+ world.getBlock(x, y, z).boundingBox.getTranslatedBoundingBox(x, y, z)
+            }
+        }
+        //        print(velocity.getY + " ")
+        for (bb <- bottomBounds) {
+            //            print(translatedBB.isCollidingWith(bb) + " ")
+            if (translatedBB.isCollidingWith(bb) && velocity.getY < 0) {
+//                print("Setting Y = 0... | " + position.getX + ", " + position.getY + ", " + position.getZ + " | " + bb.getYMax + ", " + translatedBB.getYMin + ", " + Math.abs(bb.getYMax - translatedBB.getYMin))
+                velocity.setY(Math.abs(bb.getYMax - translatedBB.getYMin))
+                velocity.setY(0)
+//                position.translate(0, , 0)
+//                println(" | " + position.getX + ", " + position.getY + ", " + position.getZ)
+            }
+        }
+        //        println()
     }
 
 
@@ -41,7 +81,7 @@ class Entity {
      * @param z Amount to translate in the z
      */
     def translate(x: Float, y: Float, z: Float): Unit = {
-        position.translate(x, -y, z)
+        position.translate(x, y, z)
     }
 
     /**
@@ -51,8 +91,8 @@ class Entity {
      * @param z Amount to translate in the z
      */
     def setSpeed(x: Float, y: Float, z: Float): Unit = {
-//        position.translate(x, -y, z)
-        velocity.set(velocity.getX + x, velocity.getY - y, velocity.getZ + z)
+        //        position.translate(x, -y, z)
+        velocity.set(velocity.getX + x, velocity.getY + y, velocity.getZ + z)
     }
 
     /**
@@ -62,10 +102,9 @@ class Entity {
      * @param z Amount to translate in the z
      */
     def addToSpeedInDirectionFacing(x: Float, y: Float, z: Float): Unit = {
-        velocity.set(velocity.getX + (x * Math.cos(rotation.getY).toFloat), velocity.getY + y, velocity.getZ + (x * Math.sin(rotation.getY).toFloat))
-        velocity.set(velocity.getX + (z * -Math.sin(rotation.getY).toFloat), velocity.getY, velocity.getZ + (z * Math.cos(rotation.getY).toFloat))
-//        position.translate(x * Math.cos(rotation.getY).toFloat, y, x * Math.sin(rotation.getY).toFloat)
-//        position.translate(z * -Math.sin(rotation.getY).toFloat, 0, z * Math.cos(rotation.getY).toFloat)
+//        println("Adding Speed " + x + " " + y + " " + z)
+        velocity.set(velocity.getX + (x * Math.sin(rotation.getY).toFloat), velocity.getY + y, velocity.getZ + (x * Math.cos(rotation.getY).toFloat))
+        velocity.set(velocity.getX + (z * -Math.cos(rotation.getY).toFloat), velocity.getY, velocity.getZ + (z * Math.sin(rotation.getY).toFloat))
     }
 
     /**

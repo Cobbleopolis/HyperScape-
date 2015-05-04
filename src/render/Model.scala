@@ -34,14 +34,6 @@ class Model(verts: Array[Float]) {
     }
 
     /**
-     * Removes a face from the model
-     * @param faceIndex The index of the face to remove
-     */
-    def removeFace(faceIndex: Int): Unit = {
-        verticies = ArrayUtil.dropIndex(verticies.asInstanceOf[Array[Any]], faceIndex * Vertex.ELEMENT_COUNT, Vertex.ELEMENT_COUNT).asInstanceOf[Array[Float]]
-    }
-
-    /**
      * Gets the model's vertices
      * @return The model's vertices
      */

@@ -17,6 +17,7 @@ abstract class World {
     var chunks = new mutable.HashMap[Int, Chunk]
     var time = 0
     var activeChunks: Array[Int] = null
+    var grav = -0.25f
     //    val environment = new Environment
     //    chunks.put(0, new Chunk(0, 0))
 
@@ -78,7 +79,7 @@ abstract class World {
      */
     def tick(player: Entity): Unit = {
         //        println(player.position.toString)
-        activeChunks = WorldUtil.getSurroundingChunkIndexes(new Vector3f(-player.position.x, player.position.y, -player.position.z), 4)
+        activeChunks = WorldUtil.getSurroundingChunkIndexes(new Vector3f(player.position.x, player.position.y, player.position.z), 4)
         //        activeChunks = WorldUtil.getSurroundingChunkIndexes(new Vector3f(0, 0, 0), 2)
         activeChunks.foreach(chunkIndex => {
             if (chunks.getOrElse(chunkIndex, null) == null) {
