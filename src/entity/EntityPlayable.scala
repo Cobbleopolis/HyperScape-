@@ -28,7 +28,6 @@ class EntityPlayable extends Entity {
                 }
                 if (Keyboard.getEventKey == Keyboard.KEY_R) {
                     position = new Vector3f(0, 16, 0)
-                    println("Toggling Flying mode...")
                 }
             }
         }
