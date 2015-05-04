@@ -17,7 +17,7 @@ abstract class World {
     var chunks = new mutable.HashMap[Int, Chunk]
     var time = 0
     var activeChunks: Array[Int] = null
-    var grav = -0.25f
+    var grav = -0.025f
     //    val environment = new Environment
     //    chunks.put(0, new Chunk(0, 0))
 
@@ -40,11 +40,7 @@ abstract class World {
      * @return Block at x, y, z
      */
     def getBlock(x: Int, y: Int, z: Int): Block = {
-        if (y >= 0) {
             chunks(WorldUtil.getChunkIndexFromXZ(x, z)).getBlock(x & 15, y, z & 15)
-        } else {
-            null
-        }
     }
 
     def blockExists(x: Int, y: Int, z: Int): Boolean = {

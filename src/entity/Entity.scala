@@ -6,43 +6,34 @@ import world.World
 
 class Entity {
 
-    var position: Vector3f = new Vector3f
     /** A vector that is used to represent the entities location (x, y, z) */
+    var position: Vector3f = new Vector3f
 
-    var rotation: Vector3f = new Vector3f
     /** A vector that is used to represent the entities rotation (roll, pitch, yaw) */
+    var rotation: Vector3f = new Vector3f
 
-    var velocity: Vector3f = new Vector3f
     /** A vector representing the entities velocity */
+    var velocity: Vector3f = new Vector3f
 
-    var hasCollision: Boolean = true
     /** Sets if the entity has collision */
+    var hasCollision: Boolean = true
 
-    var boundingBox: BoundingBox = new BoundingBox
+    /** Sets if the entity is effected by gravity */
+    var isFlying: Boolean = false
+
     /** The entities bounding box */
+    var boundingBox: BoundingBox = new BoundingBox
 
-    var isJumping: Boolean = false
-
-    var jumpTime: Int = 5
-
-    var jumpSpeed = .5f
+    var isCollidingDown: Boolean = false
 
     /**
      * Ticks the entity
      */
     def tick(world: World): Unit = {
 //        println(velocity.getX + " " + velocity.getY + " " + velocity.getZ)
-        velocity.setY(velocity.getY + world.grav)
-        if(isJumping){
-            velocity.setY(velocity.getY + jumpSpeed)
-            jumpTime -= 1
-            if(jumpTime <= 0){
-                jumpTime = 5
-                isJumping = false
-            }
-        }
+        if (!isFlying) velocity.setY(velocity.getY + world.grav)
         checkCollision(world)
-//        position.translate(velocity.getX, velocity.getY, velocity.getZ)
+        position.translate(velocity.getX, velocity.getY, velocity.getZ)
     }
 
     /**
@@ -53,24 +44,23 @@ class Entity {
         val y = Math.floor(position.getY).toInt
         val translatedBB = boundingBox.getTranslatedBoundingBox(position.getX, position.getY, position.getZ)
         var bottomBounds: Array[BoundingBox] = Array[BoundingBox]()
+
+        isCollidingDown = false
+
         for (x <- Math.floor(position.getX - boundingBox.getXMin).toInt to Math.floor(position.getX + boundingBox.getXMax).toInt) {
             for (z <- Math.floor(position.getZ - boundingBox.getZMin).toInt to Math.floor(position.getZ + boundingBox.getZMax).toInt) {
+                //                println(world == null)
                 if (world.getBlock(x, y, z).hasCollision)
                     bottomBounds = bottomBounds :+ world.getBlock(x, y, z).boundingBox.getTranslatedBoundingBox(x, y, z)
             }
         }
-        //        print(velocity.getY + " ")
         for (bb <- bottomBounds) {
-            //            print(translatedBB.isCollidingWith(bb) + " ")
             if (translatedBB.isCollidingWith(bb) && velocity.getY < 0) {
-//                print("Setting Y = 0... | " + position.getX + ", " + position.getY + ", " + position.getZ + " | " + bb.getYMax + ", " + translatedBB.getYMin + ", " + Math.abs(bb.getYMax - translatedBB.getYMin))
                 velocity.setY(Math.abs(bb.getYMax - translatedBB.getYMin))
                 velocity.setY(0)
-//                position.translate(0, , 0)
-//                println(" | " + position.getX + ", " + position.getY + ", " + position.getZ)
+                isCollidingDown = true
             }
         }
-        //        println()
     }
 
 
@@ -96,7 +86,7 @@ class Entity {
     }
 
     /**
-     * Translates the entity based on what direction it is facing
+     * Adds to the entity's velocity based on what direction it is facing
      * @param x Amount to translate in the x
      * @param y Amount to translate in the y
      * @param z Amount to translate in the z
@@ -105,6 +95,18 @@ class Entity {
 //        println("Adding Speed " + x + " " + y + " " + z)
         velocity.set(velocity.getX + (x * Math.sin(rotation.getY).toFloat), velocity.getY + y, velocity.getZ + (x * Math.cos(rotation.getY).toFloat))
         velocity.set(velocity.getX + (z * -Math.cos(rotation.getY).toFloat), velocity.getY, velocity.getZ + (z * Math.sin(rotation.getY).toFloat))
+    }
+
+    /**
+     * Translates the entity based on what direction it is facing
+     * @param x Amount to translate in the x
+     * @param y Amount to translate in the y
+     * @param z Amount to translate in the z
+     */
+    def translateInDirectionFacing(x: Float, y: Float, z: Float): Unit = {
+        //        println("Adding Speed " + x + " " + y + " " + z)
+        position.set(position.getX + (x * Math.sin(rotation.getY).toFloat), position.getY + y, position.getZ + (x * Math.cos(rotation.getY).toFloat))
+        position.set(position.getX + (z * -Math.cos(rotation.getY).toFloat), position.getY, position.getZ + (z * Math.sin(rotation.getY).toFloat))
     }
 
     /**

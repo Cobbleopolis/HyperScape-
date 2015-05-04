@@ -2,8 +2,6 @@ package render
 
 import java.util
 
-import _root_.util.ArrayUtil
-
 class Model(verts: Array[Float]) {
     var verticies = util.Arrays.copyOf(verts, verts.length)
 

@@ -59,7 +59,15 @@ class Chunk(xCoord: Int, zCoord: Int) {
      */
     def getBlock(x: Int, y: Int, z: Int): Block = {
         //        println("(" + x + ", " + y + ", " + z + ")")
-        BlockRegistry.getBlock(blocks(y << 8 | x << 4 | z))
+        val index = y << 8 | x << 4 | z
+        var block: Block = null
+        if (index >= 0 && index < blocks.length) {
+            block = BlockRegistry.getBlock(blocks(y << 8 | x << 4 | z))
+            if (block == null) block = Blocks.air
+        } else {
+            block = Blocks.air
+        }
+        block
     }
 
     /**
@@ -71,13 +79,13 @@ class Chunk(xCoord: Int, zCoord: Int) {
         for (x <- 0 to 15) {
             for (y <- 0 to 15) {
                 for (z <- 0 to 15) {
-//                    val r = rand.nextInt(opts.length + 7)
-//                    if (r <= opts.length - 1) {
-//                        setBlock(x, y, z, opts(r))
-//
-//                    }
-                    if(x % 2 == 0 && y % 2 == 0 && z % 2 == 0)
-                        setBlock(x,y,z,Blocks.blank.blockID)
+                    //                    val r = rand.nextInt(opts.length + 7)
+                    //                    if (r <= opts.length - 1) {
+                    //                        setBlock(x, y, z, opts(r))
+                    //
+                    //                    }
+                    if ((y == 0 || x % 4 == 0 || z % 4 == 0) || (y == 8 && (x % 4 == 1 || z % 4 == 1)))
+                        setBlock(x, y, z, Blocks.blank.blockID)
                 }
             }
         }
