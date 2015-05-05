@@ -37,7 +37,7 @@ class Entity {
     }
 
     /**
-     * Checks if the entity is colliding with anything and changes the entities velocity accordingly.
+     * Checks if the entity is colliding with anything and changes the entities velocity and position accordingly.
      * @param world The world the entity is in.
      */
     def checkCollision(world: World): Unit = {
@@ -47,8 +47,8 @@ class Entity {
 
         isCollidingDown = false
 
-        for (x <- Math.floor(position.getX - boundingBox.getXMin).toInt to Math.floor(position.getX + boundingBox.getXMax).toInt) {
-            for (z <- Math.floor(position.getZ - boundingBox.getZMin).toInt to Math.floor(position.getZ + boundingBox.getZMax).toInt) {
+        for (x <- Math.floor(position.getX + boundingBox.getXMin).toInt to Math.floor(position.getX + boundingBox.getXMax).toInt) {
+            for (z <- Math.floor(position.getZ + boundingBox.getZMin).toInt to Math.floor(position.getZ + boundingBox.getZMax).toInt) {
                 //                println(world == null)
                 if (world.getBlock(x, y, z).hasCollision)
                     bottomBounds = bottomBounds :+ world.getBlock(x, y, z).boundingBox.getTranslatedBoundingBox(x, y, z)
@@ -56,7 +56,8 @@ class Entity {
         }
         for (bb <- bottomBounds) {
             if (translatedBB.isCollidingWith(bb) && velocity.getY < 0) {
-                velocity.setY(Math.abs(bb.getYMax - translatedBB.getYMin))
+                //                println("Colliding...")
+                //                velocity.setY(Math.abs(bb.getYMax - translatedBB.getYMin))
                 velocity.setY(0)
                 isCollidingDown = true
             }

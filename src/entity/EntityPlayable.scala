@@ -7,7 +7,8 @@ import physics.BoundingBox
 
 class EntityPlayable extends Entity {
     var camHeight: Float = 1.85f
-    boundingBox = new BoundingBox(-0.25f, 0.25f,
+    boundingBox = new BoundingBox(
+        -0.25f, 0.25f,
         0.00f, 1.95f,
         -0.25f, 0.25f)
 
