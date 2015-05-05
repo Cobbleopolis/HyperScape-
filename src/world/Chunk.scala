@@ -75,7 +75,7 @@ class Chunk(xCoord: Int, zCoord: Int) {
      */
     def generate(): Unit = {
         println("Generate Chunk | " + xCoord + " " + zCoord)
-        val opts = Array(Blocks.blank.blockID, Blocks.light.blockID, Blocks.model.blockID, Blocks.glass.blockID)
+        val opts = Array(Blocks.blank.blockID, Blocks.light.blockID, Blocks.model.blockID, Blocks.glass.blockID, Blocks.pillar.blockID)
         for (x <- 0 to 15) {
             for (y <- 0 to 15) {
                 for (z <- 0 to 15) {
@@ -84,11 +84,11 @@ class Chunk(xCoord: Int, zCoord: Int) {
                     //                        setBlock(x, y, z, opts(r))
                     //
                     //                    }
-                    if ((y == 0 || x % 4 == 0 || z % 4 == 0) || (y == 8 && (x % 4 == 1 || z % 4 == 1)))
-                        if(rand.nextBoolean())
-                            setBlock(x, y, z, Blocks.blank.blockID)
-                        else
-                            setBlock(x, y, z, Blocks.pillar.blockID)
+                    if ((y == 0 || x % 4 == 0 || z % 4 == 0) || (y == 8 && (x % 4 == 1 || z % 4 == 1))) {
+                        val r = rand.nextInt(opts.length)
+                        //                        if (r <= opts.length - 1)
+                        setBlock(x, y, z, opts(r))
+                    }
                 }
             }
         }

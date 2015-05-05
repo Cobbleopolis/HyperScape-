@@ -6,7 +6,7 @@ import org.lwjgl.util.vector.Vector3f
 import physics.BoundingBox
 
 class EntityPlayable extends Entity {
-    var camHeight: Float = 1.85f
+    var camHeight: Float = 1.7f
     boundingBox = new BoundingBox(
         -0.5f, 0.5f,
         0.00f, 1.95f,
@@ -32,7 +32,9 @@ class EntityPlayable extends Entity {
                     println("Toggling Lines mode...")
                 }
                 if (Keyboard.getEventKey == Keyboard.KEY_R) {
-                    position = new Vector3f(0, 16, 0)
+                    position = new Vector3f(-0.5f, 17f, -0.5f)
+                    velocity = new Vector3f()
+                    rotation = new Vector3f()
                 }
             }
         }

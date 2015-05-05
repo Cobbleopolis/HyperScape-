@@ -41,22 +41,23 @@ class Entity {
      * @param world The world the entity is in.
      */
     def checkCollision(world: World): Unit = {
-        val y = Math.ceil(position.getY + boundingBox.getYMin).toInt
+        val y = Math.ceil(position.getY).toInt - 1
         val translatedBB = boundingBox.getTranslatedBoundingBox(position.getX, position.getY, position.getZ)
-        println(translatedBB.toString)
+        //        println(translatedBB.toString)
         isCollidingDown = false
 
         for (x <- Math.floor(translatedBB.getXMin).toInt to Math.ceil(translatedBB.getXMax).toInt) {
             for (z <- Math.floor(translatedBB.getZMin).toInt to Math.ceil(translatedBB.getZMax).toInt) {
                 if (world.getBlock(x, y, z).hasCollision) {
 //                    println(x + " " + y + " " + z)
-                    if(translatedBB.isCollidingWith(world.getBlock(x, y, z).boundingBox.getTranslatedBoundingBox(x - 1, y, z - 1)) && velocity.getY < 0){
+                    if (translatedBB.isCollidingWith(world.getBlock(x, y, z).boundingBox.getTranslatedBoundingBox(x, y, z - 1)) && velocity.getY < 0) {
                         velocity.setY(0)
                         isCollidingDown = true
                     }
                 }
             }
         }
+        //        println(isCollidingDown)
     }
 
 
@@ -71,12 +72,12 @@ class Entity {
     }
 
     /**
-     * Sets the speed of the entity
+     * Adds to the speed of the entity
      * @param x Amount to translate in the x
      * @param y Amount to translate in the y
      * @param z Amount to translate in the z
      */
-    def setSpeed(x: Float, y: Float, z: Float): Unit = {
+    def addToSpeed(x: Float, y: Float, z: Float): Unit = {
         //        position.translate(x, -y, z)
         velocity.set(velocity.getX + x, velocity.getY + y, velocity.getZ + z)
     }
