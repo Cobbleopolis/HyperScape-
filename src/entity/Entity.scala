@@ -41,13 +41,13 @@ class Entity {
      * @param world The world the entity is in.
      */
     def checkCollision(world: World): Unit = {
-        val y = Math.ceil(position.getY).toInt
+        val y = Math.ceil(position.getY + boundingBox.getYMin).toInt
         val translatedBB = boundingBox.getTranslatedBoundingBox(position.getX, position.getY, position.getZ)
         println(translatedBB.toString)
         isCollidingDown = false
 
-        for (x <- Math.floor(translatedBB.getXMin).toInt until Math.ceil(translatedBB.getXMax).toInt) {
-            for (z <- Math.floor(translatedBB.getZMin).toInt until Math.ceil(translatedBB.getZMax).toInt) {
+        for (x <- Math.floor(translatedBB.getXMin).toInt to Math.ceil(translatedBB.getXMax).toInt) {
+            for (z <- Math.floor(translatedBB.getZMin).toInt to Math.ceil(translatedBB.getZMax).toInt) {
                 if (world.getBlock(x, y, z).hasCollision) {
 //                    println(x + " " + y + " " + z)
                     if(translatedBB.isCollidingWith(world.getBlock(x, y, z).boundingBox.getTranslatedBoundingBox(x - 1, y, z - 1)) && velocity.getY < 0){
