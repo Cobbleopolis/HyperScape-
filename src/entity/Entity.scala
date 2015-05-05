@@ -41,7 +41,7 @@ class Entity {
      * @param world The world the entity is in.
      */
     def checkCollision(world: World): Unit = {
-        val y = Math.ceil(position.getY).toInt - 1
+        val y = Math.floor(position.getY).toInt
         val translatedBB = boundingBox.getTranslatedBoundingBox(position.getX, position.getY, position.getZ)
         //        println(translatedBB.toString)
         isCollidingDown = false
