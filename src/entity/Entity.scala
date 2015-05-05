@@ -9,7 +9,7 @@ class Entity {
     /** A vector that is used to represent the entities location (x, y, z) */
     var position: Vector3f = new Vector3f
 
-    /** A vector that is used to represent the entities rotation (roll, pitch, yaw) */
+    /** Ax vector that is used to represent the entities rotation (roll, pitch, yaw) */
     var rotation: Vector3f = new Vector3f
 
     /** A vector representing the entities velocity */
@@ -30,7 +30,7 @@ class Entity {
      * Ticks the entity
      */
     def tick(world: World): Unit = {
-//        println(velocity.getX + " " + velocity.getY + " " + velocity.getZ)
+//        println(position.getX + " " + position.getY + " " + position.getZ)
         if (!isFlying) velocity.setY(velocity.getY + world.grav)
         checkCollision(world)
         position.translate(velocity.getX, velocity.getY, velocity.getZ)
@@ -41,27 +41,20 @@ class Entity {
      * @param world The world the entity is in.
      */
     def checkCollision(world: World): Unit = {
-        val y = Math.floor(position.getY).toInt
+        val y = Math.ceil(position.getY).toInt
         val translatedBB = boundingBox.getTranslatedBoundingBox(position.getX, position.getY, position.getZ)
-        var bottomBounds: Array[BoundingBox] = Array[BoundingBox]()
-
+        println(translatedBB.toString)
         isCollidingDown = false
 
-        for (x <- Math.floor(position.getX + boundingBox.getXMin).toInt to Math.ceil(position.getX + boundingBox.getXMax).toInt) {
-            for (z <- Math.floor(position.getZ + boundingBox.getZMin).toInt to Math.ceil(position.getZ + boundingBox.getZMax).toInt) {
-                //                println(world == null)
+        for (x <- Math.floor(translatedBB.getXMin).toInt until Math.ceil(translatedBB.getXMax).toInt) {
+            for (z <- Math.floor(translatedBB.getZMin).toInt until Math.ceil(translatedBB.getZMax).toInt) {
                 if (world.getBlock(x, y, z).hasCollision) {
-                    println(x + " " + y + " " + z)
-                    bottomBounds = bottomBounds :+ world.getBlock(x, y, z).boundingBox.getTranslatedBoundingBox(x, y, z)
+//                    println(x + " " + y + " " + z)
+                    if(translatedBB.isCollidingWith(world.getBlock(x, y, z).boundingBox.getTranslatedBoundingBox(x - 1, y, z - 1)) && velocity.getY < 0){
+                        velocity.setY(0)
+                        isCollidingDown = true
+                    }
                 }
-            }
-        }
-        for (bb <- bottomBounds) {
-            if (translatedBB.isCollidingWith(bb) && velocity.getY < 0) {
-                //                println("Colliding...")
-                //                velocity.setY(Math.abs(bb.getYMax - translatedBB.getYMin))
-                velocity.setY(0)
-                isCollidingDown = true
             }
         }
     }

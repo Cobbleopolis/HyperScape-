@@ -23,8 +23,8 @@ class HyperScape {
     def init(): Unit = {
         Blocks.registerBlocks()
         player = new EntityPlayable
-        player.translate(0, 16f, 0)
-        player.rotate(0, Math.toRadians(180).toFloat, 0)
+        player.translate(0, 15f, 0)
+//        player.rotate(0, Math.toRadians(180).toFloat, 0)
         world = new WorldMainMenu
         HyperScape.mainCamera.uploadPerspective()
         HyperScape.mainCamera.uploadView()
@@ -35,10 +35,10 @@ class HyperScape {
      */
     def tick(): Unit = {
         HyperScape.mainCamera.view = new Matrix4f
-        player.parseInput()
         world.tick(player)
+        player.parseInput()
         HyperScape.mainCamera.view.rotate(-player.rotation.getX, new Vector3f(1, 0, 0))
-        HyperScape.mainCamera.view.rotate(-player.rotation.getY + Math.PI.toFloat / 2, new Vector3f(0, 1, 0))
+        HyperScape.mainCamera.view.rotate(-player.rotation.getY + (Math.PI.toFloat / 2), new Vector3f(0, 1, 0))
         HyperScape.mainCamera.view.rotate(-player.rotation.getZ, new Vector3f(0, 0, 1))
         player.position.scale(-1.0f)
         HyperScape.mainCamera.view.translate(player.position)

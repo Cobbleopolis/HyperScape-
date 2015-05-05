@@ -9,6 +9,7 @@ object Blocks {
     val light = new BlockLight
     val model = new BlockModel
     val glass = new BlockGlass
+    val pillar = new BlockPillar
 
     /**
      * Registers the blocks with the game
@@ -19,5 +20,6 @@ object Blocks {
         BlockRegistry.registerBlock(light)
         BlockRegistry.registerBlock(model)
         BlockRegistry.registerBlock(glass)
+        BlockRegistry.registerBlock(pillar)
     }
 }

@@ -44,4 +44,8 @@ class BoundingBox(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0f, yMax: Fl
         getZMax > otherBoundingBox.getZMin &&
         otherBoundingBox.getZMax > getZMin
     }
+
+    override def toString: String = {
+        xMin + " " + xMax + " " + yMin + " " + yMax + " " + zMin + " " + zMax
+    }
 }

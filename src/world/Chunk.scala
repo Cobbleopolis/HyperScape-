@@ -85,7 +85,10 @@ class Chunk(xCoord: Int, zCoord: Int) {
                     //
                     //                    }
                     if ((y == 0 || x % 4 == 0 || z % 4 == 0) || (y == 8 && (x % 4 == 1 || z % 4 == 1)))
-                        setBlock(x, y, z, Blocks.blank.blockID)
+                        if(rand.nextBoolean())
+                            setBlock(x, y, z, Blocks.blank.blockID)
+                        else
+                            setBlock(x, y, z, Blocks.pillar.blockID)
                 }
             }
         }

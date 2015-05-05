@@ -39,6 +39,7 @@ object Init {
         println("Loading Models...")
         ModelRegistry.loadModel("res/model/cube.obj", "cube")
         ModelRegistry.loadModel("res/model/model.obj", "model")
+        ModelRegistry.loadModel("res/model/pillar.obj", "pillar")
         println("Finished Loading Models")
     }
 
