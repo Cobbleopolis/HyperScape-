@@ -47,11 +47,13 @@ class Entity {
 
         isCollidingDown = false
 
-        for (x <- Math.floor(position.getX + boundingBox.getXMin).toInt to Math.floor(position.getX + boundingBox.getXMax).toInt) {
-            for (z <- Math.floor(position.getZ + boundingBox.getZMin).toInt to Math.floor(position.getZ + boundingBox.getZMax).toInt) {
+        for (x <- Math.floor(position.getX + boundingBox.getXMin).toInt to Math.ceil(position.getX + boundingBox.getXMax).toInt) {
+            for (z <- Math.floor(position.getZ + boundingBox.getZMin).toInt to Math.ceil(position.getZ + boundingBox.getZMax).toInt) {
                 //                println(world == null)
-                if (world.getBlock(x, y, z).hasCollision)
+                if (world.getBlock(x, y, z).hasCollision) {
+                    println(x + " " + y + " " + z)
                     bottomBounds = bottomBounds :+ world.getBlock(x, y, z).boundingBox.getTranslatedBoundingBox(x, y, z)
+                }
             }
         }
         for (bb <- bottomBounds) {

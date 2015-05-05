@@ -1,9 +1,8 @@
 package render
 
 import core.HyperScape
-import org.lwjgl.BufferUtils
-import org.lwjgl.opengl.{GL11, GL20, GL15, GL30}
-import org.lwjgl.util.vector.{Vector3f, Matrix4f}
+import org.lwjgl.opengl.{GL11, GL15, GL20, GL30}
+import org.lwjgl.util.vector.{Matrix4f, Vector3f}
 
 
 class RenderModel(verts: Array[Float]) {
@@ -46,7 +45,10 @@ class RenderModel(verts: Array[Float]) {
         GL20.glEnableVertexAttribArray(1)
 
         // Draw the vertices
-        GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, verts.length / Vertex.ELEMENT_COUNT)
+        if (HyperScape.lines)
+            GL11.glDrawArrays(GL11.GL_LINES, 0, verts.length / Vertex.ELEMENT_COUNT)
+        else
+            GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, verts.length / Vertex.ELEMENT_COUNT)
 
         // Put everything back to default (deselect)
         GL20.glDisableVertexAttribArray(0)

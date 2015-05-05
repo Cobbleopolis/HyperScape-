@@ -8,14 +8,14 @@ import physics.BoundingBox
 class EntityPlayable extends Entity {
     var camHeight: Float = 1.85f
     boundingBox = new BoundingBox(
-        -0.25f, 0.25f,
+        -0.5f, 0.5f,
         0.00f, 1.95f,
-        -0.25f, 0.25f)
+        -0.5f, 0.5f)
 
     val shaders = Array("terrain", "debug", "Panic! at the Disco", "plaid")
 
     def parseInput(): Unit = {
-        val speed: Float = .25f
+        val speed: Float = .125f
         while (Keyboard.next()) {
             if (Keyboard.getEventKeyState) {
                 if (Keyboard.getEventKey == Keyboard.KEY_F3) {
@@ -26,6 +26,10 @@ class EntityPlayable extends Entity {
                 if (Keyboard.getEventKey == Keyboard.KEY_F4) {
                     isFlying = !isFlying
                     println("Toggling Flying mode...")
+                }
+                if (Keyboard.getEventKey == Keyboard.KEY_F5) {
+                    HyperScape.lines = !HyperScape.lines
+                    println("Toggling Lines mode...")
                 }
                 if (Keyboard.getEventKey == Keyboard.KEY_R) {
                     position = new Vector3f(0, 16, 0)
@@ -52,7 +56,7 @@ class EntityPlayable extends Entity {
             }
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) && isFlying) {
-            translateInDirectionFacing(0, .25f, 0)
+            translateInDirectionFacing(0, -.25f, 0)
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {
             rotate(0, Math.toRadians(2.5).toFloat, 0)

@@ -23,7 +23,7 @@ class HyperScape {
     def init(): Unit = {
         Blocks.registerBlocks()
         player = new EntityPlayable
-        player.translate(0, 17f, 0)
+        player.translate(0, 16f, 0)
         player.rotate(0, Math.toRadians(180).toFloat, 0)
         world = new WorldMainMenu
         HyperScape.mainCamera.uploadPerspective()
@@ -69,6 +69,8 @@ object HyperScape {
     val uploadBuffer = BufferUtils.createFloatBuffer(64000000)
 
     var shaderSelector = 0
+
+    var lines: Boolean = false
 
     /** The Camera that renders they game */
     val mainCamera = new Camera
