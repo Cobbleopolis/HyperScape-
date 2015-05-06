@@ -1,10 +1,10 @@
 package entity
 
 import org.lwjgl.util.vector.Vector3f
-import physics.BoundingBox
+import physics.AxisAlignedBoundingBox
 import world.World
 
-class Entity {
+class Entity(world: World) {
 
     /** A vector that is used to represent the entities location (x, y, z) */
     var position: Vector3f = new Vector3f
@@ -22,42 +22,58 @@ class Entity {
     var isFlying: Boolean = false
 
     /** The entities bounding box */
-    var boundingBox: BoundingBox = new BoundingBox
+    var boundingBox: AxisAlignedBoundingBox = new AxisAlignedBoundingBox
 
     var isCollidingDown: Boolean = false
 
     /**
      * Ticks the entity
      */
-    def tick(world: World): Unit = {
-//        println(position.getX + " " + position.getY + " " + position.getZ)
+    def tick(): Unit = {
+        //        println(position.getX + " " + position.getY + " " + position.getZ)
         if (!isFlying) velocity.setY(velocity.getY + world.grav)
-        checkCollision(world)
+        velocity = applyCollision(velocity)
         position.translate(velocity.getX, velocity.getY, velocity.getZ)
     }
 
     /**
      * Checks if the entity is colliding with anything and changes the entities velocity and position accordingly.
-     * @param world The world the entity is in.
+     * @param direction The direction that the entity is moving.
+     * @return The new vector after the collision has been applied
      */
-    def checkCollision(world: World): Unit = {
-        val y = Math.floor(position.getY).toInt
-        val translatedBB = boundingBox.getTranslatedBoundingBox(position.getX, position.getY, position.getZ)
+    def applyCollision(direction: Vector3f): Vector3f = {
+        val newVector = direction
+        val posX = Math.floor(position.getX + direction.getX).toInt
+        val posY = Math.floor(position.getY + direction.getY).toInt
+        val posZ = Math.floor(position.getZ + direction.getZ).toInt
+        val translatedBB = boundingBox.getTranslatedBoundingBox(position.getX + direction.getX, position.getY + direction.getY, position.getZ + direction.getZ)
         //        println(translatedBB.toString)
         isCollidingDown = false
 
+        //Bottom Collision (-y)
         for (x <- Math.floor(translatedBB.getXMin).toInt to Math.ceil(translatedBB.getXMax).toInt) {
             for (z <- Math.floor(translatedBB.getZMin).toInt to Math.ceil(translatedBB.getZMax).toInt) {
-                if (world.getBlock(x, y, z).hasCollision) {
-//                    println(x + " " + y + " " + z)
-                    if (translatedBB.isCollidingWith(world.getBlock(x, y, z).boundingBox.getTranslatedBoundingBox(x, y, z - 1)) && velocity.getY < 0) {
-                        velocity.setY(0)
+                if (world.getBlock(x, posY, z).hasCollision) {
+                    val bb = world.getBlock(x, posY, z).boundingBox.getTranslatedBoundingBox(x, posY, z - 1)
+                    if (translatedBB.isCollidingWith(bb) && direction.getY < 0) {
+                        newVector.setY(0)
                         isCollidingDown = true
                     }
                 }
             }
         }
+
+        //North Collision (+x)
+        for (y <- posY + 1 to Math.ceil(translatedBB.getYMax).toInt) {
+            for (z <- posZ to Math.ceil(translatedBB.getZMax).toInt) {
+                if (world.getBlock(posX, y, posZ + 1).hasCollision)
+                    if (translatedBB.isCollidingWith(world.getBlock(posX, y, posZ + 1).boundingBox.getTranslatedBoundingBox(posX, y, posZ)) && direction.getX > 0) {
+                        newVector.setX(0)
+                    }
+            }
+        }
         //        println(isCollidingDown)
+        newVector
     }
 
 
@@ -89,9 +105,9 @@ class Entity {
      * @param z Amount to translate in the z
      */
     def addToSpeedInDirectionFacing(x: Float, y: Float, z: Float): Unit = {
-//        println("Adding Speed " + x + " " + y + " " + z)
-        velocity.set(velocity.getX + (x * Math.sin(rotation.getY).toFloat), velocity.getY + y, velocity.getZ + (x * Math.cos(rotation.getY).toFloat))
-        velocity.set(velocity.getX + (z * -Math.cos(rotation.getY).toFloat), velocity.getY, velocity.getZ + (z * Math.sin(rotation.getY).toFloat))
+        //        println("Adding Speed " + x + " " + y + " " + z)
+        velocity.translate(x * Math.sin(rotation.getY).toFloat, y, x * Math.cos(rotation.getY).toFloat)
+        velocity.translate(z * -Math.cos(rotation.getY).toFloat, 0, z * Math.sin(rotation.getY).toFloat)
     }
 
     /**
@@ -102,8 +118,11 @@ class Entity {
      */
     def translateInDirectionFacing(x: Float, y: Float, z: Float): Unit = {
         //        println("Adding Speed " + x + " " + y + " " + z)
-        position.set(position.getX + (x * Math.sin(rotation.getY).toFloat), position.getY + y, position.getZ + (x * Math.cos(rotation.getY).toFloat))
-        position.set(position.getX + (z * -Math.cos(rotation.getY).toFloat), position.getY, position.getZ + (z * Math.sin(rotation.getY).toFloat))
+        var direction = new Vector3f()
+        direction.translate(x * Math.sin(rotation.getY).toFloat, y, x * Math.cos(rotation.getY).toFloat)
+        direction.translate(z * -Math.cos(rotation.getY).toFloat, 0, z * Math.sin(rotation.getY).toFloat)
+        direction = applyCollision(direction)
+        position.translate(direction.getX, direction.getY, direction.getZ)
     }
 
     /**

@@ -3,11 +3,12 @@ package entity
 import core.HyperScape
 import org.lwjgl.input.Keyboard
 import org.lwjgl.util.vector.Vector3f
-import physics.BoundingBox
+import physics.AxisAlignedBoundingBox
+import world.World
 
-class EntityPlayable extends Entity {
+class EntityPlayable(world: World) extends Entity(world) {
     var camHeight: Float = 1.7f
-    boundingBox = new BoundingBox(
+    boundingBox = new AxisAlignedBoundingBox(
         -0.5f, 0.5f,
         0.00f, 1.95f,
         -0.5f, 0.5f)
@@ -51,7 +52,9 @@ class EntityPlayable extends Entity {
             translateInDirectionFacing(speed, 0, 0)
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
+//            println(isCollidingDown)
             if (isCollidingDown) {
+                println("Jump")
                 addToSpeedInDirectionFacing(0, .35f, 0)
             } else if (isFlying) {
                 translateInDirectionFacing(0, .35f, 0)

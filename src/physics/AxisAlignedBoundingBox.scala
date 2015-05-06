@@ -1,6 +1,6 @@
 package physics
 
-class BoundingBox(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0f, yMax: Float = 1f, zMin: Float = 0f, zMax: Float = 1f) {
+class AxisAlignedBoundingBox(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0f, yMax: Float = 1f, zMin: Float = 0f, zMax: Float = 1f) {
 
     /** Returns the xMin value of the bounding box. */
     def getXMin: Float = xMin
@@ -8,16 +8,16 @@ class BoundingBox(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0f, yMax: Fl
     /** Returns the xMax value of the bounding box. */
     def getXMax: Float = xMax
 
-    /** Returns the yMin value of the bounding boy. */
+    /** Returns the yMin value of the bounding box. */
     def getYMin: Float = yMin
 
-    /** Returns the yMax value of the bounding boy. */
+    /** Returns the yMax value of the bounding box. */
     def getYMax: Float = yMax
 
-    /** Returns the zMin value of the bounding boz. */
+    /** Returns the zMin value of the bounding box. */
     def getZMin: Float = zMin
 
-    /** Returns the zMax value of the bounding boz. */
+    /** Returns the zMax value of the bounding box. */
     def getZMax: Float = zMax
 
     /**
@@ -27,8 +27,12 @@ class BoundingBox(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0f, yMax: Fl
      * @param z The z value of the translation
      * @return The translated bounding box
      */
-    def getTranslatedBoundingBox(x: Float, y: Float, z:Float): BoundingBox = {
-        new BoundingBox(xMin + x, xMax + x, yMin + y, yMax + y, zMin + z, zMax + z)
+    def getTranslatedBoundingBox(x: Float, y: Float, z:Float): AxisAlignedBoundingBox = {
+        new AxisAlignedBoundingBox(xMin + x, xMax + x, yMin + y, yMax + y, zMin + z, zMax + z)
+    }
+
+    def getCenter: (Float, Float, Float) = {
+        ((xMin + xMax) / 2, (yMin + yMax) / 2, (zMin + zMax) / 2)
     }
 
     /**
@@ -36,7 +40,7 @@ class BoundingBox(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0f, yMax: Fl
      * @param otherBoundingBox The other bounding box to check collision with
      * @return If the bounding box is colliding with the passed bounding box
      */
-    def isCollidingWith(otherBoundingBox: BoundingBox): Boolean = {
+    def isCollidingWith(otherBoundingBox: AxisAlignedBoundingBox): Boolean = {
         getXMax > otherBoundingBox.getXMin &&
         otherBoundingBox.getXMax > getXMin &&
         getYMax > otherBoundingBox.getYMin &&

@@ -22,10 +22,11 @@ class HyperScape {
      */
     def init(): Unit = {
         Blocks.registerBlocks()
-        player = new EntityPlayable
-        player.translate(-0.5f, 16f, -0.5f)
-//        player.rotate(0, Math.toRadians(180).toFloat, 0)
+        //        player.rotate(0, Math.toRadians(180).toFloat, 0)
         world = new WorldMainMenu
+        player = new EntityPlayable(world)
+        world.tick(player)
+        player.translate(-0.5f, 16f, -0.5f)
         HyperScape.mainCamera.uploadPerspective()
         HyperScape.mainCamera.uploadView()
     }

@@ -8,7 +8,7 @@ import registry.{ShaderRegistry, TextureRegistry}
 
 object Game {
 
-    val WINDOW_TITLE = "Hyperspace"
+    val WINDOW_TITLE = "Hyperscape"
     val WIDTH = 1080
     val HEIGHT = 720
 

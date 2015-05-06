@@ -88,7 +88,7 @@ abstract class World {
             }
             chunks.getOrElse(chunkIndex, null).tick()
         })
-        player.tick(this)
+        player.tick()
     }
 
     /**
