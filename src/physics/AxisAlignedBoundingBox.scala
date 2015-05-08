@@ -1,5 +1,7 @@
 package physics
 
+import org.lwjgl.util.vector.Vector3f
+
 class AxisAlignedBoundingBox(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0f, yMax: Float = 1f, zMin: Float = 0f, zMax: Float = 1f) {
 
     /** Returns the xMin value of the bounding box. */
@@ -27,8 +29,17 @@ class AxisAlignedBoundingBox(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0
      * @param z The z value of the translation
      * @return The translated bounding box
      */
-    def getTranslatedBoundingBox(x: Float, y: Float, z:Float): AxisAlignedBoundingBox = {
+    def getTranslatedBoundingBox(x: Float, y: Float, z: Float): AxisAlignedBoundingBox = {
         new AxisAlignedBoundingBox(xMin + x, xMax + x, yMin + y, yMax + y, zMin + z, zMax + z)
+    }
+
+    /**
+     * Returns a copy of the bounding box translated by the coordinates
+     * @param xyz A vector with the x, y, z values of the translation
+     * @return The translated bounding box
+     */
+    def getTranslatedBoundingBox(xyz: Vector3f): AxisAlignedBoundingBox = {
+        new AxisAlignedBoundingBox(xMin + xyz.getX, xMax + xyz.getX, yMin + xyz.getY, yMax + xyz.getY, zMin + xyz.getZ, zMax + xyz.getZ)
     }
 
     def getCenter: (Float, Float, Float) = {
@@ -42,14 +53,28 @@ class AxisAlignedBoundingBox(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0
      */
     def isCollidingWith(otherBoundingBox: AxisAlignedBoundingBox): Boolean = {
         getXMax > otherBoundingBox.getXMin &&
-        otherBoundingBox.getXMax > getXMin &&
-        getYMax > otherBoundingBox.getYMin &&
-        otherBoundingBox.getYMax > getYMin &&
-        getZMax > otherBoundingBox.getZMin &&
-        otherBoundingBox.getZMax > getZMin
+                otherBoundingBox.getXMax > getXMin &&
+                getYMax > otherBoundingBox.getYMin &&
+                otherBoundingBox.getYMax > getYMin &&
+                getZMax > otherBoundingBox.getZMin &&
+                otherBoundingBox.getZMax > getZMin
+    }
+
+    /**
+     * Checks if a the bounding box is touching or colliding with the passed bounding box. Both bounding boxes should be translated for accurate detection.
+     * @param otherBoundingBox The other bounding box to check collision with
+     * @return If the bounding box is touching or colliding with the passed bounding box
+     */
+    def isTouching(otherBoundingBox: AxisAlignedBoundingBox): Boolean = {
+        getXMax >= otherBoundingBox.getXMin &&
+                otherBoundingBox.getXMax >= getXMin &&
+                getYMax >= otherBoundingBox.getYMin &&
+                otherBoundingBox.getYMax >= getYMin &&
+                getZMax >= otherBoundingBox.getZMin &&
+                otherBoundingBox.getZMax >= getZMin
     }
 
     override def toString: String = {
-        xMin + " " + xMax + " " + yMin + " " + yMax + " " + zMin + " " + zMax
+        "[" + xMin + ", " + xMax + ", " + yMin + ", " + yMax + ", " + zMin + ", " + zMax + "]"
     }
 }
