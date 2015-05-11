@@ -10,7 +10,7 @@ class EntityPlayable(world: World) extends Entity(world) {
     var camHeight: Float = 1.7f
     boundingBox = new AxisAlignedBoundingBox(
         -0.5f, 0.5f,
-        0.00f, 1.95f,
+        0.00f, 1.8f,
         -0.5f, 0.5f)
 
     val shaders = Array("terrain", "debug", "Panic! at the Disco", "plaid")
@@ -54,7 +54,7 @@ class EntityPlayable(world: World) extends Entity(world) {
         if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
 //            println(isCollidingDown)
             if (isCollidingDown) {
-                println("Jump")
+//                println("Jump")
                 addToSpeedInDirectionFacing(0, .35f, 0)
             } else if (isFlying) {
                 translateInDirectionFacing(0, .35f, 0)

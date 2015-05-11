@@ -2,6 +2,7 @@ package entity
 
 import org.lwjgl.util.vector.Vector3f
 import physics.AxisAlignedBoundingBox
+import reference.Blocks
 import util.PhysicsUtil
 import world.World
 
@@ -35,8 +36,8 @@ class Entity(world: World) {
         if (!isFlying) velocity.setY(velocity.getY + world.grav)
         position.translate(velocity.getX, velocity.getY, velocity.getZ)
         applyCollision()
-        println("Final: " + position.toString)
-        println("---------------------------------------------------------------------------------")
+//        println("Final: " + position.toString + " | " + velocity.toString)
+//        println("---------------------------------------------------------------------------------")
     }
 
     /**
@@ -53,22 +54,33 @@ class Entity(world: World) {
             for (y <- startVec.getY.toInt to endVec.getY.toInt) {
                 for (z <- startVec.getZ.toInt to endVec.getZ.toInt) {
                     if (world.getBlock(x, y, z).hasCollision) {
-                        val bb = world.getBlock(x, y, z).boundingBox.getTranslatedBoundingBox(x, y, z)
+                        val bb = world.getBlock(x, y, z).boundingBox.getTranslatedBoundingBox(x, y, z - 1)
                         val vec = PhysicsUtil.areBoundingBoxesColliding(translatedBB, bb)
-                        if (vec != null) {
-                            val dist = bb.getYMax - translatedBB.getYMin
-                            print(position.toString + " | " + velocity.toString + " | " + translatedBB.toString + " | " + bb.toString + " | " + dist + " | (" + x + ", " + y + ", " + z + ") Collision | ")
-                            if (vec.getY < 0) {
-                                position.setY(position.getY + dist)
-                                velocity.setY(0)
+                        if(vec != null){
+                            // North (+x)
+                            if(x > translatedBB.getXMax - 1 && world.getBlock(x - 1, y, z) == Blocks.air) {
+                                println("North")
+                                velocity.setX(0)
+                                position.setY(bb.getXMin - boundingBox.getXMax)
                                 translatedBB = boundingBox.getTranslatedBoundingBox(position)
-                                isCollidingDown = true
+                                //                                println(position.toString + " | " + velocity.toString + " || " + translatedBB.toString + " | " + bb.toString + " | (" + x + ", " + y + ", " + z + ")")
                             }
-
-                        } else {
-//                            println(position.toString + " | " + translatedBB.toString + " | " + bb.toString + " | (" + x + ", " + y + ", " + z + ") No Collision")
+                            // Bottom (-y)
+                            if(y <= translatedBB.getYMin && world.getBlock(x, y + 1, z) == Blocks.air) {
+                                velocity.setY(0)
+                                position.setY(bb.getYMax)
+                                isCollidingDown = true
+                                translatedBB = boundingBox.getTranslatedBoundingBox(position)
+                                //                                println(position.toString + " | " + velocity.toString + " || " + translatedBB.toString + " | " + bb.toString + " | (" + x + ", " + y + ", " + z + ")")
+                            }
+                            // Top (+y)
+                            if(y >= translatedBB.getYMax - 1 && world.getBlock(x, y - 1, z) == Blocks.air) {
+                                velocity.setY(0)
+                                position.setY(bb.getYMin - (boundingBox.getYMax - boundingBox.getXMin))
+                                translatedBB = boundingBox.getTranslatedBoundingBox(position)
+                                //                                println(position.toString + " | " + velocity.toString + " || " + translatedBB.toString + " | " + bb.toString + " | (" + x + ", " + y + ", " + z + ")")
+                            }
                         }
-                        println(position.toString)
                     }
                 }
             }

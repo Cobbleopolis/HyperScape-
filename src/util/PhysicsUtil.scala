@@ -38,4 +38,32 @@ object PhysicsUtil {
             null
         }
     }
+    
+    def largestVectorComponent(vec: Vector3f): Float = {
+        var largest: Float = 0
+        if(Math.abs(vec.getX) > Math.abs(largest)){
+            largest = vec.getX
+        }
+        if(Math.abs(vec.getY) > Math.abs(largest)){
+            largest = vec.getY
+        }
+        if(Math.abs(vec.getZ) > Math.abs(largest)){
+            largest = vec.getZ
+        }
+        largest
+    }
+
+    def smallestVectorComponent(vec: Vector3f): Float = {
+        var smallest: Float = 0
+        if(Math.abs(vec.getX) < Math.abs(smallest)){
+            smallest = vec.getX
+        }
+        if(Math.abs(vec.getY) < Math.abs(smallest)){
+            smallest = vec.getY
+        }
+        if(Math.abs(vec.getZ) < Math.abs(smallest)){
+            smallest = vec.getZ
+        }
+        smallest
+    }
 }
