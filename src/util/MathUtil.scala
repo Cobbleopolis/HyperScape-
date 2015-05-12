@@ -18,8 +18,8 @@ object MathUtil {
     /**
      * Returns the greatest integer less than or equal to the double argument
      */
-    def floor_double(p_76128_0_ : Double): Int = {
+    def floor_float(p_76128_0_ : Float): Int = {
         val i: Int = p_76128_0_.toInt
-        if (p_76128_0_ < i.toDouble) i - 1 else i
+        if (p_76128_0_ < i.toFloat) i - 1 else i
     }
 }

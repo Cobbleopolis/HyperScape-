@@ -27,7 +27,7 @@ object Game {
         ShaderRegistry.bindShader("terrain")
         TextureRegistry.bindTexture("terrain")
 
-        isFullscreen = args.contains("--fullscreen")
+        HyperScape.debug = args.contains("--debug")
 
         hyperScape = new HyperScape
         hyperScape.init()

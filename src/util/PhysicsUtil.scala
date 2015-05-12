@@ -1,7 +1,7 @@
 package util
 
 import org.lwjgl.util.vector.Vector3f
-import physics.AxisAlignedBoundingBox
+import physics.AxisAlignedBB
 
 object PhysicsUtil {
 
@@ -11,7 +11,7 @@ object PhysicsUtil {
      * @param boundingBoxB The second bounding box
      * @return The vector from the center of boundingBoxA pointing at the center of boundingBoxB if the two bounding boxes are colliding, null otherwise.
      */
-    def areBoundingBoxesColliding(boundingBoxA: AxisAlignedBoundingBox, boundingBoxB: AxisAlignedBoundingBox): Vector3f = {
+    def areBoundingBoxesColliding(boundingBoxA: AxisAlignedBB, boundingBoxB: AxisAlignedBB): Vector3f = {
 //        if (boundingBoxA.getXMax > boundingBoxB.getXMin && boundingBoxB.getXMax > boundingBoxA.getXMin && boundingBoxA.getYMax > boundingBoxB.getYMin && boundingBoxB.getYMax > boundingBoxA.getYMin && boundingBoxA.getZMax > boundingBoxB.getZMin && boundingBoxB.getZMax > boundingBoxA.getZMin) {
         if (boundingBoxA.isCollidingWith(boundingBoxB)) {
             val (centerAX, centerAY, centerAZ) = boundingBoxA.getCenter
@@ -28,7 +28,7 @@ object PhysicsUtil {
      * @param boundingBoxB The second bounding box
      * @return The vector from the center of boundingBoxA pointing at the center of boundingBoxB if the two bounding boxes are touching or colliding, null otherwise.
      */
-    def areBoundingBoxesTouching(boundingBoxA: AxisAlignedBoundingBox, boundingBoxB: AxisAlignedBoundingBox): Vector3f = {
+    def areBoundingBoxesTouching(boundingBoxA: AxisAlignedBB, boundingBoxB: AxisAlignedBB): Vector3f = {
 //        if (boundingBoxA.getXMax >= boundingBoxB.getXMin && boundingBoxB.getXMax >= boundingBoxA.getXMin && boundingBoxA.getYMax >= boundingBoxB.getYMin && boundingBoxB.getYMax >= boundingBoxA.getYMin && boundingBoxA.getZMax >= boundingBoxB.getZMin && boundingBoxB.getZMax >= boundingBoxA.getZMin) {
         if (boundingBoxA.isTouching(boundingBoxB)) {
             val (centerAX, centerAY, centerAZ) = boundingBoxA.getCenter

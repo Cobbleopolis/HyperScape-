@@ -3,12 +3,12 @@ package entity
 import core.HyperScape
 import org.lwjgl.input.Keyboard
 import org.lwjgl.util.vector.Vector3f
-import physics.AxisAlignedBoundingBox
+import physics.AxisAlignedBB
 import world.World
 
 class EntityPlayable(world: World) extends Entity(world) {
     var camHeight: Float = 1.7f
-    boundingBox = new AxisAlignedBoundingBox(
+    boundingBox = new AxisAlignedBB(
         -0.5f, 0.5f,
         0.00f, 1.8f,
         -0.5f, 0.5f)

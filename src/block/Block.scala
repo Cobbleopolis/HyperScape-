@@ -1,6 +1,6 @@
 package block
 
-import physics.AxisAlignedBoundingBox
+import physics.AxisAlignedBB
 import reference.RenderTypes
 import registry.ModelRegistry
 import render.Model
@@ -19,7 +19,7 @@ class Block {
     var hasCollision: Boolean = true
 
     /** Block's bounding box */
-    var boundingBox = new AxisAlignedBoundingBox
+    var boundingBox = new AxisAlignedBB
 
     /** Render method used by block */
     var renderType: Int = RenderTypes.FULL_BLOCK

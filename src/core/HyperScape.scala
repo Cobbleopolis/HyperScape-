@@ -73,4 +73,6 @@ object HyperScape {
 
     /** The Camera that renders they game */
     val mainCamera = new Camera
+
+    var debug = false
 }

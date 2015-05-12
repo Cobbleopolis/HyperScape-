@@ -1,15 +1,13 @@
 package world
 
-import java.util
-import java.util.List
 
-import _root_.util.{MathUtil, WorldUtil}
+import util.{PhysicsUtil, MathUtil, WorldUtil}
 import block.Block
-import core.HyperScape
+import core.{Debug, HyperScape}
 import entity.Entity
 import org.lwjgl.opengl.GL20
 import org.lwjgl.util.vector.{Matrix4f, Vector3f}
-import physics.AxisAlignedBoundingBox
+import physics.AxisAlignedBB
 import reference.{BlockSides, Blocks, RenderTypes}
 import registry.{BlockRegistry, ShaderRegistry}
 import render.{Model, RenderModel, Vertex}
@@ -230,29 +228,32 @@ abstract class World {
         chunks(index).isDirty = false
     }
 
-    def getCollidingBoundingBoxes(entity: Entity, axisAlignedBoundingBox: AxisAlignedBoundingBox): List = {
-        val boundingBoxes = new util.ArrayList[AxisAlignedBoundingBox]()
-        val xMin: Int = MathUtil.floor_double(axisAlignedBoundingBox.getXMin)
-        val xMax: Int = MathUtil.floor_double(axisAlignedBoundingBox.getXMax + 1.0D)
-        val yMin: Int = MathUtil.floor_double(axisAlignedBoundingBox.getYMin)
-        val yMax: Int = MathUtil.floor_double(axisAlignedBoundingBox.getYMax + 1.0D)
-        val zMin: Int = MathUtil.floor_double(axisAlignedBoundingBox.getZMin)
-        val zMax: Int = MathUtil.floor_double(axisAlignedBoundingBox.getZMax + 1.0D)
+    def getCollidingBoundingBoxes(entity: Entity, boundingBox: AxisAlignedBB): Array[AxisAlignedBB] = {
+        var boundingBoxes = Array[AxisAlignedBB]()
+        val xMin: Int = Math.floor(boundingBox.getXMin).toInt
+        val xMax: Int = Math.floor(boundingBox.getXMax + 1.0f).toInt
+        val yMin: Int = Math.floor(boundingBox.getYMin).toInt
+        val yMax: Int = Math.floor(boundingBox.getYMax + 1.0f).toInt
+        val zMin: Int = Math.floor(boundingBox.getZMin).toInt
+        val zMax: Int = Math.floor(boundingBox.getZMax + 1.0f).toInt
 
-        for (x <- xMin to xMax) {
-            for (y <- yMin to yMax) {
-                for (z <- zMin to zMax) {
+        for (x <- xMin - 1 to xMax) {
+            for (y <- yMin - 1 to yMax) {
+                for (z <- zMin - 1 to zMax) {
                     if (getBlock(x, y, z).hasCollision) {
-                        val bb = getBlock(x, y, z).boundingBox
-                        if (entity.boundingBox.isCollidingWith(bb))
-                            boundingBoxes.add(getBlock(x, y, z).boundingBox)
+                        val bb = getBlock(x, y, z).boundingBox.getTranslatedBoundingBox(x, y, z - 1)
+                        print(boundingBox.isTouching(bb) + " | ")
+                        if(boundingBox.isTouching(bb))
+                            boundingBoxes = boundingBoxes :+ bb
                     }
                 }
             }
         }
 
         //TODO Add detection of entities inside of AABB
-
+        Debug.printVec(xMin, yMin, zMin)
+        Debug.printVec(xMax, yMax, zMax)
+        println(boundingBoxes.length)
         boundingBoxes
     }
 

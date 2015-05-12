@@ -1,26 +1,32 @@
 package physics
 
+import core.Debug
 import org.lwjgl.util.vector.Vector3f
 
-class AxisAlignedBoundingBox(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0f, yMax: Float = 1f, zMin: Float = 0f, zMax: Float = 1f) {
-
+class AxisAlignedBB(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0f, yMax: Float = 1f, zMin: Float = 0f, zMax: Float = 1f) {
+    var minX = xMin
+    var maxX = xMax
+    var minY = yMin
+    var maxY = yMax
+    var minZ = zMin
+    var maxZ = zMax
     /** Returns the xMin value of the bounding box. */
-    def getXMin: Float = xMin
+    def getXMin: Float = minX
 
     /** Returns the xMax value of the bounding box. */
-    def getXMax: Float = xMax
+    def getXMax: Float = maxX
 
     /** Returns the yMin value of the bounding box. */
-    def getYMin: Float = yMin
+    def getYMin: Float = minY
 
     /** Returns the yMax value of the bounding box. */
-    def getYMax: Float = yMax
+    def getYMax: Float = maxY
 
     /** Returns the zMin value of the bounding box. */
-    def getZMin: Float = zMin
+    def getZMin: Float = minZ
 
     /** Returns the zMax value of the bounding box. */
-    def getZMax: Float = zMax
+    def getZMax: Float = maxZ
 
     /**
      * Returns a copy of the bounding box translated by the coordinates
@@ -29,8 +35,8 @@ class AxisAlignedBoundingBox(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0
      * @param z The z value of the translation
      * @return The translated bounding box
      */
-    def getTranslatedBoundingBox(x: Float, y: Float, z: Float): AxisAlignedBoundingBox = {
-        new AxisAlignedBoundingBox(xMin + x, xMax + x, yMin + y, yMax + y, zMin + z, zMax + z)
+    def getTranslatedBoundingBox(x: Float, y: Float, z: Float): AxisAlignedBB = {
+        new AxisAlignedBB(minX + x, maxX + x, minY + y, maxY + y, minZ + z, maxZ + z)
     }
 
     /**
@@ -38,12 +44,12 @@ class AxisAlignedBoundingBox(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0
      * @param xyz A vector with the x, y, z values of the translation
      * @return The translated bounding box
      */
-    def getTranslatedBoundingBox(xyz: Vector3f): AxisAlignedBoundingBox = {
-        new AxisAlignedBoundingBox(xMin + xyz.getX, xMax + xyz.getX, yMin + xyz.getY, yMax + xyz.getY, zMin + xyz.getZ, zMax + xyz.getZ)
+    def getTranslatedBoundingBox(xyz: Vector3f): AxisAlignedBB = {
+        getTranslatedBoundingBox(xyz.getX, xyz.getY, xyz.getZ)
     }
 
     def getCenter: (Float, Float, Float) = {
-        ((xMin + xMax) / 2, (yMin + yMax) / 2, (zMin + zMax) / 2)
+        ((minX + maxX) / 2, (minY + maxY) / 2, (minZ + maxZ) / 2)
     }
 
     /**
@@ -51,7 +57,7 @@ class AxisAlignedBoundingBox(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0
      * @param otherBoundingBox The other bounding box to check collision with
      * @return If the bounding box is colliding with the passed bounding box
      */
-    def isCollidingWith(otherBoundingBox: AxisAlignedBoundingBox): Boolean = {
+    def isCollidingWith(otherBoundingBox: AxisAlignedBB): Boolean = {
         getXMax > otherBoundingBox.getXMin &&
                 otherBoundingBox.getXMax > getXMin &&
                 getYMax > otherBoundingBox.getYMin &&
@@ -65,7 +71,7 @@ class AxisAlignedBoundingBox(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0
      * @param otherBoundingBox The other bounding box to check collision with
      * @return If the bounding box is touching or colliding with the passed bounding box
      */
-    def isTouching(otherBoundingBox: AxisAlignedBoundingBox): Boolean = {
+    def isTouching(otherBoundingBox: AxisAlignedBB): Boolean = {
         getXMax >= otherBoundingBox.getXMin &&
                 otherBoundingBox.getXMax >= getXMin &&
                 getYMax >= otherBoundingBox.getYMin &&
@@ -85,20 +91,39 @@ class AxisAlignedBoundingBox(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0
     }
 
     def translate(x: Float, y: Float, z: Float): Unit = {
-        xMin += x
-        xMax += x
-        yMin += y
-        yMax += y
-        zMin += z
-        zMax += z
+        minX += x
+        maxX += x
+        minY += y
+        maxY += y
+        minZ += z
+        maxZ += z
+    }
+
+    def getOverlap(bb: AxisAlignedBB): (Float, Float, Float) = {
+        if (isCollidingWith(bb)) {
+//            val (cX, cY, cZ) = getCenter
+//            val (oX, oY, oZ) = bb.getCenter
+            val outX = Math.max(Math.abs(getXMax - bb.getXMin), Math.abs(bb.getXMax - getXMin))
+            val outY = Math.max(Math.abs(getYMax - bb.getZMin), Math.abs(bb.getYMax - getXMin))
+            val outZ = Math.max(Math.abs(getZMax - bb.getYMin), Math.abs(bb.getZMax - getXMin))
+            Debug.printlnVec(outX, outY, outZ)
+            (outX, outY, outZ)
+        } else {
+            (0, 0, 0)
+        }
+    }
+
+
+    def getOffsets(boundingBox: AxisAlignedBB, offset: Float = 0.0f): (Float, Float, Float) = {
+        (getXOffset(boundingBox, offset), getYOffset(boundingBox, offset), getZOffset(boundingBox, offset))
     }
 
     /**
      * if instance and the argument bounding boxes overlap in the Y and Z dimensions, calculate the offset between them
-     * in the X dimension.  return var2 if the bounding boxes do not overlap or if var2 is closer to 0 then the
-     * calculated offset.  Otherwise return the calculated offset.
+     * in the X dimension.
+     * @return var2 if the bounding boxes do not overlap or if var2 is closer to 0 then the calculated offset. Otherwise return the calculated offset.
      */
-    def getXOffset(boundingBox: AxisAlignedBoundingBox, offset: Float): Float = {
+    def getXOffset(boundingBox: AxisAlignedBB, offset: Float = 0.0f): Float = {
         var out = offset
         if (boundingBox.getYMax > getYMin && boundingBox.getYMin < getYMax) {
             if (boundingBox.getZMax > getZMin && boundingBox.getZMin < getZMax) {
@@ -116,12 +141,10 @@ class AxisAlignedBoundingBox(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0
                     }
                 }
                 out
-            }
-            else {
+            } else {
                 out
             }
-        }
-        else {
+        } else {
             out
         }
     }
@@ -131,7 +154,7 @@ class AxisAlignedBoundingBox(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0
      * in the Y dimension.  return var2 if the bounding boxes do not overlap or if var2 is closer to 0 then the
      * calculated offset.  Otherwise return the calculated offset.
      */
-    def getYOffset(boundingBox: AxisAlignedBoundingBox, offset: Float): Float = {
+    def getYOffset(boundingBox: AxisAlignedBB, offset: Float = 0.0f): Float = {
         var out = offset
         if (boundingBox.getXMax > getXMin && boundingBox.getXMin < getXMax) {
             if (boundingBox.getZMax > getZMin && boundingBox.getZMin < getZMax) {
@@ -149,12 +172,10 @@ class AxisAlignedBoundingBox(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0
                     }
                 }
                 out
-            }
-            else {
+            } else {
                 out
             }
-        }
-        else {
+        } else {
             out
         }
     }
@@ -164,7 +185,7 @@ class AxisAlignedBoundingBox(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0
      * in the Z dimension.  return var2 if the bounding boxes do not overlap or if var2 is closer to 0 then the
      * calculated offset.  Otherwise return the calculated offset.
      */
-    def getZOffset(boundingBox: AxisAlignedBoundingBox, offset: Float): Float = {
+    def getZOffset(boundingBox: AxisAlignedBB, offset: Float = 0.0f): Float = {
         var out = offset
         if (boundingBox.getXMax > getXMin && boundingBox.getXMin < getXMax) {
             if (boundingBox.getYMax > getYMin && boundingBox.getYMin < getYMax) {
@@ -182,21 +203,19 @@ class AxisAlignedBoundingBox(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0
                     }
                 }
                 out
-            }
-            else {
+            } else {
                 out
             }
-        }
-        else {
+        } else {
             out
         }
     }
 
-    def copy: AxisAlignedBoundingBox = {
-        new AxisAlignedBoundingBox(xMin, xMax, yMin, yMax, zMin, zMax)
+    def copy: AxisAlignedBB = {
+        new AxisAlignedBB(minX, maxX, minY, maxY, minZ, maxZ)
     }
 
     override def toString: String = {
-        "[" + xMin + ", " + xMax + ", " + yMin + ", " + yMax + ", " + zMin + ", " + zMax + "]"
+        "[" + minX + ", " + maxX + ", " + minY + ", " + maxY + ", " + minZ + ", " + maxZ + "]"
     }
 }
