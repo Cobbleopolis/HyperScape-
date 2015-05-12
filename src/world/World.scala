@@ -1,14 +1,18 @@
 package world
 
+import java.util
+import java.util.List
+
+import _root_.util.{MathUtil, WorldUtil}
 import block.Block
 import core.HyperScape
 import entity.Entity
 import org.lwjgl.opengl.GL20
 import org.lwjgl.util.vector.{Matrix4f, Vector3f}
+import physics.AxisAlignedBoundingBox
 import reference.{BlockSides, Blocks, RenderTypes}
 import registry.{BlockRegistry, ShaderRegistry}
 import render.{Model, RenderModel, Vertex}
-import util.WorldUtil
 
 import scala.collection.mutable
 
@@ -40,11 +44,11 @@ abstract class World {
      * @return Block at x, y, z
      */
     def getBlock(x: Int, y: Int, z: Int): Block = {
-            chunks(WorldUtil.getChunkIndexFromXZ(x, z)).getBlock(x & 15, y, z & 15)
+        chunks(WorldUtil.getChunkIndexFromXZ(x, z)).getBlock(x & 15, y, z & 15)
     }
 
     def blockExists(x: Int, y: Int, z: Int): Boolean = {
-        if(chunks.contains(WorldUtil.getChunkIndexFromXZ(x, z))){
+        if (chunks.contains(WorldUtil.getChunkIndexFromXZ(x, z))) {
             getBlock(x, y, z) != Blocks.air
         } else {
             false
@@ -161,8 +165,8 @@ abstract class World {
                 val (x, y, z) = chunk.getBlockXYZFromIndex(i)
                 val modelVerts = block.gameModel.getVertices.clone()
                 var newVerts = Array[Float]()
-//                x += (chunk.getXCoord * 16)
-//                z += (chunk.getZCoord * 16)
+                //                x += (chunk.getXCoord * 16)
+                //                z += (chunk.getZCoord * 16)
                 if (block.renderType != RenderTypes.DOES_NOT_RENDER && block.renderType != RenderTypes.NON_FULL_BLOCK) {
                     val surroundingBlocks = WorldUtil.getSidesForRender(this, x + (chunk.getXCoord * 16), y, z + (chunk.getZCoord * 16))
                     if (surroundingBlocks.contains(BlockSides.TOP)) {
@@ -225,6 +229,33 @@ abstract class World {
         chunks(index).chunkModel = newChunkModel
         chunks(index).isDirty = false
     }
+
+    def getCollidingBoundingBoxes(entity: Entity, axisAlignedBoundingBox: AxisAlignedBoundingBox): List = {
+        val boundingBoxes = new util.ArrayList[AxisAlignedBoundingBox]()
+        val xMin: Int = MathUtil.floor_double(axisAlignedBoundingBox.getXMin)
+        val xMax: Int = MathUtil.floor_double(axisAlignedBoundingBox.getXMax + 1.0D)
+        val yMin: Int = MathUtil.floor_double(axisAlignedBoundingBox.getYMin)
+        val yMax: Int = MathUtil.floor_double(axisAlignedBoundingBox.getYMax + 1.0D)
+        val zMin: Int = MathUtil.floor_double(axisAlignedBoundingBox.getZMin)
+        val zMax: Int = MathUtil.floor_double(axisAlignedBoundingBox.getZMax + 1.0D)
+
+        for (x <- xMin to xMax) {
+            for (y <- yMin to yMax) {
+                for (z <- zMin to zMax) {
+                    if (getBlock(x, y, z).hasCollision) {
+                        val bb = getBlock(x, y, z).boundingBox
+                        if (entity.boundingBox.isCollidingWith(bb))
+                            boundingBoxes.add(getBlock(x, y, z).boundingBox)
+                    }
+                }
+            }
+        }
+
+        //TODO Add detection of entities inside of AABB
+
+        boundingBoxes
+    }
+
 
     /**
      * Destroies the world

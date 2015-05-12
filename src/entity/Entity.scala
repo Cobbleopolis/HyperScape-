@@ -2,11 +2,9 @@ package entity
 
 import org.lwjgl.util.vector.Vector3f
 import physics.AxisAlignedBoundingBox
-import reference.Blocks
-import util.PhysicsUtil
 import world.World
 
-class Entity(world: World) {
+class Entity(worldObj: World) {
 
     /** A vector that is used to represent the entities location (x, y, z) */
     var position: Vector3f = new Vector3f
@@ -17,7 +15,7 @@ class Entity(world: World) {
     /** A vector representing the entities velocity */
     var velocity: Vector3f = new Vector3f
 
-    /** Sets if the entity has collision */
+    /** Sets if the entity should check for collision */
     var hasCollision: Boolean = true
 
     /** Sets if the entity is effected by gravity */
@@ -26,64 +24,84 @@ class Entity(world: World) {
     /** The entities bounding box */
     var boundingBox: AxisAlignedBoundingBox = new AxisAlignedBoundingBox
 
-    var isCollidingDown: Boolean = false
+    /** true after entity is colliding on the ground */
+    var onGround: Boolean = false
+
+    var isSneaking: Boolean = false
 
     /**
      * Ticks the entity
      */
     def tick(): Unit = {
         //        println(position.getX + " " + position.getY + " " + position.getZ)
-        if (!isFlying) velocity.setY(velocity.getY + world.grav)
-        position.translate(velocity.getX, velocity.getY, velocity.getZ)
-        applyCollision()
-//        println("Final: " + position.toString + " | " + velocity.toString)
-//        println("---------------------------------------------------------------------------------")
+        if (!isFlying) velocity.setY(velocity.getY + worldObj.grav)
+        moveEntity(velocity)
+        //        applyCollision()
+        //        position.translate(moveVec.getX, moveVec.getY, moveVec.getZ)
+        //        moveVec.set(0, 0, 0)
+        //        println("Final: " + position.toString + " | " + velocity.toString)
+        //        println("---------------------------------------------------------------------------------")
     }
 
     /**
      * Checks if the entity is colliding with anything and changes the entities velocity and position accordingly.
      */
     def applyCollision(): Unit = {
-        var translatedBB = boundingBox.getTranslatedBoundingBox(position)
-        val startVec = new Vector3f(Math.floor(translatedBB.getXMin).toFloat, Math.floor(translatedBB.getYMin).toFloat, Math.floor(translatedBB.getZMin).toFloat)
-        val endVec = new Vector3f(Math.floor(translatedBB.getXMax).toFloat + 1f, Math.floor(translatedBB.getYMax + 1f).toFloat, Math.floor(translatedBB.getZMax + 1).toFloat)
+        //        var nextPos: Vector3f = MathUtil.addVectors(position, MathUtil.addVectors(moveVec, velocity))
+        //        var translatedBB: AxisAlignedBoundingBox = boundingBox.getTranslatedBoundingBox(nextPos)
 
-        isCollidingDown = false
+        //        val startVec = new Vector3f(Math.floor(translatedBB.getXMin).toFloat, Math.floor(translatedBB.getYMin).toFloat, Math.floor(translatedBB.getZMin).toFloat)
+        //        val endVec = new Vector3f(Math.floor(translatedBB.getXMax).toFloat + 1f, Math.floor(translatedBB.getYMax + 1f).toFloat, Math.floor(translatedBB.getZMax + 1).toFloat)
 
-        for (x <- startVec.getX.toInt to endVec.getX.toInt) {
-            for (y <- startVec.getY.toInt to endVec.getY.toInt) {
-                for (z <- startVec.getZ.toInt to endVec.getZ.toInt) {
-                    if (world.getBlock(x, y, z).hasCollision) {
-                        val bb = world.getBlock(x, y, z).boundingBox.getTranslatedBoundingBox(x, y, z - 1)
-                        val vec = PhysicsUtil.areBoundingBoxesColliding(translatedBB, bb)
-                        if(vec != null){
-                            // North (+x)
-                            if(x > translatedBB.getXMax - 1 && world.getBlock(x - 1, y, z) == Blocks.air) {
-                                println("North")
-                                velocity.setX(0)
-                                position.setY(bb.getXMin - boundingBox.getXMax)
-                                translatedBB = boundingBox.getTranslatedBoundingBox(position)
-                                //                                println(position.toString + " | " + velocity.toString + " || " + translatedBB.toString + " | " + bb.toString + " | (" + x + ", " + y + ", " + z + ")")
-                            }
-                            // Bottom (-y)
-                            if(y <= translatedBB.getYMin && world.getBlock(x, y + 1, z) == Blocks.air) {
-                                velocity.setY(0)
-                                position.setY(bb.getYMax)
-                                isCollidingDown = true
-                                translatedBB = boundingBox.getTranslatedBoundingBox(position)
-                                //                                println(position.toString + " | " + velocity.toString + " || " + translatedBB.toString + " | " + bb.toString + " | (" + x + ", " + y + ", " + z + ")")
-                            }
-                            // Top (+y)
-                            if(y >= translatedBB.getYMax - 1 && world.getBlock(x, y - 1, z) == Blocks.air) {
-                                velocity.setY(0)
-                                position.setY(bb.getYMin - (boundingBox.getYMax - boundingBox.getXMin))
-                                translatedBB = boundingBox.getTranslatedBoundingBox(position)
-                                //                                println(position.toString + " | " + velocity.toString + " || " + translatedBB.toString + " | " + bb.toString + " | (" + x + ", " + y + ", " + z + ")")
-                            }
-                        }
+        onGround = false
+
+
+    }
+
+    def moveEntity(vec: Vector3f): Unit = {
+        moveEntity(vec.getX, vec.getY, vec.getX)
+    }
+
+    // Entity moveEntity 586 | 655
+    def moveEntity(x: Float, y: Float, z: Float): Unit = {
+        var posX = x
+        var posY = y
+        var posZ = z
+        if (hasCollision) {
+            var x1 = x
+            var y1 = y
+            var z1 = z
+            var axisalignedbb = boundingBox.copy
+            val flag = onGround && isSneaking && this.isInstanceOf[EntityPlayable]
+
+            if (flag) {
+                var d = 0.05
+
+                while (posX != 0 && worldObj.getCollidingBoundingBoxes(this, boundingBox.getTranslatedBoundingBox(posX, -1, 0)).isEmpty) {
+                    if (posX < d && posX >= -d) {
+                        posX = 0
+                    } else if (posX > 0) {
+                        posX -= d
+                    } else {
+                        posX += d
                     }
+                    x1 = posX
+                }
+
+                while (posZ != 0 && worldObj.getCollidingBoundingBoxes(this, boundingBox.getTranslatedBoundingBox(0, -1, posZ)).isEmpty) {
+                    if (posZ < d && posZ >= -d) {
+                        posZ = 0
+                    } else if (posZ > 0) {
+                        posZ -= d
+                    } else {
+                        posZ += d
+                    }
+                    z1 = posZ
                 }
             }
+        } else {
+            boundingBox.translate(x, y, z)
+            position.translate(x, y, z)
         }
     }
 
@@ -100,7 +118,7 @@ class Entity(world: World) {
         val nextTranslatedBB = boundingBox.getTranslatedBoundingBox(position.getX + direction.getX, position.getY + direction.getY, position.getZ + direction.getZ)
         var y = -1f
         //        println(translatedBB.toString)
-        isCollidingDown = false
+        onGround = false
 
         //        for (x <- Math.floor(nextTranslatedBB.getXMin).toInt to Math.ceil(nextTranslatedBB.getXMax).toInt) {
         //            for (z <- Math.floor(nextTranslatedBB.getZMin).toInt to Math.ceil(nextTranslatedBB.getZMax).toInt) {
@@ -119,9 +137,9 @@ class Entity(world: World) {
         for (x <- Math.floor(nextTranslatedBB.getXMin).toInt to Math.ceil(nextTranslatedBB.getXMax).toInt) {
             for (z <- Math.floor(nextTranslatedBB.getZMin).toInt to Math.ceil(nextTranslatedBB.getZMax).toInt) {
 
-                val currBB = world.getBlock(x, currPosY - 1, z).boundingBox.getTranslatedBoundingBox(x, currPosY - 1, z - 1)
-                val nextBB = world.getBlock(x, nextPosY, z).boundingBox.getTranslatedBoundingBox(x, nextPosY, z - 1)
-                if (world.getBlock(x, nextPosY, z).hasCollision) {
+                val currBB = worldObj.getBlock(x, currPosY - 1, z).boundingBox.getTranslatedBoundingBox(x, currPosY - 1, z - 1)
+                val nextBB = worldObj.getBlock(x, nextPosY, z).boundingBox.getTranslatedBoundingBox(x, nextPosY, z - 1)
+                if (worldObj.getBlock(x, nextPosY, z).hasCollision) {
 
                     //                    println(bb == null)
 
@@ -131,10 +149,10 @@ class Entity(world: World) {
                     }
 
                 }
-                if (world.getBlock(x, currPosY - 1, z).hasCollision) {
+                if (worldObj.getBlock(x, currPosY - 1, z).hasCollision) {
                     y = currBB.getYMax
                     if (nextTranslatedBB.isTouching(currBB))
-                        isCollidingDown = true
+                        onGround = true
                 }
             }
         }
@@ -142,8 +160,8 @@ class Entity(world: World) {
         //North Collision (+x)
         for (y <- nextPosY + 1 to Math.ceil(nextTranslatedBB.getYMax).toInt) {
             for (z <- nextPosZ to Math.ceil(nextTranslatedBB.getZMax).toInt) {
-                if (world.getBlock(nextPosX, y, nextPosZ + 1).hasCollision) {
-                    val bb = world.getBlock(nextPosX, y, nextPosZ + 1).boundingBox.getTranslatedBoundingBox(nextPosX, y, nextPosZ)
+                if (worldObj.getBlock(nextPosX, y, nextPosZ + 1).hasCollision) {
+                    val bb = worldObj.getBlock(nextPosX, y, nextPosZ + 1).boundingBox.getTranslatedBoundingBox(nextPosX, y, nextPosZ)
                     if (nextTranslatedBB.isTouching(bb) && direction.getX > 0) {
                         newVector.setX(currentTranslatedBB.getXMax - bb.getXMin)
                     }
@@ -162,7 +180,7 @@ class Entity(world: World) {
      * @param z Amount to translate in the z
      */
     def translate(x: Float, y: Float, z: Float): Unit = {
-        position.translate(x, y, z)
+        moveEntity(x, y, z)
     }
 
     /**
@@ -200,7 +218,7 @@ class Entity(world: World) {
         direction.translate(x * Math.sin(rotation.getY).toFloat, y, x * Math.cos(rotation.getY).toFloat)
         direction.translate(z * -Math.cos(rotation.getY).toFloat, 0, z * Math.sin(rotation.getY).toFloat)
         //        direction = applyCollision(direction, "Translate")
-        position.translate(direction.getX, direction.getY, direction.getZ)
+        moveEntity(direction)
     }
 
     /**

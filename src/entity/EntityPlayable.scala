@@ -16,7 +16,7 @@ class EntityPlayable(world: World) extends Entity(world) {
     val shaders = Array("terrain", "debug", "Panic! at the Disco", "plaid")
 
     def parseInput(): Unit = {
-        val speed: Float = .125f
+        val speed: Float = 0.0625f
         while (Keyboard.next()) {
             if (Keyboard.getEventKeyState) {
                 if (Keyboard.getEventKey == Keyboard.KEY_F3) {
@@ -53,7 +53,7 @@ class EntityPlayable(world: World) extends Entity(world) {
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
 //            println(isCollidingDown)
-            if (isCollidingDown) {
+            if (onGround) {
 //                println("Jump")
                 addToSpeedInDirectionFacing(0, .35f, 0)
             } else if (isFlying) {

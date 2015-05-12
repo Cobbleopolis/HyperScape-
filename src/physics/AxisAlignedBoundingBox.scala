@@ -74,6 +74,128 @@ class AxisAlignedBoundingBox(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0
                 otherBoundingBox.getZMax >= getZMin
     }
 
+    def isVecInBoundingBox(vec: Vector3f): Boolean = {
+        vec.getX > getXMin && vec.getX < getXMax &&
+                vec.getY > getYMin && vec.getY < getYMax &&
+                vec.getZ > getZMin && vec.getZ < getZMax
+    }
+
+    def translate(vec: Vector3f): Unit = {
+        translate(vec.getX, vec.getY, vec.getZ)
+    }
+
+    def translate(x: Float, y: Float, z: Float): Unit = {
+        xMin += x
+        xMax += x
+        yMin += y
+        yMax += y
+        zMin += z
+        zMax += z
+    }
+
+    /**
+     * if instance and the argument bounding boxes overlap in the Y and Z dimensions, calculate the offset between them
+     * in the X dimension.  return var2 if the bounding boxes do not overlap or if var2 is closer to 0 then the
+     * calculated offset.  Otherwise return the calculated offset.
+     */
+    def getXOffset(boundingBox: AxisAlignedBoundingBox, offset: Float): Float = {
+        var out = offset
+        if (boundingBox.getYMax > getYMin && boundingBox.getYMin < getYMax) {
+            if (boundingBox.getZMax > getZMin && boundingBox.getZMin < getZMax) {
+                var d1: Float = .0f
+                if (offset > 0.0f && boundingBox.getXMax <= getXMin) {
+                    d1 = getXMin - boundingBox.getXMax
+                    if (d1 < offset) {
+                        out = d1
+                    }
+                }
+                if (offset < 0.0f && boundingBox.getXMin >= getXMax) {
+                    d1 = getXMax - boundingBox.getXMin
+                    if (d1 > offset) {
+                        out = d1
+                    }
+                }
+                out
+            }
+            else {
+                out
+            }
+        }
+        else {
+            out
+        }
+    }
+
+    /**
+     * if instance and the argument bounding boxes overlap in the X and Z dimensions, calculate the offset between them
+     * in the Y dimension.  return var2 if the bounding boxes do not overlap or if var2 is closer to 0 then the
+     * calculated offset.  Otherwise return the calculated offset.
+     */
+    def getYOffset(boundingBox: AxisAlignedBoundingBox, offset: Float): Float = {
+        var out = offset
+        if (boundingBox.getXMax > getXMin && boundingBox.getXMin < getXMax) {
+            if (boundingBox.getZMax > getZMin && boundingBox.getZMin < getZMax) {
+                var d1: Float = .0f
+                if (offset > 0.0D && boundingBox.getYMax <= getYMin) {
+                    d1 = getYMin - boundingBox.getYMax
+                    if (d1 < offset) {
+                        out = d1
+                    }
+                }
+                if (offset < 0.0D && boundingBox.getYMin >= getYMax) {
+                    d1 = getYMax - boundingBox.getYMin
+                    if (d1 > offset) {
+                        out = d1
+                    }
+                }
+                out
+            }
+            else {
+                out
+            }
+        }
+        else {
+            out
+        }
+    }
+
+    /**
+     * if instance and the argument bounding boxes overlap in the Y and X dimensions, calculate the offset between them
+     * in the Z dimension.  return var2 if the bounding boxes do not overlap or if var2 is closer to 0 then the
+     * calculated offset.  Otherwise return the calculated offset.
+     */
+    def getZOffset(boundingBox: AxisAlignedBoundingBox, offset: Float): Float = {
+        var out = offset
+        if (boundingBox.getXMax > getXMin && boundingBox.getXMin < getXMax) {
+            if (boundingBox.getYMax > getYMin && boundingBox.getYMin < getYMax) {
+                var d1: Float = .0f
+                if (offset > 0.0f && boundingBox.getZMax <= getZMin) {
+                    d1 = getZMin - boundingBox.getZMax
+                    if (d1 < offset) {
+                        out = d1
+                    }
+                }
+                if (offset < 0.0f && boundingBox.getZMin >= getZMax) {
+                    d1 = getZMax - boundingBox.getZMin
+                    if (d1 > offset) {
+                        out = d1
+                    }
+                }
+                out
+            }
+            else {
+                out
+            }
+        }
+        else {
+            out
+        }
+    }
+
+    def copy: AxisAlignedBoundingBox = {
+        new AxisAlignedBoundingBox(xMin, xMax, yMin, yMax, zMin, zMax)
+    }
+
     override def toString: String = {
         "[" + xMin + ", " + xMax + ", " + yMin + ", " + yMax + ", " + zMin + ", " + zMax + "]"
     }

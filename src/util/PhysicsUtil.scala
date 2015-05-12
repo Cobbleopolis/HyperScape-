@@ -38,7 +38,12 @@ object PhysicsUtil {
             null
         }
     }
-    
+
+    /**
+     * Finds the largest component from a vector
+     * @param vec The vector to parse
+     * @return The largest component from a vector
+     */
     def largestVectorComponent(vec: Vector3f): Float = {
         var largest: Float = 0
         if(Math.abs(vec.getX) > Math.abs(largest)){
@@ -53,6 +58,11 @@ object PhysicsUtil {
         largest
     }
 
+    /**
+     * Finds the smallest component from a vector
+     * @param vec The vector to parse
+     * @return The smallest component from a vector
+     */
     def smallestVectorComponent(vec: Vector3f): Float = {
         var smallest: Float = 0
         if(Math.abs(vec.getX) < Math.abs(smallest)){
