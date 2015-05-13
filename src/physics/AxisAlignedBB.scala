@@ -10,6 +10,7 @@ class AxisAlignedBB(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0f, yMax: 
     var maxY = yMax
     var minZ = zMin
     var maxZ = zMax
+
     /** Returns the xMin value of the bounding box. */
     def getXMin: Float = minX
 
@@ -54,16 +55,13 @@ class AxisAlignedBB(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0f, yMax: 
 
     /**
      * Checks if a the bounding box is colliding with the passed bounding box. Both bounding boxes should be translated for accurate detection.
-     * @param otherBoundingBox The other bounding box to check collision with
+     * @param bounds The other bounding box to check collision with
      * @return If the bounding box is colliding with the passed bounding box
      */
-    def isCollidingWith(otherBoundingBox: AxisAlignedBB): Boolean = {
-        getXMax > otherBoundingBox.getXMin &&
-                otherBoundingBox.getXMax > getXMin &&
-                getYMax > otherBoundingBox.getYMin &&
-                otherBoundingBox.getYMax > getYMin &&
-                getZMax > otherBoundingBox.getZMin &&
-                otherBoundingBox.getZMax > getZMin
+    def intersects(bounds: AxisAlignedBB): Boolean = {
+        bounds.maxX > this.minX && bounds.minX < this.maxX &&
+                bounds.maxY > this.minY && bounds.minY < this.maxY &&
+                bounds.maxZ > this.minZ && bounds.minZ < this.maxZ
     }
 
     /**
@@ -100,9 +98,9 @@ class AxisAlignedBB(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0f, yMax: 
     }
 
     def getOverlap(bb: AxisAlignedBB): (Float, Float, Float) = {
-        if (isCollidingWith(bb)) {
-//            val (cX, cY, cZ) = getCenter
-//            val (oX, oY, oZ) = bb.getCenter
+        if (intersects(bb)) {
+            //            val (cX, cY, cZ) = getCenter
+            //            val (oX, oY, oZ) = bb.getCenter
             val outX = Math.max(Math.abs(getXMax - bb.getXMin), Math.abs(bb.getXMax - getXMin))
             val outY = Math.max(Math.abs(getYMax - bb.getZMin), Math.abs(bb.getYMax - getXMin))
             val outZ = Math.max(Math.abs(getZMax - bb.getYMin), Math.abs(bb.getZMax - getXMin))
@@ -118,35 +116,30 @@ class AxisAlignedBB(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0f, yMax: 
         (getXOffset(boundingBox, offset), getYOffset(boundingBox, offset), getZOffset(boundingBox, offset))
     }
 
+    //TODO http://z80.ukl.me/mc/sim.js
+
     /**
      * if instance and the argument bounding boxes overlap in the Y and Z dimensions, calculate the offset between them
      * in the X dimension.
      * @return var2 if the bounding boxes do not overlap or if var2 is closer to 0 then the calculated offset. Otherwise return the calculated offset.
      */
-    def getXOffset(boundingBox: AxisAlignedBB, offset: Float = 0.0f): Float = {
-        var out = offset
-        if (boundingBox.getYMax > getYMin && boundingBox.getYMin < getYMax) {
-            if (boundingBox.getZMax > getZMin && boundingBox.getZMin < getZMax) {
-                var d1: Float = .0f
-                if (offset > 0.0f && boundingBox.getXMax <= getXMin) {
-                    d1 = getXMin - boundingBox.getXMax
-                    if (d1 < offset) {
-                        out = d1
-                    }
-                }
-                if (offset < 0.0f && boundingBox.getXMin >= getXMax) {
-                    d1 = getXMax - boundingBox.getXMin
-                    if (d1 > offset) {
-                        out = d1
-                    }
-                }
-                out
-            } else {
-                out
+    def getXOffset(bounds: AxisAlignedBB, curOff: Float = 0.0f): Float = {
+        var currOff = curOff
+        var newOff = 0f
+        if (bounds.maxY > minY && bounds.minY < maxY && bounds.maxZ > minZ && bounds.minX > maxZ) {
+            if (currOff > 0 && bounds.maxX <= maxX) {
+                newOff = minX - bounds.maxX
+                if (newOff < currOff)
+                    currOff = newOff
             }
-        } else {
-            out
+            if (currOff < 0 && bounds.minX >= bounds.maxX) {
+                newOff = maxX - bounds.minX
+                if (newOff > currOff) {
+                    currOff = newOff
+                }
+            }
         }
+        currOff
     }
 
     /**

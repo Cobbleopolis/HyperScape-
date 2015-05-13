@@ -1,6 +1,5 @@
 package entity
 
-import core.Debug
 import org.lwjgl.util.vector.Vector3f
 import physics.AxisAlignedBB
 import world.World
@@ -30,12 +29,14 @@ class Entity(worldObj: World) {
 
     var isSneaking: Boolean = false
 
+    var moveSpeed: Float = .25f
+
     /**
      * Ticks the entity
      */
     def tick(): Unit = {
         //        println(position.getX + " " + position.getY + " " + position.getZ)
-        if (!isFlying) velocity.setY(velocity.getY + worldObj.grav)
+        //        if (!isFlying) velocity.setY(velocity.getY + worldObj.grav)
         moveEntity(velocity)
         //        applyCollision()
         //        position.translate(moveVec.getX, moveVec.getY, moveVec.getZ)
@@ -60,52 +61,13 @@ class Entity(worldObj: World) {
     }
 
     def moveEntity(vec: Vector3f): Unit = {
-        moveEntity(vec.getX, vec.getY, vec.getX)
+        moveEntity(vec.getX, vec.getY, vec.getZ)
     }
 
-    // Entity moveEntity 586 | 655
     def moveEntity(x: Float, y: Float, z: Float): Unit = {
-        var posX = x
-        var posY = y
-        var posZ = z
-        val xMin: Int = Math.floor(boundingBox.getXMin).toInt
-        val xMax: Int = Math.floor(boundingBox.getXMax + 1.0f).toInt
-        val yMin: Int = Math.floor(boundingBox.getYMin).toInt
-        val yMax: Int = Math.floor(boundingBox.getYMax + 1.0f).toInt
-        val zMin: Int = Math.floor(boundingBox.getZMin).toInt
-        val zMax: Int = Math.floor(boundingBox.getZMax + 1.0f).toInt
-        //        val boundingBoxes = worldObj.getCollidingBoundingBoxes(this, boundingBox)
-        for (xLoc <- xMin to xMax) {
-            for (yLoc <- yMin to yMax) {
-                for (zLoc <- zMin to zMax) {
-                    if (worldObj.getBlock(xLoc, yLoc, zLoc).hasCollision) {
-                        val bb = worldObj.getBlock(xLoc, yLoc, zLoc).boundingBox.getTranslatedBoundingBox(xLoc, yLoc, zLoc)
-                        if (boundingBox.isTouching(bb)) {
-                            println(bb.toString)
-                            val (oX, oY, oZ) = boundingBox.getOverlap(bb)
-                            posX -= oX
-                            posY -= oY
-                            posZ -= oZ
-                            if(oX != 0){
-                                velocity.setX(0)
-                            }
-                            if(oY != 0){
-                                velocity.setY(0)
-                            }
-                            if(oZ != 0){
-                                velocity.setZ(0)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        Debug.printVec(xMin, yMin, zMin)
-        Debug.printVec(xMax, yMax, zMax)
-        position.translate(posX, posY, posZ)
-        boundingBox.translate(posX, posY, posZ)
-        Debug.printVec(position)
-        Debug.debugPrintln(boundingBox)
+        var (movX, movY, movZ) = (x, y, z)
+        position.translate(movX, movY, movZ)
+        boundingBox.translate(movX, movY, movZ)
     }
 
     def oldCollision(direction: Vector3f): Vector3f = {

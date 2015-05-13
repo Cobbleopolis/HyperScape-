@@ -13,7 +13,7 @@ object PhysicsUtil {
      */
     def areBoundingBoxesColliding(boundingBoxA: AxisAlignedBB, boundingBoxB: AxisAlignedBB): Vector3f = {
 //        if (boundingBoxA.getXMax > boundingBoxB.getXMin && boundingBoxB.getXMax > boundingBoxA.getXMin && boundingBoxA.getYMax > boundingBoxB.getYMin && boundingBoxB.getYMax > boundingBoxA.getYMin && boundingBoxA.getZMax > boundingBoxB.getZMin && boundingBoxB.getZMax > boundingBoxA.getZMin) {
-        if (boundingBoxA.isCollidingWith(boundingBoxB)) {
+        if (boundingBoxA.intersects(boundingBoxB)) {
             val (centerAX, centerAY, centerAZ) = boundingBoxA.getCenter
             val (centerBX, centerBY, centerBZ) = boundingBoxB.getCenter
             new Vector3f(centerAX - centerBX, centerAY - centerBY, centerAZ - centerBZ)
