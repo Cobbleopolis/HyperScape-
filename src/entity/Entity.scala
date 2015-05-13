@@ -43,7 +43,7 @@ class Entity(worldObj: World) {
         Debug.debugPrint(" | ")
         Debug.debugPrintln(boundingBox.toString)
         moveEntity(velocity)
-        onGround = velocity.getY != yVal
+        onGround = velocity.getY != yVal && yVal < 0
         Debug.printVec(position)
         Debug.debugPrint(" | ")
         Debug.printVec(velocity)
