@@ -1,7 +1,7 @@
 package entity
 
 import core.Debug
-import org.lwjgl.util.vector.{Matrix4f, Vector3f}
+import org.lwjgl.util.vector.Vector3f
 import physics.AxisAlignedBB
 import world.World
 
@@ -36,12 +36,14 @@ class Entity(worldObj: World) {
     def tick(): Unit = {
         //        println(position.getX + " " + position.getY + " " + position.getZ)
         if (!isFlying) velocity.setY(velocity.getY + worldObj.grav)
+        val yVal = velocity.getY
         Debug.printVec(position)
         Debug.debugPrint(" | ")
         Debug.printVec(velocity)
         Debug.debugPrint(" | ")
         Debug.debugPrintln(boundingBox.toString)
         moveEntity(velocity)
+        onGround = velocity.getY != yVal
         Debug.printVec(position)
         Debug.debugPrint(" | ")
         Debug.printVec(velocity)
@@ -77,20 +79,17 @@ class Entity(worldObj: World) {
 
         position.set(boundingBox.getOrigin)
 
-        onGround = vec.getY != offsetVec.getY && vec.getY < 0
+        //        onGround = vec.getY != offsetVec.getY
 
         if(vec.getX != offsetVec.getX) {
-            println("X")
             velocity.setX(0)
         }
 
         if(vec.getY != offsetVec.getY) {
-            println("Y")
             velocity.setY(0)
         }
 
         if(vec.getZ != offsetVec.getZ) {
-            println("Z")
             velocity.setZ(0)
         }
 

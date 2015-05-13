@@ -1,9 +1,8 @@
 package world
 
 
-import util.{PhysicsUtil, MathUtil, WorldUtil}
 import block.Block
-import core.{Debug, HyperScape}
+import core.HyperScape
 import entity.Entity
 import org.lwjgl.opengl.GL20
 import org.lwjgl.util.vector.{Matrix4f, Vector3f}
@@ -11,6 +10,7 @@ import physics.AxisAlignedBB
 import reference.{BlockSides, Blocks, RenderTypes}
 import registry.{BlockRegistry, ShaderRegistry}
 import render.{Model, RenderModel, Vertex}
+import util.WorldUtil
 
 import scala.collection.mutable
 
@@ -253,7 +253,6 @@ abstract class World {
         //TODO Add detection of entities inside of AABB
 //        Debug.printVec(xMin, yMin, zMin)
 //        Debug.printVec(xMax, yMax, zMax)
-        println(boundingBoxes.length)
         boundingBoxes
     }
 

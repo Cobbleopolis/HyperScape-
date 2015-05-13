@@ -26,7 +26,7 @@ class HyperScape {
         world = new WorldMainMenu
         player = new EntityPlayable(world)
 //        world.tick(player)
-        player.translate(-0.5f, 17f, -0.5f)
+        player.translate(0f, 17f, 0f)
         HyperScape.mainCamera.uploadPerspective()
         HyperScape.mainCamera.uploadView()
     }
