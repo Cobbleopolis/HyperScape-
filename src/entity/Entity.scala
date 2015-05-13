@@ -1,6 +1,7 @@
 package entity
 
-import org.lwjgl.util.vector.Vector3f
+import core.Debug
+import org.lwjgl.util.vector.{Matrix4f, Vector3f}
 import physics.AxisAlignedBB
 import world.World
 
@@ -29,15 +30,23 @@ class Entity(worldObj: World) {
 
     var isSneaking: Boolean = false
 
-    var moveSpeed: Float = .25f
-
     /**
      * Ticks the entity
      */
     def tick(): Unit = {
         //        println(position.getX + " " + position.getY + " " + position.getZ)
-        //        if (!isFlying) velocity.setY(velocity.getY + worldObj.grav)
+        if (!isFlying) velocity.setY(velocity.getY + worldObj.grav)
+        Debug.printVec(position)
+        Debug.debugPrint(" | ")
+        Debug.printVec(velocity)
+        Debug.debugPrint(" | ")
+        Debug.debugPrintln(boundingBox.toString)
         moveEntity(velocity)
+        Debug.printVec(position)
+        Debug.debugPrint(" | ")
+        Debug.printVec(velocity)
+        Debug.debugPrint(" | ")
+        Debug.debugPrintln(boundingBox.toString)
         //        applyCollision()
         //        position.translate(moveVec.getX, moveVec.getY, moveVec.getZ)
         //        moveVec.set(0, 0, 0)
@@ -45,29 +54,55 @@ class Entity(worldObj: World) {
         //        println("---------------------------------------------------------------------------------")
     }
 
-    /**
-     * Checks if the entity is colliding with anything and changes the entities velocity and position accordingly.
-     */
-    def applyCollision(): Unit = {
-        //        var nextPos: Vector3f = MathUtil.addVectors(position, MathUtil.addVectors(moveVec, velocity))
-        //        var translatedBB: AxisAlignedBoundingBox = boundingBox.getTranslatedBoundingBox(nextPos)
-
-        //        val startVec = new Vector3f(Math.floor(translatedBB.getXMin).toFloat, Math.floor(translatedBB.getYMin).toFloat, Math.floor(translatedBB.getZMin).toFloat)
-        //        val endVec = new Vector3f(Math.floor(translatedBB.getXMax).toFloat + 1f, Math.floor(translatedBB.getYMax + 1f).toFloat, Math.floor(translatedBB.getZMax + 1).toFloat)
-
-        onGround = false
-
-
-    }
+    //TODO Have Galen attempt to explain how collision is actually working and then cry because I either don't understand it or because I'm really stupid
 
     def moveEntity(vec: Vector3f): Unit = {
-        moveEntity(vec.getX, vec.getY, vec.getZ)
+        val offsetVec = new Vector3f(vec)
+        val blocks = worldObj.getCollidingBoundingBoxes(boundingBox.copy.addCoord(vec))
+
+        for (bb <- blocks) {
+            offsetVec.setY(bb.calcYOffset(boundingBox, offsetVec.getY))
+        }
+        boundingBox.translate(0, offsetVec.getY, 0)
+
+        for (bb <- blocks) {
+            offsetVec.setX(bb.calcXOffset(boundingBox, offsetVec.getX))
+        }
+        boundingBox.translate(offsetVec.getX, 0, 0)
+
+        for (bb <- blocks) {
+            offsetVec.setZ(bb.calcZOffset(boundingBox, offsetVec.getZ))
+        }
+        boundingBox.translate(0, 0, offsetVec.getZ)
+
+        position.set(boundingBox.getOrigin)
+
+        onGround = vec.getY != offsetVec.getY && vec.getY < 0
+
+        if(vec.getX != offsetVec.getX) {
+            println("X")
+            velocity.setX(0)
+        }
+
+        if(vec.getY != offsetVec.getY) {
+            println("Y")
+            velocity.setY(0)
+        }
+
+        if(vec.getZ != offsetVec.getZ) {
+            println("Z")
+            velocity.setZ(0)
+        }
+
+//        val dir = new Vector3f(0, 0, -1)
+//        val rotMat = new Matrix4f()
+//        rotMat.rotate(rotation.getY, new Vector3f(0, 1, 0))
+//        rotMat.rotate(rotation.getX, new Vector3f(1, 0, 0))
+//        Matrix4f.translate(dir, rotMat, rotMat)
     }
 
     def moveEntity(x: Float, y: Float, z: Float): Unit = {
-        var (movX, movY, movZ) = (x, y, z)
-        position.translate(movX, movY, movZ)
-        boundingBox.translate(movX, movY, movZ)
+        moveEntity(new Vector3f(x, y, z))
     }
 
     def oldCollision(direction: Vector3f): Vector3f = {
@@ -99,8 +134,8 @@ class Entity(worldObj: World) {
         //        }
 
         //Bottom Collision (-y) I DO NOT KNOW WHY THIS WORKS BUT DO NOT TOUCH!
-        for (x <- Math.floor(nextTranslatedBB.getXMin).toInt to Math.ceil(nextTranslatedBB.getXMax).toInt) {
-            for (z <- Math.floor(nextTranslatedBB.getZMin).toInt to Math.ceil(nextTranslatedBB.getZMax).toInt) {
+        for (x <- Math.floor(nextTranslatedBB.minX).toInt to Math.ceil(nextTranslatedBB.maxX).toInt) {
+            for (z <- Math.floor(nextTranslatedBB.minZ).toInt to Math.ceil(nextTranslatedBB.maxZ).toInt) {
 
                 val currBB = worldObj.getBlock(x, currPosY - 1, z).boundingBox.getTranslatedBoundingBox(x, currPosY - 1, z - 1)
                 val nextBB = worldObj.getBlock(x, nextPosY, z).boundingBox.getTranslatedBoundingBox(x, nextPosY, z - 1)
@@ -109,13 +144,13 @@ class Entity(worldObj: World) {
                     //                    println(bb == null)
 
                     if (nextTranslatedBB.isTouching(nextBB) && direction.getY < 0) {
-                        newVector.setY(nextBB.getYMax - currentTranslatedBB.getYMin)
+                        newVector.setY(nextBB.maxY - currentTranslatedBB.minY)
                         //                        newVector.setY(0)
                     }
 
                 }
                 if (worldObj.getBlock(x, currPosY - 1, z).hasCollision) {
-                    y = currBB.getYMax
+                    y = currBB.maxY
                     if (nextTranslatedBB.isTouching(currBB))
                         onGround = true
                 }
@@ -123,12 +158,12 @@ class Entity(worldObj: World) {
         }
 
         //North Collision (+x)
-        for (y <- nextPosY + 1 to Math.ceil(nextTranslatedBB.getYMax).toInt) {
-            for (z <- nextPosZ to Math.ceil(nextTranslatedBB.getZMax).toInt) {
+        for (y <- nextPosY + 1 to Math.ceil(nextTranslatedBB.maxY).toInt) {
+            for (z <- nextPosZ to Math.ceil(nextTranslatedBB.maxZ).toInt) {
                 if (worldObj.getBlock(nextPosX, y, nextPosZ + 1).hasCollision) {
                     val bb = worldObj.getBlock(nextPosX, y, nextPosZ + 1).boundingBox.getTranslatedBoundingBox(nextPosX, y, nextPosZ)
                     if (nextTranslatedBB.isTouching(bb) && direction.getX > 0) {
-                        newVector.setX(currentTranslatedBB.getXMax - bb.getXMin)
+                        newVector.setX(currentTranslatedBB.maxX - bb.minX)
                     }
                 }
             }
@@ -145,7 +180,8 @@ class Entity(worldObj: World) {
      * @param z Amount to translate in the z
      */
     def translate(x: Float, y: Float, z: Float): Unit = {
-        moveEntity(x, y, z)
+        position.translate(x, y, z)
+        boundingBox.setOrigin(position)
     }
 
     /**
@@ -172,12 +208,12 @@ class Entity(worldObj: World) {
     }
 
     /**
-     * Translates the entity based on what direction it is facing
+     * Moves the entity based on what direction it is facing
      * @param x Amount to translate in the x
      * @param y Amount to translate in the y
      * @param z Amount to translate in the z
      */
-    def translateInDirectionFacing(x: Float, y: Float, z: Float): Unit = {
+    def moveInDirectionFacing(x: Float, y: Float, z: Float): Unit = {
         //        println("Adding Speed " + x + " " + y + " " + z)
         val direction = new Vector3f()
         direction.translate(x * Math.sin(rotation.getY).toFloat, y, x * Math.cos(rotation.getY).toFloat)

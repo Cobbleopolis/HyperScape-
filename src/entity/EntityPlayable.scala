@@ -10,7 +10,7 @@ class EntityPlayable(world: World) extends Entity(world) {
     var camHeight: Float = 1.7f
     boundingBox = new AxisAlignedBB(
         -0.5f, 0.5f,
-        0.00f, 1.8f,
+        0.00f, 1.95f,
         -0.5f, 0.5f)
 
     val shaders = Array("terrain", "debug", "Panic! at the Disco", "plaid")
@@ -40,16 +40,16 @@ class EntityPlayable(world: World) extends Entity(world) {
             }
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
-            translateInDirectionFacing(0, 0, -speed)
+            moveInDirectionFacing(0, 0, -speed)
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
-            translateInDirectionFacing(-speed, 0, 0)
+            moveInDirectionFacing(-speed, 0, 0)
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
-            translateInDirectionFacing(0, 0, speed)
+            moveInDirectionFacing(0, 0, speed)
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
-            translateInDirectionFacing(speed, 0, 0)
+            moveInDirectionFacing(speed, 0, 0)
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
 //            println(isCollidingDown)
@@ -57,11 +57,11 @@ class EntityPlayable(world: World) extends Entity(world) {
 //                println("Jump")
                 addToSpeedInDirectionFacing(0, .35f, 0)
             } else if (isFlying) {
-                translateInDirectionFacing(0, .35f, 0)
+                moveInDirectionFacing(0, .35f, 0)
             }
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) && isFlying) {
-            translateInDirectionFacing(0, -.25f, 0)
+            moveInDirectionFacing(0, -.25f, 0)
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {
             rotate(0, Math.toRadians(2.5).toFloat, 0)

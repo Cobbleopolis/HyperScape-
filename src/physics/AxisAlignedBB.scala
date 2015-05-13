@@ -11,24 +11,6 @@ class AxisAlignedBB(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0f, yMax: 
     var minZ = zMin
     var maxZ = zMax
 
-    /** Returns the xMin value of the bounding box. */
-    def getXMin: Float = minX
-
-    /** Returns the xMax value of the bounding box. */
-    def getXMax: Float = maxX
-
-    /** Returns the yMin value of the bounding box. */
-    def getYMin: Float = minY
-
-    /** Returns the yMax value of the bounding box. */
-    def getYMax: Float = maxY
-
-    /** Returns the zMin value of the bounding box. */
-    def getZMin: Float = minZ
-
-    /** Returns the zMax value of the bounding box. */
-    def getZMax: Float = maxZ
-
     /**
      * Returns a copy of the bounding box translated by the coordinates
      * @param x The x value of the translation
@@ -53,6 +35,23 @@ class AxisAlignedBB(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0f, yMax: 
         ((minX + maxX) / 2, (minY + maxY) / 2, (minZ + maxZ) / 2)
     }
 
+    def getOrigin: Vector3f = {
+        new Vector3f(minX + Math.abs(xMin), minY + Math.abs(yMin), minZ + Math.abs(zMin))
+    }
+
+    def setOrigin(x: Float, y: Float, z: Float): Unit = {
+        minX = x + xMin
+        maxX = x + xMax
+        minY = y + yMin
+        maxY = y + yMax
+        minZ = z + zMin
+        maxZ = z + zMax
+    }
+
+    def setOrigin(vec: Vector3f): Unit = {
+        setOrigin(vec.getX, vec.getY, vec.getY)
+    }
+
     /**
      * Checks if a the bounding box is colliding with the passed bounding box. Both bounding boxes should be translated for accurate detection.
      * @param bounds The other bounding box to check collision with
@@ -70,18 +69,18 @@ class AxisAlignedBB(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0f, yMax: 
      * @return If the bounding box is touching or colliding with the passed bounding box
      */
     def isTouching(otherBoundingBox: AxisAlignedBB): Boolean = {
-        getXMax >= otherBoundingBox.getXMin &&
-                otherBoundingBox.getXMax >= getXMin &&
-                getYMax >= otherBoundingBox.getYMin &&
-                otherBoundingBox.getYMax >= getYMin &&
-                getZMax >= otherBoundingBox.getZMin &&
-                otherBoundingBox.getZMax >= getZMin
+        maxX >= otherBoundingBox.minX &&
+                otherBoundingBox.maxX >= minX &&
+                maxY >= otherBoundingBox.minY &&
+                otherBoundingBox.maxY >= minY &&
+                maxZ >= otherBoundingBox.minZ &&
+                otherBoundingBox.maxZ >= minZ
     }
 
     def isVecInBoundingBox(vec: Vector3f): Boolean = {
-        vec.getX > getXMin && vec.getX < getXMax &&
-                vec.getY > getYMin && vec.getY < getYMax &&
-                vec.getZ > getZMin && vec.getZ < getZMax
+        vec.getX > minX && vec.getX < maxX &&
+                vec.getY > minY && vec.getY < maxY &&
+                vec.getZ > minZ && vec.getZ < maxZ
     }
 
     def translate(vec: Vector3f): Unit = {
@@ -101,9 +100,9 @@ class AxisAlignedBB(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0f, yMax: 
         if (intersects(bb)) {
             //            val (cX, cY, cZ) = getCenter
             //            val (oX, oY, oZ) = bb.getCenter
-            val outX = Math.max(Math.abs(getXMax - bb.getXMin), Math.abs(bb.getXMax - getXMin))
-            val outY = Math.max(Math.abs(getYMax - bb.getZMin), Math.abs(bb.getYMax - getXMin))
-            val outZ = Math.max(Math.abs(getZMax - bb.getYMin), Math.abs(bb.getZMax - getXMin))
+            val outX = Math.max(Math.abs(maxX - bb.minX), Math.abs(bb.maxX - minX))
+            val outY = Math.max(Math.abs(maxY - bb.minZ), Math.abs(bb.maxY - minX))
+            val outZ = Math.max(Math.abs(maxZ - bb.minY), Math.abs(bb.maxZ - minX))
             Debug.printlnVec(outX, outY, outZ)
             (outX, outY, outZ)
         } else {
@@ -111,9 +110,28 @@ class AxisAlignedBB(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0f, yMax: 
         }
     }
 
+    /**
+     * Expands the bounding box by the given amount
+     * @param vec The amount to expand in each direction
+     * @return The expanded bounding box
+     */
+    def addCoord(vec: Vector3f): AxisAlignedBB = {
+        if(vec.getX < 0)
+            minX += vec.getX
+        else
+            maxX += vec.getX
 
-    def getOffsets(boundingBox: AxisAlignedBB, offset: Float = 0.0f): (Float, Float, Float) = {
-        (getXOffset(boundingBox, offset), getYOffset(boundingBox, offset), getZOffset(boundingBox, offset))
+        if(vec.getY < 0)
+            minY += vec.getY
+        else
+            maxY += vec.getY
+
+        if(vec.getZ < 0)
+            minZ += vec.getZ
+        else
+            maxZ += vec.getZ
+
+        this
     }
 
     //TODO http://z80.ukl.me/mc/sim.js
@@ -123,23 +141,23 @@ class AxisAlignedBB(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0f, yMax: 
      * in the X dimension.
      * @return var2 if the bounding boxes do not overlap or if var2 is closer to 0 then the calculated offset. Otherwise return the calculated offset.
      */
-    def getXOffset(bounds: AxisAlignedBB, curOff: Float = 0.0f): Float = {
-        var currOff = curOff
-        var newOff = 0f
-        if (bounds.maxY > minY && bounds.minY < maxY && bounds.maxZ > minZ && bounds.minX > maxZ) {
-            if (currOff > 0 && bounds.maxX <= maxX) {
+    def calcXOffset(bounds: AxisAlignedBB, currentOffset: Float): Float = {
+        var curOff = currentOffset
+        if (bounds.maxY > minY && bounds.minY < maxY && bounds.maxZ > minZ && bounds.minZ > maxZ) {
+            var newOff = 0f
+            if (curOff > 0 && bounds.maxX <= minX) {
                 newOff = minX - bounds.maxX
-                if (newOff < currOff)
-                    currOff = newOff
+                if (newOff < curOff)
+                    curOff = newOff
             }
-            if (currOff < 0 && bounds.minX >= bounds.maxX) {
+            if (curOff < 0 && bounds.minX >= bounds.maxX) {
                 newOff = maxX - bounds.minX
-                if (newOff > currOff) {
-                    currOff = newOff
+                if (newOff > curOff) {
+                    curOff = newOff
                 }
             }
         }
-        currOff
+        curOff
     }
 
     /**
@@ -147,30 +165,22 @@ class AxisAlignedBB(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0f, yMax: 
      * in the Y dimension.  return var2 if the bounding boxes do not overlap or if var2 is closer to 0 then the
      * calculated offset.  Otherwise return the calculated offset.
      */
-    def getYOffset(boundingBox: AxisAlignedBB, offset: Float = 0.0f): Float = {
-        var out = offset
-        if (boundingBox.getXMax > getXMin && boundingBox.getXMin < getXMax) {
-            if (boundingBox.getZMax > getZMin && boundingBox.getZMin < getZMax) {
-                var d1: Float = .0f
-                if (offset > 0.0D && boundingBox.getYMax <= getYMin) {
-                    d1 = getYMin - boundingBox.getYMax
-                    if (d1 < offset) {
-                        out = d1
-                    }
-                }
-                if (offset < 0.0D && boundingBox.getYMin >= getYMax) {
-                    d1 = getYMax - boundingBox.getYMin
-                    if (d1 > offset) {
-                        out = d1
-                    }
-                }
-                out
-            } else {
-                out
+    def calcYOffset(bounds: AxisAlignedBB, currentOffset: Float): Float = {
+        var curOff = currentOffset
+        if(bounds.maxX > minX && bounds.minX < maxX && bounds.maxZ > minZ && bounds.minZ < maxZ) {
+            var newOff = 0f
+            if(curOff > 0 && bounds.maxY <= minY) {
+                newOff = minY - bounds.maxY
+                if(newOff < curOff)
+                    curOff = newOff
             }
-        } else {
-            out
+            if(curOff < 0 && bounds.minY >= maxY){
+                newOff = maxY - bounds.minY
+                if(newOff > curOff)
+                    curOff = newOff
+            }
         }
+        curOff
     }
 
     /**
@@ -178,30 +188,22 @@ class AxisAlignedBB(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0f, yMax: 
      * in the Z dimension.  return var2 if the bounding boxes do not overlap or if var2 is closer to 0 then the
      * calculated offset.  Otherwise return the calculated offset.
      */
-    def getZOffset(boundingBox: AxisAlignedBB, offset: Float = 0.0f): Float = {
-        var out = offset
-        if (boundingBox.getXMax > getXMin && boundingBox.getXMin < getXMax) {
-            if (boundingBox.getYMax > getYMin && boundingBox.getYMin < getYMax) {
-                var d1: Float = .0f
-                if (offset > 0.0f && boundingBox.getZMax <= getZMin) {
-                    d1 = getZMin - boundingBox.getZMax
-                    if (d1 < offset) {
-                        out = d1
-                    }
-                }
-                if (offset < 0.0f && boundingBox.getZMin >= getZMax) {
-                    d1 = getZMax - boundingBox.getZMin
-                    if (d1 > offset) {
-                        out = d1
-                    }
-                }
-                out
-            } else {
-                out
+    def calcZOffset(bounds: AxisAlignedBB, currentOffset: Float): Float = {
+        var curOff = currentOffset
+        if(bounds.maxY > minY && bounds.minY < maxY && bounds.maxX > minX && bounds.minX < maxX) {
+            var newOff = 0f
+            if(curOff > 0  && bounds.maxZ <= minZ){
+                newOff = minZ - bounds.maxZ
+                if(newOff < curOff)
+                    curOff = newOff
             }
-        } else {
-            out
+            if(curOff < 0 && bounds.minZ >= maxZ) {
+                newOff = maxZ - bounds.minZ
+                if(newOff > curOff)
+                    curOff = newOff
+            }
         }
+        curOff
     }
 
     def copy: AxisAlignedBB = {

@@ -19,7 +19,7 @@ abstract class World {
     var chunks = new mutable.HashMap[Int, Chunk]
     var time = 0
     var activeChunks: Array[Int] = null
-    var grav = -0.025f
+    val grav = -0.025f
     //    val environment = new Environment
     //    chunks.put(0, new Chunk(0, 0))
 
@@ -228,22 +228,22 @@ abstract class World {
         chunks(index).isDirty = false
     }
 
-    def getCollidingBoundingBoxes(entity: Entity, boundingBox: AxisAlignedBB): Array[AxisAlignedBB] = {
+    def getCollidingBoundingBoxes(boundingBox: AxisAlignedBB): Array[AxisAlignedBB] = {
         var boundingBoxes = Array[AxisAlignedBB]()
-        val xMin: Int = Math.floor(boundingBox.getXMin).toInt
-        val xMax: Int = Math.floor(boundingBox.getXMax + 1.0f).toInt
-        val yMin: Int = Math.floor(boundingBox.getYMin).toInt
-        val yMax: Int = Math.floor(boundingBox.getYMax + 1.0f).toInt
-        val zMin: Int = Math.floor(boundingBox.getZMin).toInt
-        val zMax: Int = Math.floor(boundingBox.getZMax + 1.0f).toInt
+        val xMin: Int = Math.floor(boundingBox.minX).toInt
+        val xMax: Int = Math.floor(boundingBox.maxX + 1.0f).toInt
+        val yMin: Int = Math.floor(boundingBox.minY).toInt
+        val yMax: Int = Math.floor(boundingBox.maxY + 1.0f).toInt
+        val zMin: Int = Math.floor(boundingBox.minZ).toInt
+        val zMax: Int = Math.floor(boundingBox.maxZ + 1.0f).toInt
 
-        for (x <- xMin - 1 to xMax) {
-            for (y <- yMin - 1 to yMax) {
-                for (z <- zMin - 1 to zMax) {
+        for (x <- xMin until xMax) {
+            for (y <- yMin until yMax) {
+                for (z <- zMin until zMax) {
                     if (getBlock(x, y, z).hasCollision) {
                         val bb = getBlock(x, y, z).boundingBox.getTranslatedBoundingBox(x, y, z - 1)
-                        print(boundingBox.isTouching(bb) + " | ")
-                        if(boundingBox.isTouching(bb))
+//                        print(boundingBox.isTouching(bb) + " | ")
+                        if(boundingBox.intersects(bb))
                             boundingBoxes = boundingBoxes :+ bb
                     }
                 }
@@ -251,8 +251,8 @@ abstract class World {
         }
 
         //TODO Add detection of entities inside of AABB
-        Debug.printVec(xMin, yMin, zMin)
-        Debug.printVec(xMax, yMax, zMax)
+//        Debug.printVec(xMin, yMin, zMin)
+//        Debug.printVec(xMax, yMax, zMax)
         println(boundingBoxes.length)
         boundingBoxes
     }

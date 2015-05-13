@@ -22,4 +22,13 @@ object MathUtil {
         val i: Int = p_76128_0_.toInt
         if (p_76128_0_ < i.toFloat) i - 1 else i
     }
+
+    /**
+     * Copies the values from vecB to vecA
+     * @param vecA The vector who's values will be changed the values in vecB
+     * @param vecB The vector who's values will be assigned to vecA
+     */
+    def copyVec(vecA: Vector3f, vecB: Vector3f): Unit = {
+        vecA.set(vecB)
+    }
 }
