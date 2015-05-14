@@ -243,7 +243,7 @@ abstract class World {
                     if (getBlock(x, y, z).hasCollision) {
                         val bb = getBlock(x, y, z).boundingBox.getTranslatedBoundingBox(x, y, z - 1)
 //                        print(boundingBox.isTouching(bb) + " | ")
-                        if(boundingBox.intersects(bb))
+                        //                        if(boundingBox.intersects(bb))
                             boundingBoxes = boundingBoxes :+ bb
                     }
                 }

@@ -7,6 +7,11 @@ import reference.Blocks
 import registry.BlockRegistry
 import render.RenderModel
 
+/**
+ * Creates a chunk object
+ * @param xCoord The X chunk coordinate of the chunk
+ * @param zCoord The Z chunk coordinate of the chunk
+ */
 class Chunk(xCoord: Int, zCoord: Int) {
     val rand = new Random
     var blocks = new Array[Int](16384)

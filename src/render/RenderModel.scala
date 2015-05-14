@@ -4,7 +4,10 @@ import core.HyperScape
 import org.lwjgl.opengl.{GL11, GL15, GL20, GL30}
 import org.lwjgl.util.vector.{Matrix4f, Vector3f}
 
-
+/**
+ * Creates a renderable model
+ * @param verts An array of floats used to define a model object (must be ordered x, y, z, u, v)
+ */
 class RenderModel(verts: Array[Float]) {
     val modelMatrix = new Matrix4f()
 

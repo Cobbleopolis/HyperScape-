@@ -1,14 +1,34 @@
 package physics
 
-import core.Debug
 import org.lwjgl.util.vector.Vector3f
 
+/**
+ * Generates an axis aligned bounding box.
+ * @param xMin The minimum x bound of the bounding box
+ * @param xMax The maximum x bound of the bounding box
+ * @param yMin The minimum y bound of the bounding box
+ * @param yMax The maximum y bound of the bounding box
+ * @param zMin The minimum z bound of the bounding box
+ * @param zMax The maximum z bound of the bounding box
+ */
 class AxisAlignedBB(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0f, yMax: Float = 1f, zMin: Float = 0f, zMax: Float = 1f) {
+
+    /** The translated minimum x bound */
     var minX = xMin
+
+    /** The translated maximum x bound */
     var maxX = xMax
+
+    /** The translated minimum y bound */
     var minY = yMin
+
+    /** The translated maximum y bound */
     var maxY = yMax
+
+    /** The translated minimum z bound */
     var minZ = zMin
+
+    /** The translated maximum z bound */
     var maxZ = zMax
 
     /**
@@ -31,14 +51,28 @@ class AxisAlignedBB(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0f, yMax: 
         getTranslatedBoundingBox(xyz.getX, xyz.getY, xyz.getZ)
     }
 
+    /**
+     * Gets the exact center of the bounding box
+     * @return The exact center of the bounding box
+     */
     def getCenter: (Float, Float, Float) = {
         ((minX + maxX) / 2, (minY + maxY) / 2, (minZ + maxZ) / 2)
     }
 
+    /**
+     * Gets the bounding box's origin
+     * @return A vector containing the x, y, z of the bounding box's origin
+     */
     def getOrigin: Vector3f = {
         new Vector3f(minX + Math.abs(xMin), minY + Math.abs(yMin), minZ + Math.abs(zMin))
     }
 
+    /**
+     * Sets the origin location of the bounding box
+     * @param x X location of the origin
+     * @param y Y location of the origin
+     * @param z Z location of the origin
+     */
     def setOrigin(x: Float, y: Float, z: Float): Unit = {
         minX = x + xMin
         maxX = x + xMax
@@ -77,16 +111,31 @@ class AxisAlignedBB(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0f, yMax: 
                 otherBoundingBox.maxZ >= minZ
     }
 
+    /**
+     * Detects if a vector is inside the bounding box
+     * @param vec The vector to detect if it inside the bounding box
+     * @return true if it inside the bounding box else otherwise
+     */
     def isVecInBoundingBox(vec: Vector3f): Boolean = {
         vec.getX > minX && vec.getX < maxX &&
                 vec.getY > minY && vec.getY < maxY &&
                 vec.getZ > minZ && vec.getZ < maxZ
     }
 
+    /**
+     * Translates the bounding box
+     * @param vec A vector combining the translations for the operation
+     */
     def translate(vec: Vector3f): Unit = {
         translate(vec.getX, vec.getY, vec.getZ)
     }
 
+    /**
+     * Translates the bounding box
+     * @param x How much to translate on the x axis
+     * @param y How much to translate on the y axis
+     * @param z How much to translate on the z axis
+     */
     def translate(x: Float, y: Float, z: Float): Unit = {
         minX += x
         maxX += x
@@ -94,20 +143,6 @@ class AxisAlignedBB(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0f, yMax: 
         maxY += y
         minZ += z
         maxZ += z
-    }
-
-    def getOverlap(bb: AxisAlignedBB): (Float, Float, Float) = {
-        if (intersects(bb)) {
-            //            val (cX, cY, cZ) = getCenter
-            //            val (oX, oY, oZ) = bb.getCenter
-            val outX = Math.max(Math.abs(maxX - bb.minX), Math.abs(bb.maxX - minX))
-            val outY = Math.max(Math.abs(maxY - bb.minZ), Math.abs(bb.maxY - minX))
-            val outZ = Math.max(Math.abs(maxZ - bb.minY), Math.abs(bb.maxZ - minX))
-            Debug.printlnVec(outX, outY, outZ)
-            (outX, outY, outZ)
-        } else {
-            (0, 0, 0)
-        }
     }
 
     /**
@@ -137,9 +172,11 @@ class AxisAlignedBB(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0f, yMax: 
     //TODO http://z80.ukl.me/mc/sim.js
 
     /**
-     * if instance and the argument bounding boxes overlap in the Y and Z dimensions, calculate the offset between them
-     * in the X dimension.
-     * @return var2 if the bounding boxes do not overlap or if var2 is closer to 0 then the calculated offset. Otherwise return the calculated offset.
+     * If bounds overlay on Y and Z plane, calculate distance between the 2 bounds, else return curOff.
+     * If the distance is less than curOff, return it, else return curOff.
+     * @param bounds The other bounding box
+     * @param currentOffset The current distance between the 2 bounds
+     * @return If the distance is less than curOff, return it, else return curOff.
      */
     def calcXOffset(bounds: AxisAlignedBB, currentOffset: Float): Float = {
         var curOff = currentOffset
@@ -161,9 +198,11 @@ class AxisAlignedBB(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0f, yMax: 
     }
 
     /**
-     * if instance and the argument bounding boxes overlap in the X and Z dimensions, calculate the offset between them
-     * in the Y dimension.  return var2 if the bounding boxes do not overlap or if var2 is closer to 0 then the
-     * calculated offset.  Otherwise return the calculated offset.
+     * If bounds overlay on X and Z plane, calculate distance between the 2 bounds, else return curOff.
+     * If the distance is less than curOff, return it, else return curOff.
+     * @param bounds The other bounding box
+     * @param currentOffset The current distance between the 2 bounds
+     * @return If the distance is less than curOff, return it, else return curOff.
      */
     def calcYOffset(bounds: AxisAlignedBB, currentOffset: Float): Float = {
         var curOff = currentOffset
@@ -184,9 +223,11 @@ class AxisAlignedBB(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0f, yMax: 
     }
 
     /**
-     * if instance and the argument bounding boxes overlap in the Y and X dimensions, calculate the offset between them
-     * in the Z dimension.  return var2 if the bounding boxes do not overlap or if var2 is closer to 0 then the
-     * calculated offset.  Otherwise return the calculated offset.
+     * If bounds overlay on X and Y plane, calculate distance between the 2 bounds, else return curOff.
+     * If the distance is less than curOff, return it, else return curOff.
+     * @param bounds The other bounding box
+     * @param currentOffset The current distance between the 2 bounds
+     * @return If the distance is less than curOff, return it, else return curOff.
      */
     def calcZOffset(bounds: AxisAlignedBB, currentOffset: Float): Float = {
         var curOff = currentOffset
@@ -206,10 +247,18 @@ class AxisAlignedBB(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0f, yMax: 
         curOff
     }
 
+    /**
+     * Creates a copy of the current bounding box
+     * @return a copy of the bounding box
+     */
     def copy: AxisAlignedBB = {
         new AxisAlignedBB(minX, maxX, minY, maxY, minZ, maxZ)
     }
 
+    /**
+     * Generates a string based on the current state of the bounding box
+     * @return a string based on the current state of the bounding box
+     */
     override def toString: String = {
         "[" + minX + ", " + maxX + ", " + minY + ", " + maxY + ", " + minZ + ", " + maxZ + "]"
     }

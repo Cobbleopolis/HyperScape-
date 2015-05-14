@@ -5,6 +5,10 @@ import org.lwjgl.util.vector.Vector3f
 import physics.AxisAlignedBB
 import world.World
 
+/**
+ * Creates an entity object
+ * @param worldObj The world the entity is in
+ */
 class Entity(worldObj: World) {
 
     /** A vector that is used to represent the entities location (x, y, z) */
@@ -28,6 +32,7 @@ class Entity(worldObj: World) {
     /** true after entity is colliding on the ground */
     var onGround: Boolean = false
 
+    /** true if the entity is sneaking, false otherwise */
     var isSneaking: Boolean = false
 
     /**
@@ -58,6 +63,10 @@ class Entity(worldObj: World) {
 
     //TODO Have Galen attempt to explain how collision is actually working and then cry because I either don't understand it or because I'm really stupid
 
+    /**
+     * Attempts to move the entity with collision
+     * @param vec The vector containing the x, y, z values for the transformations
+     */
     def moveEntity(vec: Vector3f): Unit = {
         val offsetVec = new Vector3f(vec)
         val blocks = worldObj.getCollidingBoundingBoxes(boundingBox.copy.addCoord(vec))
@@ -100,77 +109,15 @@ class Entity(worldObj: World) {
 //        Matrix4f.translate(dir, rotMat, rotMat)
     }
 
+    /**
+     * Attempts to move the entity with collision
+     * @param x x value of the transformation
+     * @param y y value of the transformation
+     * @param z z value of the transformation
+     */
     def moveEntity(x: Float, y: Float, z: Float): Unit = {
         moveEntity(new Vector3f(x, y, z))
     }
-
-    def oldCollision(direction: Vector3f): Vector3f = {
-        val newVector = new Vector3f(direction.getX, direction.getY, direction.getZ)
-        val currPosX = Math.floor(position.getX).toInt
-        val currPosY = Math.floor(position.getY).toInt
-        val currPosZ = Math.floor(position.getZ).toInt
-
-        val nextPosX = Math.floor(position.getX + direction.getX).toInt
-        val nextPosY = Math.floor(position.getY + direction.getY).toInt
-        val nextPosZ = Math.floor(position.getZ + direction.getZ).toInt
-        val currentTranslatedBB = boundingBox.getTranslatedBoundingBox(position.getX, position.getY, position.getZ)
-        val nextTranslatedBB = boundingBox.getTranslatedBoundingBox(position.getX + direction.getX, position.getY + direction.getY, position.getZ + direction.getZ)
-        var y = -1f
-        //        println(translatedBB.toString)
-        onGround = false
-
-        //        for (x <- Math.floor(nextTranslatedBB.getXMin).toInt to Math.ceil(nextTranslatedBB.getXMax).toInt) {
-        //            for (z <- Math.floor(nextTranslatedBB.getZMin).toInt to Math.ceil(nextTranslatedBB.getZMax).toInt) {
-        //                if (world.getBlock(x, currPosY, z).hasCollision) {
-        //                    val bb = world.getBlock(x, currPosY - 1, z).boundingBox.getTranslatedBoundingBox(x, currPosY, z - 1)
-        //                    if (nextTranslatedBB.isCollidingWith(bb)) {
-        //                        newVector.setY(-Math.abs(bb.getYMax - currentTranslatedBB.getYMin))
-        //                        isCollidingDown = true
-        //                        y = bb.getYMax
-        //                    }
-        //                }
-        //            }
-        //        }
-
-        //Bottom Collision (-y) I DO NOT KNOW WHY THIS WORKS BUT DO NOT TOUCH!
-        for (x <- Math.floor(nextTranslatedBB.minX).toInt to Math.ceil(nextTranslatedBB.maxX).toInt) {
-            for (z <- Math.floor(nextTranslatedBB.minZ).toInt to Math.ceil(nextTranslatedBB.maxZ).toInt) {
-
-                val currBB = worldObj.getBlock(x, currPosY - 1, z).boundingBox.getTranslatedBoundingBox(x, currPosY - 1, z - 1)
-                val nextBB = worldObj.getBlock(x, nextPosY, z).boundingBox.getTranslatedBoundingBox(x, nextPosY, z - 1)
-                if (worldObj.getBlock(x, nextPosY, z).hasCollision) {
-
-                    //                    println(bb == null)
-
-                    if (nextTranslatedBB.isTouching(nextBB) && direction.getY < 0) {
-                        newVector.setY(nextBB.maxY - currentTranslatedBB.minY)
-                        //                        newVector.setY(0)
-                    }
-
-                }
-                if (worldObj.getBlock(x, currPosY - 1, z).hasCollision) {
-                    y = currBB.maxY
-                    if (nextTranslatedBB.isTouching(currBB))
-                        onGround = true
-                }
-            }
-        }
-
-        //North Collision (+x)
-        for (y <- nextPosY + 1 to Math.ceil(nextTranslatedBB.maxY).toInt) {
-            for (z <- nextPosZ to Math.ceil(nextTranslatedBB.maxZ).toInt) {
-                if (worldObj.getBlock(nextPosX, y, nextPosZ + 1).hasCollision) {
-                    val bb = worldObj.getBlock(nextPosX, y, nextPosZ + 1).boundingBox.getTranslatedBoundingBox(nextPosX, y, nextPosZ)
-                    if (nextTranslatedBB.isTouching(bb) && direction.getX > 0) {
-                        newVector.setX(currentTranslatedBB.maxX - bb.minX)
-                    }
-                }
-            }
-        }
-        //        println(position.toString + " | " + direction.toString + " | " + newVector.toString + " | " + nextPosX + " | " + nextPosY + " | " + nextPosZ + " | " + currPosX + " | " + currPosY + " | " + currPosZ + " | " + y + " | " + isCollidingDown + " | " + place)
-        newVector
-    }
-
 
     /**
      * Translates the entity

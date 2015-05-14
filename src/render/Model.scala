@@ -2,6 +2,10 @@ package render
 
 import java.util
 
+/**
+ * Creates a model object. This can not be rendered.
+ * @param verts An array of floats used to define a model object (must be ordered x, y, z, u, v)
+ */
 class Model(verts: Array[Float]) {
     var verticies = util.Arrays.copyOf(verts, verts.length)
 

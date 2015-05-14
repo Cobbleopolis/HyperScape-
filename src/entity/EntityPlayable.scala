@@ -15,6 +15,9 @@ class EntityPlayable(world: World) extends Entity(world) {
 
     val shaders = Array("terrain", "debug", "Panic! at the Disco", "plaid")
 
+    /**
+     * Parses the input of the player
+     */
     def parseInput(): Unit = {
         val speed: Float = 0.0625f
         while (Keyboard.next()) {

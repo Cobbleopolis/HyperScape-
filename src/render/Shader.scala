@@ -2,6 +2,12 @@ package render
 
 import org.lwjgl.opengl.GL20
 
+/**
+ * Creates a shader object
+ * @param programId The id of the shader program
+ * @param vertexId The id of the vertex shader program
+ * @param fragmentId The id of the fragment shader program
+ */
 class Shader(programId: Int, vertexId: Int, fragmentId: Int) {
 
     var uniformLocations: Map[String, Int] = Map() /** Map of the uniform locations for the shader*/
