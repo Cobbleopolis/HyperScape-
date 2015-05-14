@@ -230,16 +230,16 @@ abstract class World {
 
     def getCollidingBoundingBoxes(boundingBox: AxisAlignedBB): Array[AxisAlignedBB] = {
         var boundingBoxes = Array[AxisAlignedBB]()
-        val xMin: Int = Math.floor(boundingBox.minX).toInt
+        val xMin: Int = Math.floor(boundingBox.minX - 1.0f).toInt
         val xMax: Int = Math.floor(boundingBox.maxX + 1.0f).toInt
-        val yMin: Int = Math.floor(boundingBox.minY).toInt
+        val yMin: Int = Math.floor(boundingBox.minY - 1.0f).toInt
         val yMax: Int = Math.floor(boundingBox.maxY + 1.0f).toInt
-        val zMin: Int = Math.floor(boundingBox.minZ).toInt
+        val zMin: Int = Math.floor(boundingBox.minZ - 1.0f).toInt
         val zMax: Int = Math.floor(boundingBox.maxZ + 1.0f).toInt
 
-        for (x <- xMin until xMax) {
-            for (y <- yMin until yMax) {
-                for (z <- zMin until zMax) {
+        for (x <- xMin to xMax) {
+            for (y <- yMin to yMax) {
+                for (z <- zMin to zMax) {
                     if (getBlock(x, y, z).hasCollision) {
                         val bb = getBlock(x, y, z).boundingBox.getTranslatedBoundingBox(x, y, z - 1)
 //                        print(boundingBox.isTouching(bb) + " | ")

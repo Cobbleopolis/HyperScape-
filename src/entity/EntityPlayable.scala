@@ -9,9 +9,9 @@ import world.World
 class EntityPlayable(world: World) extends Entity(world) {
     var camHeight: Float = 1.7f
     boundingBox = new AxisAlignedBB(
-        -0.5f, 0.5f,
+        -0.4f, 0.4f,
         0.00f, 1.95f,
-        -0.5f, 0.5f)
+        -0.4f, 0.4f)
 
     val shaders = Array("terrain", "debug", "Panic! at the Disco", "plaid")
 
@@ -19,7 +19,7 @@ class EntityPlayable(world: World) extends Entity(world) {
      * Parses the input of the player
      */
     def parseInput(): Unit = {
-        val speed: Float = 0.0625f
+        val speed: Float = 0.125f
         while (Keyboard.next()) {
             if (Keyboard.getEventKeyState) {
                 if (Keyboard.getEventKey == Keyboard.KEY_F3) {
