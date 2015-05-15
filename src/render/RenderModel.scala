@@ -41,14 +41,14 @@ class RenderModel(verts: Array[Float]) {
     /**
      * Renders the model
      */
-    def render(): Unit = {
+    def render(drawLines: Boolean = false): Unit = {
         // Bind to the VAO that has all the information about the quad vertices
         GL30.glBindVertexArray(vao)
         GL20.glEnableVertexAttribArray(0)
         GL20.glEnableVertexAttribArray(1)
 
         // Draw the vertices
-        if (HyperScape.lines)
+        if (drawLines)
             GL11.glDrawArrays(GL11.GL_LINES, 0, verts.length / Vertex.ELEMENT_COUNT)
         else
             GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, verts.length / Vertex.ELEMENT_COUNT)

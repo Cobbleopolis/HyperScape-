@@ -91,9 +91,10 @@ class Chunk(xCoord: Int, zCoord: Int) {
                     //
                     //                    }
                     if ((y == 0 || x % size == 0 || z % size == 0) || (y == 4 && (x % size == 1 || z % size == 1))) {
-//                        val r = rand.nextInt(opts.length)
-                        //                        if (r <= opts.length - 1)
-                        setBlock(x, y, z, Blocks.blank.blockID)
+                        if (x % 2 == 1 || z % 2 == 1 || y == 0)
+                        //                            setBlock(x, y, z, Blocks.blank.blockID)
+                        //                        else
+                            setBlock(x, y, z, Blocks.pillar.blockID)
                     }
                 }
             }

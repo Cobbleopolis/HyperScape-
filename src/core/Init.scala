@@ -1,6 +1,6 @@
 package core
 
-import registry.{ModelRegistry, TextureRegistry, ShaderRegistry}
+import registry.{ModelRegistry, ShaderRegistry, TextureRegistry}
 
 object Init {
 
@@ -40,6 +40,7 @@ object Init {
         ModelRegistry.loadModel("res/model/cube.obj", "cube")
         ModelRegistry.loadModel("res/model/model.obj", "model")
         ModelRegistry.loadModel("res/model/pillar.obj", "pillar")
+        ModelRegistry.loadModel("res/model/player.obj", "player")
         println("Finished Loading Models")
     }
 

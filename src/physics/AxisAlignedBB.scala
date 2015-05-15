@@ -151,17 +151,17 @@ class AxisAlignedBB(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0f, yMax: 
      * @return The expanded bounding box
      */
     def addCoord(vec: Vector3f): AxisAlignedBB = {
-        if(vec.getX < 0)
+        if (vec.getX < 0)
             minX += vec.getX
         else
             maxX += vec.getX
 
-        if(vec.getY < 0)
+        if (vec.getY < 0)
             minY += vec.getY
         else
             maxY += vec.getY
 
-        if(vec.getZ < 0)
+        if (vec.getZ < 0)
             minZ += vec.getZ
         else
             maxZ += vec.getZ
@@ -184,8 +184,9 @@ class AxisAlignedBB(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0f, yMax: 
             var newOff = 0f
             if (curOff > 0 && bounds.maxX <= minX) {
                 newOff = minX - bounds.maxX
-                if (newOff < curOff)
+                if (newOff < curOff) {
                     curOff = newOff
+                }
             }
             if (curOff < 0 && bounds.minX >= bounds.maxX) {
                 newOff = maxX - bounds.minX
@@ -206,16 +207,16 @@ class AxisAlignedBB(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0f, yMax: 
      */
     def calcYOffset(bounds: AxisAlignedBB, currentOffset: Float): Float = {
         var curOff = currentOffset
-        if(bounds.maxX > minX && bounds.minX < maxX && bounds.maxZ > minZ && bounds.minZ < maxZ) {
+        if (bounds.maxX > minX && bounds.minX < maxX && bounds.maxZ > minZ && bounds.minZ < maxZ) {
             var newOff = 0f
-            if(curOff > 0 && bounds.maxY <= minY) {
+            if (curOff > 0 && bounds.maxY <= minY) {
                 newOff = minY - bounds.maxY
-                if(newOff < curOff)
+                if (newOff < curOff)
                     curOff = newOff
             }
-            if(curOff < 0 && bounds.minY >= maxY){
+            if (curOff < 0 && bounds.minY >= maxY) {
                 newOff = maxY - bounds.minY
-                if(newOff > curOff)
+                if (newOff > curOff)
                     curOff = newOff
             }
         }
@@ -231,17 +232,19 @@ class AxisAlignedBB(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0f, yMax: 
      */
     def calcZOffset(bounds: AxisAlignedBB, currentOffset: Float): Float = {
         var curOff = currentOffset
-        if(bounds.maxY > minY && bounds.minY < maxY && bounds.maxX > minX && bounds.minX < maxX) {
+        if (bounds.maxY > minY && bounds.minY < maxY && bounds.maxX > minX && bounds.minX < maxX) {
             var newOff = 0f
-            if(curOff > 0  && bounds.maxZ <= minZ){
+            if (curOff > 0 && bounds.maxZ <= minZ) {
                 newOff = minZ - bounds.maxZ
-                if(newOff < curOff)
+                if (newOff < curOff) {
                     curOff = newOff
+                }
             }
-            if(curOff < 0 && bounds.minZ >= maxZ) {
+            if (curOff < 0 && bounds.minZ >= maxZ) {
                 newOff = maxZ - bounds.minZ
-                if(newOff > curOff)
+                if (newOff > curOff) {
                     curOff = newOff
+                }
             }
         }
         curOff

@@ -3,6 +3,7 @@ package entity
 import core.Debug
 import org.lwjgl.util.vector.Vector3f
 import physics.AxisAlignedBB
+import util.MathUtil
 import world.World
 
 /**
@@ -69,7 +70,7 @@ class Entity(worldObj: World) {
      */
     def moveEntity(vec: Vector3f): Unit = {
         val offsetVec = new Vector3f(vec)
-        val blocks = worldObj.getCollidingBoundingBoxes(boundingBox.copy.addCoord(vec))
+        val blocks = worldObj.getCollidingBoundingBoxes(boundingBox.copy.addCoord(MathUtil.addVectors(position, offsetVec)))
 
         for (bb <- blocks) {
             offsetVec.setY(bb.calcYOffset(boundingBox, offsetVec.getY))

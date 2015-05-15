@@ -128,7 +128,7 @@ abstract class World {
                 GL20.glUniform4f(colorLoc, Math.sin(chunk.getXCoord).toFloat, Math.sin(chunk.getZCoord).toFloat, 0.3125f, 1)
             }
 
-            chunk.chunkModel.render()
+            chunk.chunkModel.render(HyperScape.lines)
             i = i + 1
         })
         //        println(HyperScape.mainCamera.view)
@@ -241,7 +241,7 @@ abstract class World {
             for (y <- yMin to yMax) {
                 for (z <- zMin to zMax) {
                     if (getBlock(x, y, z).hasCollision) {
-                        val bb = getBlock(x, y, z).boundingBox.getTranslatedBoundingBox(x, y, z - 1)
+                        val bb = getBlock(x, y, z).boundingBox.getTranslatedBoundingBox(x, y, z)
 //                        print(boundingBox.isTouching(bb) + " | ")
                         //                        if(boundingBox.intersects(bb))
                             boundingBoxes = boundingBoxes :+ bb

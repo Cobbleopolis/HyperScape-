@@ -36,8 +36,8 @@ class HyperScape {
      */
     def tick(): Unit = {
         HyperScape.mainCamera.view = new Matrix4f
-        world.tick(player)
         player.parseInput()
+        world.tick(player)
         HyperScape.mainCamera.view.rotate(-player.rotation.getX, new Vector3f(1, 0, 0))
         HyperScape.mainCamera.view.rotate(-player.rotation.getY + (Math.PI.toFloat / 2), new Vector3f(0, 1, 0))
         HyperScape.mainCamera.view.rotate(-player.rotation.getZ, new Vector3f(0, 0, 1))
@@ -53,6 +53,7 @@ class HyperScape {
     def render(): Unit = {
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT)
         world.render()
+        player.render()
     }
 
     /**

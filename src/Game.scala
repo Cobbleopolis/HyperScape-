@@ -1,7 +1,6 @@
 import java.io._
-import javax.imageio.ImageIO
 
-import core.{Init, HyperScape}
+import core.{HyperScape, Init}
 import org.lwjgl.LWJGLException
 import org.lwjgl.opengl._
 import registry.{ShaderRegistry, TextureRegistry}
@@ -70,7 +69,7 @@ object Game {
      * Initializes OpenGL
      */
     def initGL(): Unit = {
-        // Setup an OpenGL context with API version 3.2
+        // Setup an OpenGL context with API version 3.3
         try {
             val pixelFormat = new PixelFormat()
             val contextAtrributes = new ContextAttribs(3, 3)
@@ -86,9 +85,10 @@ object Game {
         }
         GL11.glViewport(0, 0, WIDTH, HEIGHT)
         GL11.glEnable(GL11.GL_CULL_FACE)
-        GL11.glClearColor(0.4f, 0.6f, 0.9f, 1f)
+        GL11.glClearColor(0.4f, 0.6f, 0.9f, .5f)
         GL11.glEnable(GL11.GL_DEPTH_TEST)
-//        GL11.glEnable(GL11.GL_BLEND)
+
+        //        GL11.glEnable(GL11.GL_BLEND)
 //        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
     }
 }

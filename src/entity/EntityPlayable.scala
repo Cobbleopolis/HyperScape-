@@ -2,16 +2,21 @@ package entity
 
 import core.HyperScape
 import org.lwjgl.input.Keyboard
-import org.lwjgl.util.vector.Vector3f
+import org.lwjgl.opengl.GL20
+import org.lwjgl.util.vector.{Matrix4f, Vector3f}
 import physics.AxisAlignedBB
+import registry.{ModelRegistry, ShaderRegistry}
+import render.RenderModel
 import world.World
 
 class EntityPlayable(world: World) extends Entity(world) {
-    var camHeight: Float = 1.7f
+    var camHeight: Float = 1.3f
     boundingBox = new AxisAlignedBB(
-        -0.4f, 0.4f,
-        0.00f, 1.95f,
-        -0.4f, 0.4f)
+        -0.3f, 0.3f,
+        0.00f, 1.3f,
+        -0.3f, 0.3f)
+
+    var model = new RenderModel(ModelRegistry.getModel("player").getVertices)
 
     val shaders = Array("terrain", "debug", "Panic! at the Disco", "plaid")
 
@@ -79,5 +84,17 @@ class EntityPlayable(world: World) extends Entity(world) {
         if (Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
             rotate(-Math.toRadians(2.5).toFloat, 0, 0)
         }
+    }
+
+    def render(): Unit = {
+        HyperScape.uploadBuffer.clear()
+        val modelMat = new Matrix4f
+        val loc = ShaderRegistry.getCurrentShader.getUniformLocation("modelMatrix")
+        modelMat.translate(position)
+        modelMat.store(HyperScape.uploadBuffer)
+        HyperScape.uploadBuffer.flip()
+        GL20.glUniformMatrix4(loc, false, HyperScape.uploadBuffer)
+        HyperScape.uploadBuffer.clear()
+        model.render(true)
     }
 }
