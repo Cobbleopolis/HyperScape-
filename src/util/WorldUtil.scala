@@ -81,22 +81,22 @@ object WorldUtil {
         var block: Block = null
         //        println("(" + x + ", " + y + ", " + z + ")")
         if (side == BlockSides.BOTTOM) {
-            if (world.blockExists(x, y - 1, z))
+            if (world.isNonAirBlock(x, y - 1, z))
                 block = world.getBlock(x, y - 1, z)
         } else if (side == BlockSides.NORTH) {
-            if (world.blockExists(x + 1, y, z))
+            if (world.isNonAirBlock(x + 1, y, z))
                 block = world.getBlock(x + 1, y, z)
         } else if (side == BlockSides.EAST) {
-            if (world.blockExists(x, y, z - 1))
+            if (world.isNonAirBlock(x, y, z - 1))
                 block = world.getBlock(x, y, z - 1)
         } else if (side == BlockSides.SOUTH) {
-            if (world.blockExists(x - 1, y, z))
+            if (world.isNonAirBlock(x - 1, y, z))
                 block = world.getBlock(x - 1, y, z)
         } else if (side == BlockSides.WEST) {
-            if (world.blockExists(x, y, z + 1))
+            if (world.isNonAirBlock(x, y, z + 1))
                 block = world.getBlock(x, y, z + 1)
         } else if (side == BlockSides.TOP) {
-            if (world.blockExists(x, y + 1, z))
+            if (world.isNonAirBlock(x, y + 1, z))
                 block = world.getBlock(x, y + 1, z)
         }
         if (block == null) {

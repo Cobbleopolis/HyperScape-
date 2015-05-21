@@ -44,17 +44,8 @@ class Entity(worldObj: World) {
         if (!isFlying) velocity.setY(velocity.getY + worldObj.grav)
         val yVal = velocity.getY
         Debug.printVec(position)
-        Debug.debugPrint(" | ")
-        Debug.printVec(velocity)
-        Debug.debugPrint(" | ")
-        Debug.debugPrintln(boundingBox.toString)
         moveEntity(velocity)
         onGround = velocity.getY != yVal && yVal < 0
-        Debug.printVec(position)
-        Debug.debugPrint(" | ")
-        Debug.printVec(velocity)
-        Debug.debugPrint(" | ")
-        Debug.debugPrintln(boundingBox.toString)
         //        applyCollision()
         //        position.translate(moveVec.getX, moveVec.getY, moveVec.getZ)
         //        moveVec.set(0, 0, 0)

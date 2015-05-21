@@ -39,13 +39,18 @@ abstract class World {
      * @param x X coordinate of block
      * @param y Y coordinate of block
      * @param z Z coordinate of block
-     * @return Block at x, y, z
+     * @return Returns air block if the block at x, y, z does not exist otherwise returns the block at x, y, z
      */
     def getBlock(x: Int, y: Int, z: Int): Block = {
-        chunks(WorldUtil.getChunkIndexFromXZ(x, z)).getBlock(x & 15, y, z & 15)
+        val chunk = getChunk(x, z)
+        if (chunk != null)
+            chunks(WorldUtil.getChunkIndexFromXZ(x, z)).getBlock(x & 15, y, z & 15)
+        else
+            Blocks.air
+
     }
 
-    def blockExists(x: Int, y: Int, z: Int): Boolean = {
+    def isNonAirBlock(x: Int, y: Int, z: Int): Boolean = {
         if (chunks.contains(WorldUtil.getChunkIndexFromXZ(x, z))) {
             getBlock(x, y, z) != Blocks.air
         } else {
@@ -57,7 +62,7 @@ abstract class World {
      * Gets the chunk at the coordinate x, z
      * @param x X coordinate of chunk
      * @param z Z coordinate of chunk
-     * @return Chunk at x, z
+     * @return Chunk at x, z null if the chunk at x, z does not exist
      */
     def getChunk(x: Int, z: Int): Chunk = {
         chunks.getOrElse(WorldUtil.getChunkIndexFromXZ(x, z), null)
@@ -240,19 +245,20 @@ abstract class World {
         for (x <- xMin to xMax) {
             for (y <- yMin to yMax) {
                 for (z <- zMin to zMax) {
-                    if (getBlock(x, y, z).hasCollision) {
-                        val bb = getBlock(x, y, z).boundingBox.getTranslatedBoundingBox(x, y, z)
-//                        print(boundingBox.isTouching(bb) + " | ")
-                        //                        if(boundingBox.intersects(bb))
-                            boundingBoxes = boundingBoxes :+ bb
-                    }
+                    if (isNonAirBlock(x, y, z))
+                        if (getBlock(x, y, z).hasCollision) {
+                            val bb = getBlock(x, y, z).boundingBox.getTranslatedBoundingBox(x, y, z)
+                            //                        print(boundingBox.isTouching(bb) + " | ")
+                            if (boundingBox.intersects(bb))
+                                boundingBoxes = boundingBoxes :+ bb
+                        }
                 }
             }
         }
 
         //TODO Add detection of entities inside of AABB
-//        Debug.printVec(xMin, yMin, zMin)
-//        Debug.printVec(xMax, yMax, zMax)
+        //        Debug.printVec(xMin, yMin, zMin)
+        //        Debug.printVec(xMax, yMax, zMax)
         boundingBoxes
     }
 

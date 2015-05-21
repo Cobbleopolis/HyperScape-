@@ -85,7 +85,7 @@ class Chunk(xCoord: Int, zCoord: Int) {
         for (x <- 0 to 15) {
             for (y <- 0 to 15) {
                 for (z <- 0 to 15) {
-                    //                    val r = rand.nextInt(opts.length + 7)
+                    val r = rand.nextInt(opts.length)
                     //                    if (r <= opts.length - 1) {
                     //                        setBlock(x, y, z, opts(r))
                     //
@@ -94,7 +94,7 @@ class Chunk(xCoord: Int, zCoord: Int) {
                         if (x % 2 == 1 || z % 2 == 1 || y == 0)
                         //                            setBlock(x, y, z, Blocks.blank.blockID)
                         //                        else
-                            setBlock(x, y, z, Blocks.pillar.blockID)
+                            setBlock(x, y, z, opts(r))
                     }
                 }
             }

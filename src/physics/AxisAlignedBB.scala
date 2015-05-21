@@ -92,9 +92,9 @@ class AxisAlignedBB(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0f, yMax: 
      * @return If the bounding box is colliding with the passed bounding box
      */
     def intersects(bounds: AxisAlignedBB): Boolean = {
-        bounds.maxX > this.minX && bounds.minX < this.maxX &&
-                bounds.maxY > this.minY && bounds.minY < this.maxY &&
-                bounds.maxZ > this.minZ && bounds.minZ < this.maxZ
+        (bounds.maxX > this.minX || bounds.minX < this.maxX) &&
+                (bounds.maxY > this.minY || bounds.minY < this.maxY) &&
+                (bounds.maxZ > this.minZ || bounds.minZ < this.maxZ)
     }
 
     /**
@@ -180,7 +180,7 @@ class AxisAlignedBB(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0f, yMax: 
      */
     def calcXOffset(bounds: AxisAlignedBB, currentOffset: Float): Float = {
         var curOff = currentOffset
-        if (bounds.maxY > minY && bounds.minY < maxY && bounds.maxZ > minZ && bounds.minZ > maxZ) {
+        if (bounds.maxY > minY && bounds.minY < maxY && bounds.maxZ > minZ && bounds.minZ < maxZ) {
             var newOff = 0f
             if (curOff > 0 && bounds.maxX <= minX) {
                 newOff = minX - bounds.maxX
@@ -188,7 +188,7 @@ class AxisAlignedBB(xMin: Float = 0f, xMax: Float = 1f, yMin: Float = 0f, yMax: 
                     curOff = newOff
                 }
             }
-            if (curOff < 0 && bounds.minX >= bounds.maxX) {
+            if (curOff < 0 && bounds.minX >= maxX) {
                 newOff = maxX - bounds.minX
                 if (newOff > curOff) {
                     curOff = newOff
