@@ -34,6 +34,7 @@ class EntityPlayable(world: World) extends Entity(world) {
                 }
                 if (Keyboard.getEventKey == Keyboard.KEY_F4) {
                     isFlying = !isFlying
+                    velocity.set(0, 0, 0)
                     println("Toggling Flying mode...")
                 }
                 if (Keyboard.getEventKey == Keyboard.KEY_F5) {
