@@ -85,7 +85,7 @@ object Game {
         }
         GL11.glViewport(0, 0, WIDTH, HEIGHT)
         GL11.glEnable(GL11.GL_CULL_FACE)
-        GL11.glClearColor(0.4f, 0.6f, 0.9f, .5f)
+        GL11.glClearColor(0.67058823529411764705882352941176f, 0.8078431372549019607843137254902f, 1f, 1f)
         GL11.glEnable(GL11.GL_DEPTH_TEST)
 
         //        GL11.glEnable(GL11.GL_BLEND)

@@ -1,6 +1,5 @@
 package entity
 
-import core.Debug
 import org.lwjgl.util.vector.Vector3f
 import physics.AxisAlignedBB
 import util.MathUtil
@@ -43,7 +42,7 @@ class Entity(worldObj: World) {
         //        println(position.getX + " " + position.getY + " " + position.getZ)
         if (!isFlying) velocity.setY(velocity.getY + worldObj.grav)
         val yVal = velocity.getY
-        Debug.printVec(position)
+        //        Debug.printVec(position)
         moveEntity(velocity)
         onGround = velocity.getY != yVal && yVal < 0
         //        applyCollision()
