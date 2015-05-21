@@ -95,6 +95,8 @@ class EntityPlayable(world: World) extends Entity(world) {
         HyperScape.uploadBuffer.flip()
         GL20.glUniformMatrix4(loc, false, HyperScape.uploadBuffer)
         HyperScape.uploadBuffer.clear()
-        model.render(true)
+        val colorLoc = ShaderRegistry.getCurrentShader.getUniformLocation("chunkColor")
+        GL20.glUniform4f(colorLoc, 1, 1, 1, 1)
+        model.render()
     }
 }
