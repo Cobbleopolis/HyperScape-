@@ -34,16 +34,16 @@ class Block {
     var topFaces: Array[Int] = Array[Int](2, 7)
 
     /** Faces to add when the north side of the block is open */
-    var northFaces: Array[Int] = Array[Int](3, 8)
+    var northFaces: Array[Int] = Array[Int](6, 11)
 
     /** Faces to add when the east side of the block is open */
-    var eastFaces: Array[Int] = Array[Int](6, 11)
+    var eastFaces: Array[Int] = Array[Int](5, 10)
 
     /** Faces to add when the south side of the block is open */
-    var southFaces: Array[Int] = Array[Int](5, 10)
+    var southFaces: Array[Int] = Array[Int](4, 9)
 
     /** Faces to add when the west side of the block is open */
-    var westFaces: Array[Int] = Array[Int](4, 9)
+    var westFaces: Array[Int] = Array[Int](3, 8)
 
     /** Faces to add when the bottom side of the block is open */
     var bottomFaces: Array[Int] = Array[Int](0, 1)
