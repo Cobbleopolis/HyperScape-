@@ -2,7 +2,8 @@ package core
 
 import entity.EntityPlayable
 import org.lwjgl.BufferUtils
-import org.lwjgl.opengl.GL11
+import org.lwjgl.input.Mouse
+import org.lwjgl.opengl.{Display, GL11}
 import org.lwjgl.util.vector.{Matrix4f, Vector3f}
 import reference.Blocks
 import render.Camera
@@ -22,6 +23,7 @@ class HyperScape {
      */
     def init(): Unit = {
         Blocks.registerBlocks()
+        Mouse.setGrabbed(true)
         //        player.rotate(0, Math.toRadians(180).toFloat, 0)
         world = new WorldMainMenu
         player = new EntityPlayable(world)
@@ -45,6 +47,7 @@ class HyperScape {
         //        HyperScape.mainCamera.view.translate(new Vector3f(0, -player.camHeight, 0))
         //        println(HyperScape.mainCamera.view.toString)
         HyperScape.mainCamera.uploadView()
+        if (Mouse.isGrabbed) Mouse.setCursorPosition(Display.getWidth / 2, Display.getHeight / 2)
     }
 
     /**

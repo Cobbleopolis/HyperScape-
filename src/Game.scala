@@ -1,8 +1,8 @@
 import java.io._
 
 import core.{HyperScape, Init}
-import org.lwjgl.LWJGLException
 import org.lwjgl.opengl._
+import org.lwjgl.{LWJGLException, Sys}
 import registry.{ShaderRegistry, TextureRegistry}
 
 object Game {
@@ -12,6 +12,8 @@ object Game {
     val HEIGHT = 720
 
     var hyperScape: HyperScape = null
+
+    var lastFrame: Long = 0
 
     var isFullscreen = false
 
@@ -26,6 +28,7 @@ object Game {
         ShaderRegistry.bindShader("terrain")
         TextureRegistry.bindTexture("terrain")
 
+        lastFrame = getTime
         HyperScape.debug = args.contains("--debug")
 
         hyperScape = new HyperScape
@@ -90,5 +93,24 @@ object Game {
 
         //        GL11.glEnable(GL11.GL_BLEND)
 //        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
+    }
+
+    /**
+     * Get the time in milliseconds
+     * @return The system time in milliseconds
+     */
+    def getTime: Long = {
+        (Sys.getTime * 1000) / Sys.getTimerResolution
+    }
+
+    /**
+     * Calculate how many milliseconds have passed since last frame.
+     * @return milliseconds passed since last frame
+     */
+    def getDelta: Int = {
+        val time = getTime
+        val delta = (time - lastFrame).toInt
+        lastFrame = time
+        delta
     }
 }

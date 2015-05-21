@@ -17,6 +17,12 @@ class Entity(worldObj: World) {
     /** Ax vector that is used to represent the entities rotation (roll, pitch, yaw) */
     var rotation: Vector3f = new Vector3f
 
+    /** Defines the maximum angle (in degrees) at which the entity can look up. */
+    var maxLookUp = 90
+
+    /** Defines the minimum angle (in degrees) at which the entity can look down. */
+    var maxLookDown = -90
+
     /** A vector representing the entities velocity */
     var velocity: Vector3f = new Vector3f
 
@@ -81,23 +87,23 @@ class Entity(worldObj: World) {
 
         //        onGround = vec.getY != offsetVec.getY
 
-        if(vec.getX != offsetVec.getX) {
+        if (vec.getX != offsetVec.getX) {
             velocity.setX(0)
         }
 
-        if(vec.getY != offsetVec.getY) {
+        if (vec.getY != offsetVec.getY) {
             velocity.setY(0)
         }
 
-        if(vec.getZ != offsetVec.getZ) {
+        if (vec.getZ != offsetVec.getZ) {
             velocity.setZ(0)
         }
 
-//        val dir = new Vector3f(0, 0, -1)
-//        val rotMat = new Matrix4f()
-//        rotMat.rotate(rotation.getY, new Vector3f(0, 1, 0))
-//        rotMat.rotate(rotation.getX, new Vector3f(1, 0, 0))
-//        Matrix4f.translate(dir, rotMat, rotMat)
+        //        val dir = new Vector3f(0, 0, -1)
+        //        val rotMat = new Matrix4f()
+        //        rotMat.rotate(rotation.getY, new Vector3f(0, 1, 0))
+        //        rotMat.rotate(rotation.getX, new Vector3f(1, 0, 0))
+        //        Matrix4f.translate(dir, rotMat, rotMat)
     }
 
     /**
@@ -167,6 +173,21 @@ class Entity(worldObj: World) {
      */
     def rotate(roll: Float, pitch: Float, yaw: Float): Unit = {
         rotation.translate(roll, pitch, yaw)
+        if (rotation.getY > MathUtil.TAU) rotation.setY(rotation.getY - MathUtil.TAU)
+        if (rotation.getY < 0) rotation.setY(MathUtil.TAU + rotation.getY)
+        if (rotation.getX > Math.toRadians(maxLookUp).toFloat) rotation.setX(Math.toRadians(maxLookUp).toFloat)
+        if (rotation.getX < Math.toRadians(maxLookDown).toFloat) rotation.setX(Math.toRadians(maxLookDown).toFloat)
+
+    }
+
+    /**
+     * Rotates the entity
+     * @param roll Amount to rotate the entity on the x-axis in degrees
+     * @param pitch Amount to rotate the entity on the y-axis in degrees
+     * @param yaw Amount to rotate the entity on the z-axis in degrees
+     */
+    def rotateDeg(roll: Float, pitch: Float, yaw: Float): Unit = {
+        rotate(Math.toRadians(roll).toFloat, Math.toRadians(pitch).toFloat, Math.toRadians(yaw).toFloat)
     }
 
 }

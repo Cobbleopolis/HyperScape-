@@ -6,6 +6,7 @@ object MathUtil {
     val PI = Math.PI.toFloat
     val PI180 = PI / 180f
     val PI360 = PI / 360f
+    val TAU = PI * 2
 
     def addVectors(vec1: Vector3f, vec2: Vector3f): Vector3f = {
         new Vector3f(vec1.getX + vec2.getX, vec1.getY + vec2.getY, vec1.getZ + vec2.getZ)

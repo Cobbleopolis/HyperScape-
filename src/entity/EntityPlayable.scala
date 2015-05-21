@@ -1,7 +1,7 @@
 package entity
 
 import core.HyperScape
-import org.lwjgl.input.Keyboard
+import org.lwjgl.input.{Keyboard, Mouse}
 import org.lwjgl.opengl.GL20
 import org.lwjgl.util.vector.{Matrix4f, Vector3f}
 import physics.AxisAlignedBB
@@ -11,6 +11,8 @@ import world.World
 
 class EntityPlayable(world: World) extends Entity(world) {
     var camHeight: Float = 1.3f
+    var mouseSpeed: Float = 1
+
     boundingBox = new AxisAlignedBB(
         -0.3f, 0.3f,
         0.00f, 1.3f,
@@ -42,12 +44,25 @@ class EntityPlayable(world: World) extends Entity(world) {
                     println("Toggling Lines mode...")
                 }
                 if (Keyboard.getEventKey == Keyboard.KEY_R) {
-                    position = new Vector3f(-0.5f, 17f, -0.5f)
+                    position.set(-0.5f, 17f, -0.5f)
                     boundingBox.setOrigin(position)
                     velocity = new Vector3f()
                     rotation = new Vector3f()
                 }
             }
+        }
+        if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
+            if (Mouse.isGrabbed) {
+                Mouse.setGrabbed(false)
+            }
+        }
+        if (Mouse.isGrabbed) {
+            val mouseDX = Mouse.getDX * mouseSpeed * 0.16f
+            val mouseDY = Mouse.getDY * mouseSpeed * 0.16f
+            rotateDeg(mouseDY, -mouseDX, 0)
+        }
+        if (Mouse.isButtonDown(0) && !Mouse.isGrabbed) {
+            Mouse.setGrabbed(true)
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
             moveInDirectionFacing(0, 0, -speed)
@@ -62,9 +77,9 @@ class EntityPlayable(world: World) extends Entity(world) {
             moveInDirectionFacing(speed, 0, 0)
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
-//            println(isCollidingDown)
+            //            println(isCollidingDown)
             if (onGround) {
-//                println("Jump")
+                //                println("Jump")
                 addToSpeedInDirectionFacing(0, .35f, 0)
             } else if (isFlying) {
                 moveInDirectionFacing(0, .35f, 0)
@@ -73,18 +88,18 @@ class EntityPlayable(world: World) extends Entity(world) {
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) && isFlying) {
             moveInDirectionFacing(0, -.25f, 0)
         }
-        if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {
-            rotate(0, Math.toRadians(2.5).toFloat, 0)
-        }
-        if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
-            rotate(0, -Math.toRadians(2.5).toFloat, 0)
-        }
-        if (Keyboard.isKeyDown(Keyboard.KEY_UP)) {
-            rotate(Math.toRadians(2.5).toFloat, 0, 0)
-        }
-        if (Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
-            rotate(-Math.toRadians(2.5).toFloat, 0, 0)
-        }
+        //        if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {
+        //            rotate(0, Math.toRadians(2.5).toFloat, 0)
+        //        }
+        //        if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
+        //            rotate(0, -Math.toRadians(2.5).toFloat, 0)
+        //        }
+        //        if (Keyboard.isKeyDown(Keyboard.KEY_UP)) {
+        //            rotate(Math.toRadians(2.5).toFloat, 0, 0)
+        //        }
+        //        if (Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
+        //            rotate(-Math.toRadians(2.5).toFloat, 0, 0)
+        //        }
     }
 
     def render(): Unit = {
