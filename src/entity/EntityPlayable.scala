@@ -44,7 +44,7 @@ class EntityPlayable(world: World) extends Entity(world) {
                     println("Toggling Lines mode...")
                 }
                 if (Keyboard.getEventKey == Keyboard.KEY_R) {
-                    position.set(-0.5f, 17f, -0.5f)
+                    position.set(-0.5f, 64f, -0.5f)
                     boundingBox.setOrigin(position)
                     velocity = new Vector3f()
                     rotation = new Vector3f()
