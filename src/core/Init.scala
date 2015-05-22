@@ -29,6 +29,7 @@ object Init {
     def loadTextures(): Unit = {
         println("Loading Textures...")
         TextureRegistry.loadTexture("res/blocks.png", "terrain")
+        TextureRegistry.loadTexture("res/player.png", "player")
         println("Finished Loading Textures")
     }
 

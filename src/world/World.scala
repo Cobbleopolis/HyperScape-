@@ -8,7 +8,7 @@ import org.lwjgl.opengl.GL20
 import org.lwjgl.util.vector.{Matrix4f, Vector3f}
 import physics.AxisAlignedBB
 import reference.{BlockSides, Blocks, RenderTypes}
-import registry.{BlockRegistry, ShaderRegistry}
+import registry.{BlockRegistry, ShaderRegistry, TextureRegistry}
 import render.{Model, RenderModel, Vertex}
 import util.WorldUtil
 
@@ -103,6 +103,7 @@ abstract class World {
      */
     def render(): Unit = {
         checkDirtyChunks()
+        TextureRegistry.bindTexture("terrain")
         HyperScape.mainCamera.uploadView()
         var i = 0
         activeChunks.foreach(chunkIndex => {

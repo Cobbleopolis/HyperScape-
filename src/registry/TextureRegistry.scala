@@ -1,6 +1,5 @@
 package registry
 
-import java.awt.image.{BufferedImage, DataBufferByte}
 import java.io.File
 import javax.imageio.ImageIO
 
@@ -40,7 +39,7 @@ object TextureRegistry {
      */
     def bindTexture(textureName: String): Unit = {
         if (!textureName.equals(currTexture)) {
-            println("Binding Texture | " + textureName)
+            //            println("Binding Texture | " + textureName)
             val texture: Int = textures(textureName)
             GL13.glActiveTexture(GL13.GL_TEXTURE0)
             GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture)

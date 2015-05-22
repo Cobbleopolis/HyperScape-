@@ -5,7 +5,7 @@ import org.lwjgl.input.{Keyboard, Mouse}
 import org.lwjgl.opengl.GL20
 import org.lwjgl.util.vector.{Matrix4f, Vector3f}
 import physics.AxisAlignedBB
-import registry.{ModelRegistry, ShaderRegistry}
+import registry.{ModelRegistry, ShaderRegistry, TextureRegistry}
 import render.RenderModel
 import world.World
 
@@ -103,6 +103,7 @@ class EntityPlayable(world: World) extends Entity(world) {
     }
 
     def render(): Unit = {
+        TextureRegistry.bindTexture("player")
         HyperScape.uploadBuffer.clear()
         val modelMat = new Matrix4f
         val loc = ShaderRegistry.getCurrentShader.getUniformLocation("modelMatrix")
@@ -112,7 +113,7 @@ class EntityPlayable(world: World) extends Entity(world) {
         GL20.glUniformMatrix4(loc, false, HyperScape.uploadBuffer)
         HyperScape.uploadBuffer.clear()
         val colorLoc = ShaderRegistry.getCurrentShader.getUniformLocation("chunkColor")
-        GL20.glUniform4f(colorLoc, 1, 1, 1, 1)
+        GL20.glUniform4f(colorLoc, 0, 0, 1, 1)
         model.render()
     }
 }
