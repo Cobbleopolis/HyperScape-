@@ -11,6 +11,10 @@ out vec4 pass_Color;
 out vec2 pass_TextureCoord;
 out float fogPct;
 
+
+const float begin = 10.0;
+const float end = 15.0;
+const float range = end - begin;
 void main(void) {
 	vec4 worldPos = viewMatrix * modelMatrix * vec4(in_Position, 1.0);
 	gl_Position = projectionMatrix * worldPos;
@@ -18,7 +22,5 @@ void main(void) {
 	//pass_Color = vec4(in_Position.x / 16, in_Position.y / 16, in_Position.z / 16, 1);
 	pass_TextureCoord = in_TextureCoord;
 	float dist = length(worldPos);
-	if (dist >= 48.0) {
-	    fogPct = 1.0 - min(1.0, max(0.0, (64.0 - dist) / 4.0));
-	}
+    fogPct = max(0.0, min((dist - begin) / range, 1.0));
 }
