@@ -12,8 +12,8 @@ out vec2 pass_TextureCoord;
 out float fogPct;
 
 
-const float begin = 10.0;
-const float end = 15.0;
+const float begin = 48.0;
+const float end = 64.0;
 const float range = end - begin;
 void main(void) {
 	vec4 worldPos = viewMatrix * modelMatrix * vec4(in_Position, 1.0);
