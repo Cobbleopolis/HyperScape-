@@ -6,6 +6,7 @@ uniform mat4 modelMatrix;
 
 in vec3 in_Position;
 in vec2 in_TextureCoord;
+in vec3 in_Normal;
 
 out vec4 pass_Color;
 out vec2 pass_TextureCoord;
@@ -18,7 +19,7 @@ const float range = end - begin;
 void main(void) {
 	vec4 worldPos = viewMatrix * modelMatrix * vec4(in_Position, 1.0);
 	gl_Position = projectionMatrix * worldPos;
-	pass_Color = vec4(1, 1, 1, 1);
+	pass_Color = vec4(abs(in_Normal), 1.0);
 	//pass_Color = vec4(in_Position.x / 16, in_Position.y / 16, in_Position.z / 16, 1);
 	pass_TextureCoord = in_TextureCoord;
 	float dist = length(worldPos);

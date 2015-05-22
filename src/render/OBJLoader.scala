@@ -14,7 +14,8 @@ object OBJLoader {
         //        val vertArray = BufferUtils.newFloatBuffer(objFileContentsArray.count(line => line.startsWith("v ")))
         var vertArray = Array[Float]()
         var uvArray = Array[Float]()
-        var indArray = Array[(Int, Int)]()
+        var normArray = Array[Float]()
+        var indArray = Array[(Int, Int, Int)]()
         objFileContentsArray.foreach(line => {
             if (line.startsWith("v ")) {
                 val vertLine = line.split(" ")
@@ -23,24 +24,28 @@ object OBJLoader {
             } else if (line.startsWith("vt ")) {
                 val uvLine = line.split(" ")
                 uvArray = uvArray :+ uvLine(1).toFloat :+ uvLine(2).toFloat
+            } else if (line.startsWith("vn ")) {
+                val normLine = line.split(" ")
+                normArray = normArray :+ normLine(1).toFloat :+ normLine(2).toFloat :+ normLine(3).toFloat
             } else if (line.startsWith("f ")) {
                 val indLine = line.split(" ")
 
                 var splitInd = indLine(1).split("/")
-                indArray = indArray :+(splitInd(0).toInt - 1, splitInd(1).toInt - 1)
+                indArray = indArray :+(splitInd(0).toInt - 1, splitInd(1).toInt - 1, splitInd(2).toInt - 1)
 
                 splitInd = indLine(2).split("/")
-                indArray = indArray :+(splitInd(0).toInt - 1, splitInd(1).toInt - 1)
+                indArray = indArray :+(splitInd(0).toInt - 1, splitInd(1).toInt - 1, splitInd(2).toInt - 1)
 
                 splitInd = indLine(3).split("/")
-                indArray = indArray :+(splitInd(0).toInt - 1, splitInd(1).toInt - 1)
+                indArray = indArray :+(splitInd(0).toInt - 1, splitInd(1).toInt - 1, splitInd(2).toInt - 1)
             }
         })
         var completeArray = Array[Float]()
         indArray.foreach(indexes => {
             val vertLoc = indexes._1 * 3
             val uvLoc = indexes._2 * 2
-            completeArray = completeArray :+ vertArray(vertLoc) :+ vertArray(vertLoc + 1) :+ vertArray(vertLoc + 2) :+ uvArray(uvLoc) :+ uvArray(uvLoc + 1)
+            val normLoc = indexes._3 * 3
+            completeArray = completeArray :+ vertArray(vertLoc) :+ vertArray(vertLoc + 1) :+ vertArray(vertLoc + 2) :+ uvArray(uvLoc) :+ uvArray(uvLoc + 1) :+ normArray(normLoc) :+ normArray(normLoc + 1) :+ normArray(normLoc + 2)
         })
 //        println(vertArray.mkString(" "))
 //        println(uvArray.mkString(" "))

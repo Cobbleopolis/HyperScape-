@@ -103,17 +103,21 @@ class EntityPlayable(world: World) extends Entity(world) {
     }
 
     def render(): Unit = {
+        val renderModel = model.copy
         TextureRegistry.bindTexture("player")
         HyperScape.uploadBuffer.clear()
         val modelMat = new Matrix4f
         val loc = ShaderRegistry.getCurrentShader.getUniformLocation("modelMatrix")
         modelMat.translate(position)
+        //        modelMat.rotate(-rotation.getX + (MathUtil.PI / 2), new Vector3f(1, 0, 0))
+        modelMat.rotate(rotation.getZ, new Vector3f(0, 0, 1))
+        modelMat.rotate(rotation.getY, new Vector3f(0, 1, 0))
         modelMat.store(HyperScape.uploadBuffer)
         HyperScape.uploadBuffer.flip()
         GL20.glUniformMatrix4(loc, false, HyperScape.uploadBuffer)
         HyperScape.uploadBuffer.clear()
         val colorLoc = ShaderRegistry.getCurrentShader.getUniformLocation("chunkColor")
         GL20.glUniform4f(colorLoc, 0, 0, 1, 1)
-        model.render()
+        renderModel.render()
     }
 }
