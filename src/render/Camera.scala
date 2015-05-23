@@ -1,8 +1,8 @@
 package render
 
 import core.HyperScape
-import org.lwjgl.opengl.{GL20, Display}
-import org.lwjgl.util.vector.{Vector3f, Matrix4f}
+import org.lwjgl.opengl.{Display, GL20}
+import org.lwjgl.util.vector.{Matrix4f, Vector3f}
 import registry.ShaderRegistry
 import util.MathUtil
 
@@ -36,6 +36,7 @@ class Camera {
      * Uploads the perspective matrix to the GPU
      */
     def uploadPerspective(): Unit = {
+        HyperScape.uploadBuffer.clear()
         val loc = ShaderRegistry.getCurrentShader.getUniformLocation("projectionMatrix")
         perspective.store(HyperScape.uploadBuffer)
         HyperScape.uploadBuffer.flip()
@@ -47,6 +48,7 @@ class Camera {
      * Uploads the view matrix to the GPU
      */
     def uploadView(): Unit = {
+        HyperScape.uploadBuffer.clear()
         val loc = ShaderRegistry.getCurrentShader.getUniformLocation("viewMatrix")
         view.store(HyperScape.uploadBuffer)
         HyperScape.uploadBuffer.flip()
