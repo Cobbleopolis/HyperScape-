@@ -46,6 +46,10 @@ class Chunk(xCoord: Int, zCoord: Int) {
         ((index >> 4) & 15, index >> 8, index & 15)
     }
 
+    def getBlockIndexFromXYZ(x: Int, y: Int, z: Int): Int = {
+        y << 8 | x << 4 | z
+    }
+
     /**
      * Checks if the block exists (isn't null and isn't air
      * @param x X location of the block
@@ -64,7 +68,7 @@ class Chunk(xCoord: Int, zCoord: Int) {
      */
     def getBlock(x: Int, y: Int, z: Int): Block = {
         //        println("(" + x + ", " + y + ", " + z + ")")
-        val index = y << 8 | x << 4 | z
+        val index = getBlockIndexFromXYZ(x, y, z)
         var block: Block = null
         if (index >= 0 && index < blocks.length) {
             block = BlockRegistry.getBlock(blocks(y << 8 | x << 4 | z))
@@ -84,17 +88,10 @@ class Chunk(xCoord: Int, zCoord: Int) {
         val opts = Array(Blocks.blank.blockID, Blocks.light.blockID, Blocks.model.blockID, Blocks.glass.blockID, Blocks.pillar.blockID)
         for (x <- 0 to 15) {
             for (z <- 0 to 15) {
-                for (y <- 0 to ((Math.sin(x + (xCoord * 16)) + Math.cos(z + (zCoord * 16))).toInt * 5) + 5) {
-                    val r = rand.nextInt(opts.length)
-                    //                    if (r <= opts.length - 1) {
-                    //                        setBlock(x, y, z, opts(r))
-                    //
-                    //                    }
-                    if ((y == 0 || x % size == 0 || z % size == 0) || (y == 4 && (x % size == 1 || z % size == 1))) {
-                        //                        if (x % 2 == 1 || z % 2 == 1 || y == 0)
-                        //                            setBlock(x, y, z, Blocks.blank.blockID)
-                        //                        else
-                            setBlock(x, y, z, opts(r))
+                for (y <- 0 to 16) {
+                    if ((x < size && z < size && y < 5) || y < 1) {
+                        val r = rand.nextInt(opts.length)
+                        setBlock(x, y, z, opts(r))
                     }
                 }
             }
@@ -109,7 +106,7 @@ class Chunk(xCoord: Int, zCoord: Int) {
      * @param blockID Sets the block at x, y, z (internal chunk coordinates) to block
      */
     def setBlock(x: Int, y: Int, z: Int, blockID: Int): Unit = {
-        blocks(y << 8 | x << 4 | z) = blockID
+        blocks(getBlockIndexFromXYZ(x, y, z)) = blockID
         isDirty = true
     }
 

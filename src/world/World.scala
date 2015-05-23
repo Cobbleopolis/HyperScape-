@@ -9,7 +9,7 @@ import org.lwjgl.util.vector.{Matrix4f, Vector3f}
 import physics.AxisAlignedBB
 import reference.{BlockSides, Blocks, RenderTypes}
 import registry.{BlockRegistry, ShaderRegistry, TextureRegistry}
-import render.{Model, RenderModel, Vertex}
+import render.{SunLamp, Model, RenderModel, Vertex}
 import util.WorldUtil
 
 import scala.collection.mutable
@@ -20,7 +20,7 @@ abstract class World {
     var time = 0
     var activeChunks: Array[Int] = null
     val grav = -0.025f
-    //    val environment = new Environment
+    val sun: SunLamp = new SunLamp(new Vector3f(1f, -1f, 1f), new Vector3f(1f, 1f, 1f), 0.0f)
     //    chunks.put(0, new Chunk(0, 0))
 
     /**
@@ -96,6 +96,8 @@ abstract class World {
             chunks.getOrElse(chunkIndex, null).tick()
         })
         player.tick()
+        time += 1
+        if(time < 24000) time = 0
     }
 
     /**
@@ -134,6 +136,12 @@ abstract class World {
                 GL20.glUniform4f(colorLoc, Math.sin(chunk.getXCoord).toFloat, Math.sin(chunk.getZCoord).toFloat, 0.3125f, 1)
             }
 
+            val sunDirectionLoc = ShaderRegistry.getCurrentShader.getUniformLocation("sunDirection")
+            GL20.glUniform3f(sunDirectionLoc, sun.direction.getX, sun.direction.getY, sun.direction.getZ)
+            val sunColorLoc = ShaderRegistry.getCurrentShader.getUniformLocation("sunColor")
+            GL20.glUniform4f(sunColorLoc, sun.color.getX, sun.color.getY, sun.color.getZ, 1.0f)
+            val sunIntensityLoc = ShaderRegistry.getCurrentShader.getUniformLocation("sunIntensity")
+            GL20.glUniform1f(sunIntensityLoc, sun.intensity)
             chunk.chunkModel.render(HyperScape.lines)
             i = i + 1
         })
