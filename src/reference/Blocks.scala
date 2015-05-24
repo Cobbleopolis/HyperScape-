@@ -11,6 +11,7 @@ object Blocks {
     val glass = new BlockGlass
     val pillar = new BlockPillar
     val slab = new BlockSlab
+    val sphere = new BlockSphere
 
     /**
      * Registers the blocks with the game
@@ -23,5 +24,6 @@ object Blocks {
         BlockRegistry.registerBlock(glass)
         BlockRegistry.registerBlock(pillar)
         BlockRegistry.registerBlock(slab)
+        BlockRegistry.registerBlock(sphere)
     }
 }
