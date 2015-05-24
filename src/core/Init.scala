@@ -39,7 +39,7 @@ object Init {
     def loadModels(): Unit = {
         println("Loading Models...")
         ModelRegistry.loadModel("res/model/cube.obj", "cube")
-        ModelRegistry.loadModel("res/model/sphere.obj", "model")
+        ModelRegistry.loadModel("res/model/model.obj", "model")
         ModelRegistry.loadModel("res/model/pillar.obj", "pillar")
         ModelRegistry.loadModel("res/model/player.obj", "player")
         ModelRegistry.loadModel("res/model/slab.obj", "slab")
