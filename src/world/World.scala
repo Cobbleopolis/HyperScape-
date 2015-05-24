@@ -9,7 +9,7 @@ import org.lwjgl.util.vector.{Matrix4f, Vector3f}
 import physics.AxisAlignedBB
 import reference.{BlockSides, Blocks, RenderTypes}
 import registry.{BlockRegistry, ShaderRegistry, TextureRegistry}
-import render.{SunLamp, Model, RenderModel, Vertex}
+import render._
 import util.WorldUtil
 
 import scala.collection.mutable
@@ -20,7 +20,8 @@ abstract class World {
     var time = 0
     var activeChunks: Array[Int] = null
     val grav = -0.025f
-    val sun: SunLamp = new SunLamp(new Vector3f(1f, -1f, 1f), new Vector3f(1f, 1f, 1f), 0.0f)
+    val sun: SunLamp = new SunLamp(new Vector3f(1f, -1f, 1f), new Vector3f(1f, 1f, 1f), 0.25f)
+
     //    chunks.put(0, new Chunk(0, 0))
 
     /**
@@ -107,10 +108,26 @@ abstract class World {
         checkDirtyChunks()
         TextureRegistry.bindTexture("terrain")
         HyperScape.mainCamera.uploadView()
+//        var lights: Array[PointLight] = Array[PointLight]()
+//        var lightFloats: Array[Float] = Array[Float]()
+//        activeChunks.foreach(i => {
+//            val chunk = chunks(i)
+//            lights = lights ++ chunk.lights
+//        })
+//        lights.foreach(light => {
+////            println((lightFloats == null) + " | " + (light.getFloatsForUpload == null))
+//            if(light != null)
+//                lightFloats = lightFloats ++ light.getFloatsForUpload
+//        })
+//        val pointFloatsLoc = ShaderRegistry.getCurrentShader.getUniformLocation("pointLampFloats")
+//        HyperScape.uploadBuffer.clear()
+//        HyperScape.uploadBuffer.put(lightFloats)
+//        HyperScape.uploadBuffer.flip()
+////        GL20.glUniform1(pointFloatsLoc, HyperScape.uploadBuffer)
+//        HyperScape.uploadBuffer.clear()
         var i = 0
         activeChunks.foreach(chunkIndex => {
             val chunk = chunks(chunkIndex)
-
             val modelMatrix = new Matrix4f()
             //            println("X, Z | " + chunk.getXCoord + " " + chunk.getZCoord)
             modelMatrix.translate(new Vector3f(chunk.getXCoord * 16, 0, chunk.getZCoord * 16))
@@ -140,8 +157,8 @@ abstract class World {
             GL20.glUniform3f(sunDirectionLoc, sun.direction.getX, sun.direction.getY, sun.direction.getZ)
             val sunColorLoc = ShaderRegistry.getCurrentShader.getUniformLocation("sunColor")
             GL20.glUniform4f(sunColorLoc, sun.color.getX, sun.color.getY, sun.color.getZ, 1.0f)
-            val sunIntensityLoc = ShaderRegistry.getCurrentShader.getUniformLocation("sunIntensity")
-            GL20.glUniform1f(sunIntensityLoc, sun.intensity)
+            val sunIntensityLoc = ShaderRegistry.getCurrentShader.getUniformLocation("sunAmbient")
+            GL20.glUniform1f(sunIntensityLoc, sun.ambient)
             chunk.chunkModel.render(HyperScape.lines)
             i = i + 1
         })

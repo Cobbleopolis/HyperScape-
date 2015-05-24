@@ -3,9 +3,10 @@ package world
 import java.util.Random
 
 import block._
+import org.lwjgl.util.vector.Vector3f
 import reference.Blocks
 import registry.BlockRegistry
-import render.RenderModel
+import render.{PointLight, RenderModel}
 
 /**
  * Creates a chunk object
@@ -13,8 +14,9 @@ import render.RenderModel
  * @param zCoord The Z chunk coordinate of the chunk
  */
 class Chunk(xCoord: Int, zCoord: Int) {
+    val chunkSize = 16384
     val rand = new Random
-    var blocks = new Array[Int](16384)
+    var blocks = new Array[Int](chunkSize)
     for ((block, i) <- blocks.zipWithIndex) {
         blocks(i) = Blocks.air.blockID
     }
@@ -26,7 +28,10 @@ class Chunk(xCoord: Int, zCoord: Int) {
      * Ticks the chunk
      */
     def tick(): Unit = {
+//        for ((blockID, i) <- blocks.zipWithIndex) {
+//            val block = BlockRegistry.getBlock(blockID)
 
+//        }
     }
 
     /**
@@ -85,7 +90,7 @@ class Chunk(xCoord: Int, zCoord: Int) {
     def generate(): Unit = {
         println("Generate Chunk | " + xCoord + " " + zCoord)
         val size = 8
-        val opts = Array(Blocks.blank.blockID, Blocks.light.blockID, Blocks.model.blockID, Blocks.glass.blockID, Blocks.pillar.blockID)
+        val opts = Array(Blocks.blank.blockID, Blocks.light.blockID, Blocks.model.blockID, Blocks.glass.blockID, Blocks.pillar.blockID, Blocks.slab.blockID)
         for (x <- 0 to 15) {
             for (z <- 0 to 15) {
                 for (y <- 0 to 16) {
@@ -109,6 +114,10 @@ class Chunk(xCoord: Int, zCoord: Int) {
         blocks(getBlockIndexFromXYZ(x, y, z)) = blockID
         isDirty = true
     }
+
+//    def getLights: Array[PointLight] = {
+//
+//    }
 
     /**
      * Gets the x coordinate of the chunk

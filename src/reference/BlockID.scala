@@ -7,4 +7,5 @@ object BlockID {
     val MODEL = 3
     val GLASS = 4
     val PILLAR = 5
+    val SLAB = 6
 }
