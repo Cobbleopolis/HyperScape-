@@ -4,7 +4,7 @@ import java.util.Random
 
 import block._
 import org.lwjgl.util.vector.Vector3f
-import reference.Blocks
+import reference.{WorldRef, Blocks}
 import registry.BlockRegistry
 import render.{PointLight, RenderModel}
 
@@ -14,9 +14,9 @@ import render.{PointLight, RenderModel}
  * @param zCoord The Z chunk coordinate of the chunk
  */
 class Chunk(xCoord: Int, zCoord: Int) {
-    val chunkSize = 16384
     val rand = new Random
-    var blocks = new Array[Int](chunkSize)
+    var blocks = new Array[Int](WorldRef.CHUNK_SIZE)
+    var lightLevels = new Array[Int](WorldRef.CHUNK_LIGHT_SIZE)
     for ((block, i) <- blocks.zipWithIndex) {
         blocks(i) = Blocks.air.blockID
     }
@@ -114,6 +114,12 @@ class Chunk(xCoord: Int, zCoord: Int) {
         blocks(getBlockIndexFromXYZ(x, y, z)) = blockID
         isDirty = true
     }
+
+    def setLightLevel(x: Int, y: Int, z: Int, lightLevel: Int): Unit = {
+        var cappedLightLevel = Math.max(0, Math.min(16, lightLevel))
+
+    }
+
 
 //    def getLights: Array[PointLight] = {
 //
