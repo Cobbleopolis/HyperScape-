@@ -3,7 +3,6 @@
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 modelMatrix;
-uniform float sunAmbeant;
 
 in vec3 in_Position;
 in vec2 in_TextureCoord;

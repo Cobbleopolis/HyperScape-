@@ -1,6 +1,5 @@
 package block
 
-import org.lwjgl.util.vector.Vector3f
 import physics.AxisAlignedBB
 import reference.RenderTypes
 import registry.ModelRegistry
@@ -14,11 +13,7 @@ class Block {
     var gameModel: Model = ModelRegistry.getModel("cube")
 
     /** Light Level to render with */
-    var lightLevel: Int = 0
-
-    var lightPos: Vector3f = new Vector3f(0.5f, 0.5f, 0.5f)
-
-    var lightColor: Vector3f = new Vector3f(1, 1, 1)
+    var lightLevel: Byte = 0
 
     /** Sets if the block has collision */
     var hasCollision: Boolean = true

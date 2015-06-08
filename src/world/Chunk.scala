@@ -3,10 +3,9 @@ package world
 import java.util.Random
 
 import block._
-import org.lwjgl.util.vector.Vector3f
-import reference.{WorldRef, Blocks}
+import reference.{Blocks, WorldRef}
 import registry.BlockRegistry
-import render.{PointLight, RenderModel}
+import render.RenderModel
 
 /**
  * Creates a chunk object
@@ -16,13 +15,14 @@ import render.{PointLight, RenderModel}
 class Chunk(xCoord: Int, zCoord: Int) {
     val rand = new Random
     var blocks = new Array[Int](WorldRef.CHUNK_SIZE)
-    var lightLevels = new Array[Int](WorldRef.CHUNK_LIGHT_SIZE)
+    var lightLevels = new Array[Byte](WorldRef.CHUNK_SIZE)
     for ((block, i) <- blocks.zipWithIndex) {
         blocks(i) = Blocks.air.blockID
     }
     var chunkModel: RenderModel = null
     var isDirty: Boolean = false
-    generate()
+    var isEmpty: Boolean = true
+    //    generate()
 
     /**
      * Ticks the chunk
@@ -34,13 +34,16 @@ class Chunk(xCoord: Int, zCoord: Int) {
 //        }
     }
 
-    /**
-     * Returns if the chunk is empty
-     * @return If the chunk is empty or not
-     */
-    def isEmpty: Boolean = {
-        blocks.isEmpty
-    }
+    //    /**
+    //     * Returns if the chunk has not been generated
+    //     * @return If the chunk has not been generated
+    //     */
+    //    def isEmpty: Boolean = {
+    //        blocks.foreach(blockID => {
+    //            if (BlockRegistry.getBlock(blockID) != Blocks.air) false
+    //        })
+    //        true
+    //    }
 
     /**
      * Gets the x, y, z of the block at index
@@ -51,12 +54,19 @@ class Chunk(xCoord: Int, zCoord: Int) {
         ((index >> 4) & 15, index >> 8, index & 15)
     }
 
+    /**
+     * Gets the index of a block
+     * @param x X location of the block
+     * @param y Y location of the block
+     * @param z Z location of the block
+     * @return
+     */
     def getBlockIndexFromXYZ(x: Int, y: Int, z: Int): Int = {
         y << 8 | x << 4 | z
     }
 
     /**
-     * Checks if the block exists (isn't null and isn't air
+     * Checks if the block exists (isn't null and isn't air)
      * @param x X location of the block
      * @param y Y location of the block
      * @param z Z location of the block
@@ -90,7 +100,7 @@ class Chunk(xCoord: Int, zCoord: Int) {
     def generate(): Unit = {
         println("Generate Chunk | " + xCoord + " " + zCoord)
         val size = 8
-        val opts = Array(Blocks.blank.blockID, Blocks.light.blockID, Blocks.model.blockID, Blocks.glass.blockID, Blocks.pillar.blockID, Blocks.slab.blockID, Blocks.sphere.blockID)
+        val opts = Array(Blocks.blank, Blocks.light, Blocks.model, Blocks.glass, Blocks.pillar, Blocks.slab, Blocks.sphere)
         for (x <- 0 to 15) {
             for (z <- 0 to 15) {
                 for (y <- 0 to 16) {
@@ -101,6 +111,7 @@ class Chunk(xCoord: Int, zCoord: Int) {
                 }
             }
         }
+        isEmpty = false
     }
 
     /**
@@ -108,22 +119,35 @@ class Chunk(xCoord: Int, zCoord: Int) {
      * @param x X location of the block
      * @param y Y location of the block
      * @param z Z location of the block
-     * @param blockID Sets the block at x, y, z (internal chunk coordinates) to block
+     * @param block Sets the block at x, y, z (internal chunk coordinates) to block
      */
-    def setBlock(x: Int, y: Int, z: Int, blockID: Int): Unit = {
-        blocks(getBlockIndexFromXYZ(x, y, z)) = blockID
+    def setBlock(x: Int, y: Int, z: Int, block: Block): Unit = {
+        blocks(getBlockIndexFromXYZ(x, y, z)) = block.blockID
         isDirty = true
     }
 
-    def setLightLevel(x: Int, y: Int, z: Int, lightLevel: Int): Unit = {
-        var cappedLightLevel = Math.max(0, Math.min(16, lightLevel))
-
+    /**
+     * Sets the lightlevel at the provided x, y, z (chunk coordinates)
+     * @param x X location of the block
+     * @param y Y location of the block
+     * @param z Z location of the block
+     * @param lightLevel Level of the light to set
+     */
+    def setLightLevel(x: Int, y: Int, z: Int, lightLevel: Byte): Unit = {
+        //        val cappedLightLevel = Math.max(0, Math.min(16, lightLevel)).toByte
+        lightLevels(getBlockIndexFromXYZ(x, y, z)) = lightLevel
     }
 
-
-//    def getLights: Array[PointLight] = {
-//
-//    }
+    /**
+     * Gets the light level at x, y, z (chunk coordinates)
+     * @param x X location of the block
+     * @param y Y location of the block
+     * @param z Z location of the block
+     * @return The light level at x, y, z (chunk coordinates)
+     */
+    def getLightLevel(x: Int, y: Int, z: Int): Byte = {
+        lightLevels(getBlockIndexFromXYZ(x, y, z))
+    }
 
     /**
      * Gets the x coordinate of the chunk

@@ -7,7 +7,7 @@ import entity.Entity
 import org.lwjgl.opengl.GL20
 import org.lwjgl.util.vector.{Matrix4f, Vector3f}
 import physics.AxisAlignedBB
-import reference.{BlockSides, Blocks, RenderTypes}
+import reference.{BlockSides, Blocks, RenderTypes, WorldRef}
 import registry.{BlockRegistry, ShaderRegistry, TextureRegistry}
 import render._
 import util.WorldUtil
@@ -20,7 +20,7 @@ abstract class World {
     var time = 0
     var activeChunks: Array[Int] = null
     val grav = -0.025f
-    val sun: SunLamp = new SunLamp(new Vector3f(1f, -1f, 1f), new Vector3f(1f, 1f, 1f), 0.25f)
+    //    val sun: SunLamp = new SunLamp(new Vector3f(1f, -1f, 1f), new Vector3f(1f, 1f, 1f), 0.25f)
 
     //    chunks.put(0, new Chunk(0, 0))
 
@@ -31,8 +31,12 @@ abstract class World {
      * @param z Z Coordinate of block
      * @param block Block to set the location to
      */
-    def setBlock(x: Int, y: Int, z: Int, block: Int): Unit = {
+    def setBlock(x: Int, y: Int, z: Int, block: Block): Unit = {
+        val oldBlock = chunks(WorldUtil.getChunkIndexFromXZ(x, z)).getBlock(x, y, z)
         chunks(WorldUtil.getChunkIndexFromXZ(x, z)).setBlock(x & 15, y, z & 15, block)
+        if (block.lightLevel != oldBlock.lightLevel) {
+            checkLight(x, y, z)
+        }
     }
 
     /**
@@ -51,12 +55,109 @@ abstract class World {
 
     }
 
+    /**
+     * Sets the lightlevel at the provided x, y, z
+     * @param x X location of the block
+     * @param y Y location of the block
+     * @param z Z location of the block
+     * @param lightLevel Level of the light to set
+     */
+    def setLightLevel(x: Int, y: Int, z: Int, lightLevel: Byte): Unit = {
+        //        val cappedLightLevel = Math.max(0, Math.min(16, lightLevel)).toByte
+        chunks(WorldUtil.getChunkIndexFromXZ(x, z)).setLightLevel(x & 15, y, z & 15, lightLevel)
+    }
+
+    /**
+     * Gets the light level at x, y, z
+     * @param x X location of the block
+     * @param y Y location of the block
+     * @param z Z location of the block
+     * @return The light level at x, y, z
+     */
+    def getLightLevel(x: Int, y: Int, z: Int): Byte = {
+        chunks(WorldUtil.getChunkIndexFromXZ(x, z)).getLightLevel(x & 15, y, z & 15)
+    }
+
+    /**
+     *
+     * @param x
+     * @param y
+     * @param z
+     */
+    def checkLight(x: Int, y: Int, z: Int): Unit = {
+        var lightLevel = getLightLevel(x, y, z)
+        var blockList = Array[Vector3f]()
+        if (lightLevel > 0) {
+            if (!getBlock(x - 1, y, z).isOpaque) blockList = blockList :+ new Vector3f(x - 1, y, z)
+            if (!getBlock(x + 1, y, z).isOpaque) blockList = blockList :+ new Vector3f(x + 1, y, z)
+            if (!getBlock(x, y - 1, z).isOpaque) blockList = blockList :+ new Vector3f(x, y - 1, z)
+            if (!getBlock(x, y + 1, z).isOpaque) blockList = blockList :+ new Vector3f(x, y + 1, z)
+            if (!getBlock(x, y, z - 1).isOpaque) blockList = blockList :+ new Vector3f(x, y, z - 1)
+            if (!getBlock(x, y, z + 1).isOpaque) blockList = blockList :+ new Vector3f(x, y, z + 1)
+        }
+        calcLight(blockList)
+    }
+
+    def calcLight(blockList: Array[Vector3f]): Unit = {
+        if (blockList.length > 0) {
+            var addedBlockList = blockList.tail
+            val head = blockList.head
+            val (x, y, z) = (head.getX.toInt, head.getY.toInt, head.getZ.toInt)
+            var lightLevel: Byte = 0
+            if (getLightLevel(x - 1, y, z) > lightLevel) {
+                lightLevel = getLightLevel(x - 1, y, z)
+            }
+            if (getLightLevel(x + 1, y, z) > lightLevel) {
+                lightLevel = getLightLevel(x + 1, y, z)
+            }
+            if (getLightLevel(x, y - 1, z) > lightLevel) {
+                lightLevel = getLightLevel(x, y - 1, z)
+            }
+            if (getLightLevel(x, y + 1, z) > lightLevel) {
+                lightLevel = getLightLevel(x, y + 1, z)
+            }
+            if (getLightLevel(x, y, z - 1) > lightLevel) {
+                lightLevel = getLightLevel(x, y, z - 1)
+            }
+            if (getLightLevel(x, y, z + 1) > lightLevel) {
+                lightLevel = getLightLevel(x, y, z + 1)
+            }
+            lightLevel = (lightLevel - 1).toByte
+            setLightLevel(x, y, z, lightLevel)
+            if (lightLevel > 0) {
+                if (!getBlock(x - 1, y, z).isOpaque) addedBlockList = addedBlockList :+ new Vector3f(x - 1, y, z)
+                if (!getBlock(x + 1, y, z).isOpaque) addedBlockList = addedBlockList :+ new Vector3f(x + 1, y, z)
+                if (!getBlock(x, y - 1, z).isOpaque) addedBlockList = addedBlockList :+ new Vector3f(x, y - 1, z)
+                if (!getBlock(x, y + 1, z).isOpaque) addedBlockList = addedBlockList :+ new Vector3f(x, y + 1, z)
+                if (!getBlock(x, y, z - 1).isOpaque) addedBlockList = addedBlockList :+ new Vector3f(x, y, z - 1)
+                if (!getBlock(x, y, z + 1).isOpaque) addedBlockList = addedBlockList :+ new Vector3f(x, y, z + 1)
+            }
+            if (addedBlockList.length > 0) {
+                calcLight(addedBlockList)
+            }
+        }
+    }
+
+    /**
+     * Detects if a block is not air
+     * @param x X location of the block
+     * @param y Y location of the block
+     * @param z Z location of the block
+     * @return false if the block is not air, true otherwise
+     */
     def isNonAirBlock(x: Int, y: Int, z: Int): Boolean = {
         if (chunks.contains(WorldUtil.getChunkIndexFromXZ(x, z))) {
             getBlock(x, y, z) != Blocks.air
         } else {
             false
         }
+    }
+
+    def canBlockSeeSky(x: Int, y: Int, z: Int): Boolean = {
+        for (i <- y + 1 to WorldRef.CHUNK_HEIGHT) {
+            if (getBlock(x, i, z) isOpaque) false
+        }
+        true
     }
 
     /**
@@ -92,13 +193,19 @@ abstract class World {
                 chunks.put(chunkIndex, new Chunk(x, z))
             }
             if (chunks.getOrElse(chunkIndex, null).isEmpty) {
+                println("Generating Chunk " + chunkIndex)
                 chunks(chunkIndex).generate()
             }
             chunks.getOrElse(chunkIndex, null).tick()
         })
         player.tick()
-        time += 1
-        if(time < 24000) time = 0
+        time = time + 1
+        if (time == 300) {
+            setBlock(10, 10, 10, Blocks.light);
+            println("Set Block")
+        }
+        if (time > 24000) time = 0
+        println("Tick " + time)
     }
 
     /**
@@ -108,23 +215,23 @@ abstract class World {
         checkDirtyChunks()
         TextureRegistry.bindTexture("terrain")
         HyperScape.mainCamera.uploadView()
-//        var lights: Array[PointLight] = Array[PointLight]()
-//        var lightFloats: Array[Float] = Array[Float]()
-//        activeChunks.foreach(i => {
-//            val chunk = chunks(i)
-//            lights = lights ++ chunk.lights
-//        })
-//        lights.foreach(light => {
-////            println((lightFloats == null) + " | " + (light.getFloatsForUpload == null))
-//            if(light != null)
-//                lightFloats = lightFloats ++ light.getFloatsForUpload
-//        })
-//        val pointFloatsLoc = ShaderRegistry.getCurrentShader.getUniformLocation("pointLampFloats")
-//        HyperScape.uploadBuffer.clear()
-//        HyperScape.uploadBuffer.put(lightFloats)
-//        HyperScape.uploadBuffer.flip()
-////        GL20.glUniform1(pointFloatsLoc, HyperScape.uploadBuffer)
-//        HyperScape.uploadBuffer.clear()
+        //        var lights: Array[PointLight] = Array[PointLight]()
+        //        var lightFloats: Array[Float] = Array[Float]()
+        //        activeChunks.foreach(i => {
+        //            val chunk = chunks(i)
+        //            lights = lights ++ chunk.lights
+        //        })
+        //        lights.foreach(light => {
+        ////            println((lightFloats == null) + " | " + (light.getFloatsForUpload == null))
+        //            if(light != null)
+        //                lightFloats = lightFloats ++ light.getFloatsForUpload
+        //        })
+        //        val pointFloatsLoc = ShaderRegistry.getCurrentShader.getUniformLocation("pointLampFloats")
+        //        HyperScape.uploadBuffer.clear()
+        //        HyperScape.uploadBuffer.put(lightFloats)
+        //        HyperScape.uploadBuffer.flip()
+        ////        GL20.glUniform1(pointFloatsLoc, HyperScape.uploadBuffer)
+        //        HyperScape.uploadBuffer.clear()
         var i = 0
         activeChunks.foreach(chunkIndex => {
             val chunk = chunks(chunkIndex)
@@ -153,12 +260,12 @@ abstract class World {
                 GL20.glUniform4f(colorLoc, Math.sin(chunk.getXCoord).toFloat, Math.sin(chunk.getZCoord).toFloat, 0.3125f, 1)
             }
 
-            val sunDirectionLoc = ShaderRegistry.getCurrentShader.getUniformLocation("sunDirection")
-            GL20.glUniform3f(sunDirectionLoc, sun.direction.getX, sun.direction.getY, sun.direction.getZ)
-            val sunColorLoc = ShaderRegistry.getCurrentShader.getUniformLocation("sunColor")
-            GL20.glUniform4f(sunColorLoc, sun.color.getX, sun.color.getY, sun.color.getZ, 1.0f)
-            val sunIntensityLoc = ShaderRegistry.getCurrentShader.getUniformLocation("sunAmbient")
-            GL20.glUniform1f(sunIntensityLoc, sun.ambient)
+            //            val sunDirectionLoc = ShaderRegistry.getCurrentShader.getUniformLocation("sunDirection")
+            //            GL20.glUniform3f(sunDirectionLoc, sun.direction.getX, sun.direction.getY, sun.direction.getZ)
+            //            val sunColorLoc = ShaderRegistry.getCurrentShader.getUniformLocation("sunColor")
+            //            GL20.glUniform4f(sunColorLoc, sun.color.getX, sun.color.getY, sun.color.getZ, 1.0f)
+            //            val sunIntensityLoc = ShaderRegistry.getCurrentShader.getUniformLocation("sunAmbient")
+            //            GL20.glUniform1f(sunIntensityLoc, sun.ambient)
             chunk.chunkModel.render(HyperScape.lines)
             i = i + 1
         })
